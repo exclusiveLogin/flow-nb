@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+    <meta name="theme-color" content="#444">
+
+
+    <title>СКУ - Система Контроля Утечек</title>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+
+
+    <link rel="icon" sizes="192x192" href="/style/logo.png">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css">
+    <link rel="stylesheet" href="style/dark.css">
+    <link rel="stylesheet" href="style/lightbox.css">
+    <link rel="stylesheet" href="fancybox/jquery.fancybox.css">
+    <link rel="stylesheet" href="jquery-ui-1.11.4/jquery-ui.css">
+    <link href='https://fonts.googleapis.com/css?family=Cinzel' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Quicksand:400,700' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Josefin+Sans:400,100,600,700,300' rel='stylesheet' type='text/css'>
+    <!-- Latest compiled and minified JavaScript -->
+
+
+    <script src="/js/global.js"></script>
+    <script src="/js/jquery-1.11.3.js"></script>
+    <script src="jquery-ui-1.11.4/jquery-ui.js"></script>
+
+    <script src="/js/auth.js"></script>
+
+    <script src="/js/start.js"></script>
+
+    <script src="/js/trends.js"></script>
+
+    <script src="/js/lightbox.js"></script>
+
+    <script src="/js/detect.js"></script>
+
+    <!--Google Maps-->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCGc1IlCuJd173d1Q1685Eya-Cs7NJ5HOU"></script>
+    <script src="/js/maps.js"></script>
+
+    <script src="/fancybox/jquery.fancybox.pack.js"></script>
+    <script src="/fancybox/jquery.fancybox.js"></script>
+
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+    <script src="https://code.highcharts.com/stock/highstock.js"></script>
+    <script src="https://code.highcharts.com/highcharts-more.js"></script>
+    <script src="/js/socket.io.js"></script>
+    <script src="/js/io.js"></script>
+
+
+
+</head>
+<body>
+    <div id="tooltip"></div>
+    <div id="header" class="container-fluid headerdark">
+        <div id="sysmsg" class="col-xs-12 col-md-12 col-sm-12 col-lg-12 text-center myhide">Системное сообщение: <span id="sysmsg_val"></span></div>
+        <div id="emer_code" class="col-xs-12 col-md-12 col-sm-12 col-lg-12 text-center myhide">ВНИМАНИЕ!!! <span id="emer_code_msg"></span></div>
+
+        <div class="logo col-lg-7 col-md-7 col-sm-7 hidden-xs">Система Контроля Утечек<br><small>Самаранефтепродукт - Причал</small></div>
+        <div class="logo col-xs-12 col-sm-6 visible-xs  text-center">Система Контроля Утечек</div>
+
+        <div id="menu" class="col-lg-5 col-md-5 col-sm-5 text-right hidden-xs">
+            <button class="btn btn-success btnlogin">Войти в систему</button>
+            <button class="btn btn-danger btnlogout">Выйти из системы</button>
+        </div>
+        <div id="menupda" class="col-xs-12 visible-xs text-center"></div>
+
+        <div id="loginform" class="col-xs-12 text-center form-inline">
+            <header>Авторизация</header>
+            <div class="form-group">
+                <label>Логин</label>
+                <input id="loginName" type="text" class="form-control">
+            </div>
+            <div class="form-group">
+                <label>Пароль</label>
+                <input id="passwordName" type="password" class="form-control">
+            </div>
+            <div class="col-xs-12 text-center">
+                <button id="btnloginenter" class="btn btn-success btn-group-sm" autofocus>Войти</button>
+                <button class="btnlogincl btn btn-danger btn-group-sm">Закрыть</button>
+            </div>
+        </div>
+    </div>
+    <div class="danger_field"></div>
+    <div id="fancytemp" class="container"></div>
+    <div id="wrapper" class="transparent">
+        <div id="container" class="container-fluid">
+            <div id="rt_trend1" class="col-lg-6 col-md-6 col-sm-12 col-xs-12 rt-trend"><span id="tube1">0</span> кг/см2</div>
+            <div id="rt_trend2" class="col-lg-6 col-md-6 col-sm-12 col-xs-12 rt-trend"><span id="tube1">0</span> кг/см2</div>
+            <div id="rt_trend3" class="col-lg-6 col-md-6 col-sm-12 col-xs-12 rt-trend"><span id="tube1">0</span> кг/см2</div>
+            <div id="rt_trend4" class="col-lg-6 col-md-6 col-sm-12 col-xs-12 rt-trend"><span id="tube1">0</span> кг/см2</div>
+        </div>
+    </div>
+    <div id="panel" class="cont_panel transparent">
+        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-6 btncont"><button class="btn btn-warning btn-arj-tube" data-num="1">Анализ трубы 1</button></div>
+        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-6 btncont"><button class="btn btn-warning btn-arj-tube" data-num="2">Анализ трубы 2</button></div>
+        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-6 btncont"><button class="btn btn-warning btn-arj-tube" data-num="3">Анализ трубы 3</button></div>
+        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-6 btncont"><button class="btn btn-warning btn-arj-tube" data-num="4">Анализ трубы 4</button></div>
+    </div>
+    <div id="tubecard" class="container-fluid transparent">
+        <button class="btn_close btn btn-danger" id="btn_close_analize"><i class="fa fa-close"></i></button>
+        <div class="tubetitle">Анализ трубы <span id="arj_tube_num">1</span></div>
+        <div class="col-md-12">
+            <div class="row">
+                <div class="col-md-4" id="infocont">
+                    <div class="row">
+                        <div id="map"></div>
+                        <div id="info">
+                            <div class="pointcont">
+                                <span>Выбранная точка:</span><br>
+                                <span>время:</span><span class="dt_time">------------------</span><br>
+                                <span>значение:</span><span class="dt_val">------------------</span><br>
+                            </div>
+                            <div class="infotext">Точка на графике (Причал)</div>
+                            <div class="btn btn-success btn-block disabled">Установить выбранную точку</div>
+                            <div class="infotext">Точка на графике (Нефтебаза)</div>
+                            <div class="btn btn-success btn-block disabled">Установить выбранную точку</div>
+                        </div>
+                    </div>
+                </div>
+                <div id="arj_trend" class="col-md-8"></div>
+            </div>
+            <div class="btn btn-warning btn-block" id="btn_calc">Расчитать место протечки</div>
+        </div>
+    </div>
+    <div id="result" class="container-fluid transparent">
+        <button class="btn_close btn btn-danger" id="btn_close_result"><i class="fa fa-close"></i></button>
+        <div class="tubetitle">Результат вычислений</div>
+        <div class="row">
+            <div class="col-md-4 result_pr">
+                <span class="res_title">от причала</span><br>
+                <span class="res_val"><span class="res_pr_val">300</span><span>м</span></span>
+            </div>
+            <div class="col-md-4 result_delta">
+                <span class="res_title">Смещение от центра</span><br>
+                <span class="res_val"><span class="res_center_val">-200</span><span>м</span></span>
+            </div>
+            <div class="col-md-4 result_nb">
+                <span class="res_title">от нефтебазы</span><br>
+                <span class="res_val"><span class="res_nb_val">800</span><span>м</span></span>
+            </div>
+        </div>
+    </div>
+    <div id="footer">
+        Все права защищены ООО ИК Сибинтек 2016<br>
+        Поддержка осуществляется по внутреннему номеру 112
+    </div>
+</body>
+</html>
