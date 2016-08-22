@@ -26,16 +26,19 @@ io.on("connection",function(socket){
               //console.log(Global.clients);
           }
     });
+    socket.on("RTSend",function(data){
+        console.log("data rcv RT");
+        console.log(data);
+        //****************************LATER
+    });
     socket.on('disconnect',function(){
+        console.log("IO disconnected");
         var index = Global.clients.indexOf(socket);
         //console.log("bfd:"+Global.clients);
         if(index!=-1){
             Global.clients.splice(index,1);
         }
         //console.log("ad:"+Global.clients);
-    });
-    socket.on('free_free',function(){
-        Global.freeLock = false;
     });
     socket.on("replica",function(cont){
         
@@ -96,6 +99,7 @@ function inserterDB(tube,stack){
                         }
                     }else{
                         console.log(err);
+                        io.sockets.emit("send_free",{});
                     }
                 });
                 if(stack[elem].min == 0){
@@ -106,6 +110,7 @@ function inserterDB(tube,stack){
                             //console.log("all ok data inserted");
                         }else{
                             console.log(err);
+                            io.sockets.emit("send_free",{});
                         }
                     });
                 }
@@ -117,14 +122,12 @@ function inserterDB(tube,stack){
                             //console.log("all ok data inserted");
                         }else{
                             console.log(err);
+                            io.sockets.emit("send_free",{});
                         }
                     });
                 }
             }
-            if(!Global.freeLock){
-                freener(stack[stack.length-1].id,tube);
-                Global.freeLock = true;
-            }
+            freener(stack[stack.length-1].id,tube);
             connection.release();
         }else{
             console.log("pool SQL error");
