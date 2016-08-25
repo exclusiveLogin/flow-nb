@@ -78,7 +78,7 @@ $(document).ready(function(){
     });
     $('.btn-arj-tube').on('click',function(){
         var num = $(this).data("num");
-        console.log("btn_tube num = "+num);
+        //console.log("btn_tube num = "+num);
         if(num){
             trendToggle(true,num);
         }

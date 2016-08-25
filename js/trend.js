@@ -229,13 +229,22 @@ $(document).ready(function(){
         },
         series:[{
             type: 'line',
-            name: 'Давление в трубе 1',
+            name: 'Нефтебаза',
             //data:[0,3,4,3,12,15,2],
             tooltip: {
                 valueDecimals: 2,
                 valueSuffix:' кг/см2'
             },
             color:"orange"
+        },{
+            type: 'line',
+            name: 'Причал',
+            //data:[0,5,6,3,3,10,1],
+            tooltip: {
+                valueDecimals: 2,
+                valueSuffix:' кг/см2'
+            },
+            color:"cyan"
         }]
     };
     var Trend_rt_setting2 = {

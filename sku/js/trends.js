@@ -1,4 +1,4 @@
-$(document).ready(function () {
+$(document).ready(function(){
     Highcharts.theme = {
         colors: ["#2b908f", "#90ee7e", "#f45b5b", "#7798BF", "#aaeeee", "#ff0066", "#eeaaee",
             "#55BF3B", "#DF5353", "#7798BF", "#aaeeee"],
@@ -188,353 +188,287 @@ $(document).ready(function () {
         }}
     };
     Highcharts.setOptions(G_Setting);
-
-    Global.container = $("#trend");
-    Global.container_forecast = $(".forecast_trend");
-    Global.container_windrose = $(".wind_rose_trend");
-    Global.container_wind = $(".wind_trend");
-    Global.trendSetting = {
+    Global.trend1Container = document.getElementById("rt_trend1");
+    Global.trend2Container = document.getElementById("rt_trend2");
+    Global.trend3Container = document.getElementById("rt_trend3");
+    Global.trend4Container = document.getElementById("rt_trend4");
+    Global.mainTrendContainer = document.getElementById("arj_trend");
+    var Trend_rt_setting1 = {
         credits:{enabled:false},
         chart: {
-            zoomType: 'x',
-            height:300,
-            renderTo:Global.container[0],            
+            //animation:false,
+            height:250,
+            renderTo:Global.trend1Container,            
         },
         title: {
-            text: 'График эмоционального состояния'
+            text: 'Труба 1'
         },
         legend: {
-            //enabled: true
+            enabled: false
         },
         xAxis: {
             type: 'datetime',
-            gridLineWidth:1,
-            //ordinal:false,
+            ordinal:false,
         },
         yAxis: {
+            //min:0,
+            //max:16,
+            minRange:3,
             title: {
-                text: 'Эмоции'
+                text: 'Давление'
             },
-            floor:0,
-            ceiling:100
-        },
-        rangeSelector:{
-            buttons:[{
-                type:"hour",
-                count:1,
-                text:"1ч"
-            },{
-                type:"hour",
-                count:3,
-                text:"3ч"
-            },{
-                type:"hour",
-                count:8,
-                text:"8ч"
-            },{
-                type:"day",
-                count:1,
-                text:"1д"
-            },{
-                type:"week",
-                count:1,
-                text:"7д"
-            },{
-                type:"all",
-                text:"Все"
-            }],
-            selected:3,
-            //inputEnabled:false
-        },
-        navigator:{
-            height:15
-        },
-        scrollbar:{
-            enabled:false
         },
         plotOptions: {
             series: {
-                threshold:40,
-                negativeColor:'red',
-                states: {
-                    hover: {
-                        enabled: true,
-                        lineWidth: 5
-                    }
-                }
-            }
+                threshold:40
+            },
+            line:{
+                marker:{
+                    enabled:false
+                },
+            },
         },
         series:[{
-            id:'emo',
-            type: 'areaspline',
-            name: 'Эмоциональное состояние',
-            //data:[0,0],
-            lineWidth: 4,
-            dataLabels:{
-                enabled:true,
-            },
-            tooltip: {
-                valueDecimals: 0,
-                valueSuffix:' emo'
-            },
-            color:"lightgreen"
-        },{
-            type: 'flags',
-            linkedTo:':previous',
-            //data:[],
-            shape:'squarepin',
-            onSeries:'emo',
-            y:-40
-        }]
-    };
-    Global.trendForecastSetting = {
-        chart: {
-            zoomType: 'x',
-            height:270,
-            renderTo:Global.container_forecast[0],
-            alignTicks:false
-        },
-        title: {
-            text: 'Прогноз'
-        },
-        credits:{
-            enabled:false
-        },
-        reflow:true,
-        xAxis: {
-            type: 'datetime',
-            crosshair: true
-            //ordinal:false,
-        },
-        yAxis:[{
-            tickLength:0,
-            //gridLineWidth: 0,
-            lineWidth:0,
-            title: {
-                text: 'Температура'
-            }
-        },{
-            tickLength:0,
-            gridLineWidth: 1,
-            title: {
-                text: 'Влажность'
-            },
-            floor:0,
-            ceiling:100,
-            opposite:true
-        },{
-            tickLength:0,
-            gridLineWidth: 0,
-            title: {
-                text: 'Дождь'
-            },
-            floor:0,
-            opposite:true
-        }],        
-        tooltip:{
-            shared:true
-        },
-        plotOptions: {
-            column:{
-                states:{
-                    hover:{
-                        brightness:-0.5,
-                        color:"grey"
-                    }
-                }
-            },
-            spline:{
-                states:{
-                    hover:{
-                        lineWidth: 5
-                    }
-                }
-            }
-        },
-        series:[{
-            type: 'spline',
-            name: 'Температура',
-            //data:[1,2,3,4,5,6,7,8,69],
-            lineWidth: 2,
-            color:"orange",
-            tooltip: {
-                valueDecimals: 1,
-                valueSuffix:" C"
-            },
-            zIndex:4
-        },{
-            type: 'spline',
-            name: 'Влажность',
-            //data:[1,2,3,4,5,6,7,8,69],
-            lineWidth: 2,
-            tooltip: {
-                valueDecimals: 0,
-                valueSuffix:" %"
-            },
-            color:"cyan",
-            yAxis:1,
-            zIndex:3,
-            max:100,
-            ceiling:100,
-            min:0,
-            floor:0,
-            //tickInterval:20
-        },{
-            type: 'column',
-            name: 'Дождь',
-            //data:[1,2,3,4,5,6,7,8,69],
+            type: 'line',
+            name: 'Нефтебаза',
+            data:[0,3,4,3,12,15,2],
             tooltip: {
                 valueDecimals: 2,
-                valueSuffix:" мм"
+                valueSuffix:' кг/см2'
             },
-            color:"darkgrey",
-            yAxis:2,
-            linkedTo:":previous",
-            zIndex:2
+            color:"orange"
+        },{
+            type: 'line',
+            name: 'Причал',
+            data:[0,5,2,7,1,4,7],
+            tooltip: {
+                valueDecimals: 2,
+                valueSuffix:' кг/см2'
+            },
+            color:"cyan"
         }]
     };
-    Global.trendWindSetting = {
+    var Trend_rt_setting2 = {
+        credits:{enabled:false},
         chart: {
-            zoomType: 'x',
-            //width:1000,
-            renderTo:Global.container_wind[0],
-            alignTicks:false
+            height:250,
+            renderTo:Global.trend2Container,            
         },
         title: {
-            text: 'Анализ ветра'
+            text: 'Труба 2'
         },
-        credits:{
-            enabled:false
+        legend: {
+            enabled: false
         },
         xAxis: {
             type: 'datetime',
-            crosshair: true
-            //ordinal:false,
+            ordinal:false,
         },
-        yAxis:[{
-            tickLength:0,
-            //gridLineWidth: 0,
-            lineWidth:0,
+        yAxis: {
+            //min:0,
+            //max:16,
+            minRange:3,
             title: {
-                text: 'Скрость ветра'
-            }
-        },{
-            tickLength:0,
-            gridLineWidth: 0,
-            title: {
-                text: 'Направление'
+                text: 'Давление'
             },
-            floor:0,
-            ceiling:360,
-            opposite:true,
-            tickInterval:20
-        }],
-        tooltip:{
-            shared:true
         },
         plotOptions: {
-            spline:{
-                states:{
-                    hover:{
-                        //lineWidth: 5
-                    }
-                }
-            }
-        },
-        navigator:{
-            height:10
-        },
-        scrollbar:{
-            enabled:false
+            series: {
+                threshold:40
+            },
+            line:{
+                marker:{
+                    enabled:false
+                },
+            },
         },
         series:[{
-            type: 'spline',
-            name: 'Реальная скорость',
-            lineWidth: 2,
-            color:"orange",
+            type: 'line',
+            name: 'Нефтебаза',
+            data:[0,3,4,3,12,15,2],
             tooltip: {
-                valueDecimals: 1,
-                valueSuffix:" м/с"
+                valueDecimals: 2,
+                valueSuffix:' кг/см2'
             },
-            zIndex:4
+            color:"orange"
         },{
-            type: 'spline',
-            name: 'Прогнозируемая скорость',
-            lineWidth: 2,
+            type: 'line',
+            name: 'Причал',
+            data:[0,5,2,7,1,4,7],
             tooltip: {
-                valueDecimals: 1,
-                valueSuffix:" м/с"
+                valueDecimals: 2,
+                valueSuffix:' кг/см2'
             },
-            color:"cyan",
-            zIndex:4
-        },{
-            type: 'areaspline',
-            name: 'Направление ветра',
-            lineWidth: 2,
-            tooltip: {
-                valueDecimals: 0,
-                valueSuffix:' °'
-            },
-            color:"grey",
-            yAxis:1,
-            zIndex:3,
-            max:360,
-            min:0,
+            color:"cyan"
         }]
     };
-    Global.trendWindroseSetting = {
-        legend:{
-            enabled:false
-        },
+    var Trend_rt_setting3 = {
+        credits:{enabled:false},
         chart: {
-            zoomType: 'x',
-            renderTo:Global.container_windrose[0],
-            polar:true
+            height:250,
+            renderTo:Global.trend3Container,            
         },
         title: {
-            text: 'Роза ветров'
+            text: 'Труба 3'
         },
-        credits:{
-            enabled:false
+        legend: {
+            enabled: false
         },
         xAxis: {
-            crosshair: true,
-            categories:["N","NNE","NE","ENE","E","ESE","SE","SSE","S","SSW","SW","WSW","W","WWN","NW","NNW"]
-            //ordinal:false,
+            type: 'datetime',
+            ordinal:false,
         },
-        yAxis:{
-            labels:{
-                enabled:false
-            }
-        },
-        tooltip:{
-            
+        yAxis: {
+            //min:0,
+            //max:16,
+            minRange:3,
+            title: {
+                text: 'Давление'
+            },
         },
         plotOptions: {
-            column:{
-                states:{
-                    hover:{
-                        brightness:-0.5,
-                        color:"white"
-                    }
-                }
-            }
+            series: {
+                threshold:40
+            },
+            line:{
+                marker:{
+                    enabled:false
+                },
+            },
         },
         series:[{
-            //stacking:'percent',
-            type: 'column',
-            name: 'Частота',
-            color:"orange",
-            pointPlacement: 'on',
+            type: 'line',
+            name: 'Нефтебаза',
+            data:[0,3,4,3,12,15,2],
             tooltip: {
-                valueDecimals: 0,
-                valueSuffix:" раз"
-            }
+                valueDecimals: 2,
+                valueSuffix:' кг/см2'
+            },
+            color:"orange"
+        },{
+            type: 'line',
+            name: 'Причал',
+            data:[0,5,2,7,1,4,7],
+            tooltip: {
+                valueDecimals: 2,
+                valueSuffix:' кг/см2'
+            },
+            color:"cyan"
         }]
     };
-    
-    //Global.trend = new Highcharts.StockChart(Global.trendSetting);
-    //Global.trend_forecast = new Highcharts.Chart(Global.trendForecastSetting);
-    //Global.trend_windrose_obj = new Highcharts.Chart(Global.trendWindroseSetting);
-    //Global.trend_windobj = new Highcharts.StockChart(Global.trendWindSetting);
+    var Trend_rt_setting4 = {
+        credits:{enabled:false},
+        chart: {
+            height:250,
+            renderTo:Global.trend4Container,            
+        },
+        title: {
+            text: 'Труба 4'
+        },
+        legend: {
+            enabled: false
+        },
+        xAxis: {
+            type: 'datetime',
+            ordinal:false,
+        },
+        yAxis: {
+            //min:0,
+            //max:16,
+            minRange:3,
+            title: {
+                text: 'Давление'
+            },
+        },
+        plotOptions: {
+            series: {
+                threshold:40
+            },
+            line:{
+                marker:{
+                    enabled:false
+                },
+            },
+        },
+        series:[{
+            type: 'line',
+            name: 'Нефтебаза',
+            data:[0,3,4,3,12,15,2],
+            tooltip: {
+                valueDecimals: 2,
+                valueSuffix:' кг/см2'
+            },
+            color:"orange"
+        },{
+            type: 'line',
+            name: 'Причал',
+            data:[0,5,2,7,1,4,7],
+            tooltip: {
+                valueDecimals: 2,
+                valueSuffix:' кг/см2'
+            },
+            color:"cyan"
+        }]
+    };
+    var Trend_arj_setting = {
+        credits:{enabled:false},
+        chart: {
+            //height:250,
+            renderTo:Global.mainTrendContainer,            
+        },
+        title: {
+            //enabled:false,
+            text: ''
+        },
+        legend: {
+            enabled: false
+        },
+        xAxis: {
+            type: 'datetime',
+            ordinal:false,
+        },
+        yAxis: {
+            //min:0,
+            //max:16,
+            minRange:3,
+            title: {
+                text: 'Давление'
+            },
+        },
+        plotOptions: {
+            series: {
+                threshold:40
+            },
+            line:{
+                marker:{
+                    enabled:false
+                },
+            },
+        },
+        series:[{
+            type: 'line',
+            name: 'Нефтебаза',
+            data:[0,3,4,3,12,15,2],
+            tooltip: {
+                valueDecimals: 2,
+                valueSuffix:' кг/см2'
+            },
+            color:"orange"
+        },{
+            type: 'line',
+            name: 'Причал',
+            data:[0,5,2,7,1,4,7],
+            tooltip: {
+                valueDecimals: 2,
+                valueSuffix:' кг/см2'
+            },
+            color:"cyan"
+        }]
+    };
+    Global.Trend1 = new Highcharts.Chart(Trend_rt_setting1);
+    Global.Trend2 = new Highcharts.Chart(Trend_rt_setting2);
+    Global.Trend3 = new Highcharts.Chart(Trend_rt_setting3);
+    Global.Trend4 = new Highcharts.Chart(Trend_rt_setting4);
+    Global.MainTrend = new Highcharts.StockChart(Trend_arj_setting);
+    //console.log("test");
 });

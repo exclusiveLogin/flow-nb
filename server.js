@@ -1,9 +1,11 @@
 var Global = {};
 Global.freeLock = false;
 Global.clients = [];
-var socketServ = require('socket.io').listen(3000);
+//----------------UTILS-------------------
+const util = require("util");
 
 //----------------SERVER------------------
+var socketServ = require('socket.io').listen(3000);
 
 socketServ.on("connection",function(socket){
     console.log("client Front End connected");
@@ -43,14 +45,15 @@ client.on('connect', function () {
     pool.getConnection(function(err, connection) {
         if(err){
             socketServ.sockets.emit("mysql_error",{});
+            console.log("error SQL pool");
         }else{
             socketServ.sockets.emit("all_ok",{});
-            console.log("No error SQL all ok");
+            console.log("No error SQL {LOCAL} all ok");
             Global.connection = connection;
             Global.schedullerTube = setInterval(function(){
                 rcvTubes();  
                 //console.log(process.memoryUsage().heapUsed);
-            },1000);
+            },500);
         }    
     });
 });
@@ -73,6 +76,17 @@ client.on('error', function (err) {
 var io = require('socket.io').listen(3001);
 
 io.on("connection",function(socket){
+    pool.getConnection(function(err, connection) {
+        if(err){
+            socketServ.sockets.emit("mysql_error",{});
+            console.log("error SQL pool");
+        }else{
+            socketServ.sockets.emit("all_ok",{});
+            console.log("No error SQL {REMOTE RT} all ok");
+            Global.connectionRT = connection;
+        }    
+    });
+    
     console.log("IO connected");
     socket.emit("msg",{data:"connection to server established"});
     socket.on('id',function(data){
@@ -84,11 +98,13 @@ io.on("connection",function(socket){
           }
     });
     socket.on("RTSend",function(data){
-        console.log("data rcv RT");
-        console.log(data);
-        //****************************LATER
+        inserterRT(data.tubes,data.time);
     });
     socket.on('disconnect',function(){
+        //---------------pool free------------
+        Global.connectionRT.release();
+        Global.connectionRT = null;
+        //------------------------------------
         console.log("IO disconnected");
         var index = Global.clients.indexOf(socket);
         //console.log("bfd:"+Global.clients);
@@ -135,6 +151,74 @@ function freener(lid,tube){
     console.log("prepare to del id:"+lid+" on tube "+tube);
     io.sockets.emit("free",{"lid":lid,"tube":tube});
 };
+function inserterRT(tubes,time){
+    console.log("data rcv RT:"+util.inspect(tubes,{colors:true}));
+    var tmpDate = new Date(time);
+    var tmpSeconds = tmpDate.getSeconds();
+    var tmpMinutes = tmpDate.getMinutes();
+    for(var elem in tubes){//перебор 4 труб
+        var tmpTube = Number(elem)+1;
+        //console.log("id:"+elem+" tube:"+tmpTube+" value:"+tubes[elem]+" utc:"+time);
+        
+
+        if(Global.connectionRT){
+            var secondLock = false;
+            tmpQ = 'INSERT IGNORE INTO `p_tube'+tmpTube+'_dump` (`value`,`utc`) VALUES('+tubes[elem]+','+time+')';
+            
+            Global.connectionRT.query(tmpQ,function(err){
+                if(err){
+                    console.log("error SQL insert RT:"+util.inspect(err,{colors:true}));
+                    socketServ.sockets.emit("mysql_error",{});
+                }else{
+                    //console.log("Data RT saved in DB successuful");
+                }
+            });
+         
+            
+            if(tmpSeconds==0 && tmpMinutes == 0 && !secondLock){//Пишем в часовой (одну запись!!!!)
+                tmpQ = 'INSERT IGNORE INTO `p_tube'+tmpTube+'_h` (`value`,`utc`) VALUES('+tubes[elem]+','+time+')';
+                Global.connectionRT.query(tmpQ,function(err){
+                    if(err){
+                        console.log("error SQL insert RT:"+util.inspect(err,{colors:true}));
+                        socketServ.sockets.emit("mysql_error",{});
+                    }else{
+                        console.log("Data RT Hourly saved in DB successuful");
+                    }
+                });
+                secondLock = true;
+            }
+            if(tmpSeconds==0 && !secondLock){//Пишем в минутный (одну запись!!!!)
+                tmpQ = 'INSERT IGNORE INTO `p_tube'+tmpTube+'_m` (`value`,`utc`) VALUES('+tubes[elem]+','+time+')';
+                
+                Global.connectionRT.query(tmpQ,function(err){
+                    if(err){
+                        console.log("error SQL insert RT:"+util.inspect(err,{colors:true}));
+                        socketServ.sockets.emit("mysql_error",{});
+                    }else{
+                        console.log("Data RT Minutly saved in DB successuful");
+                    }
+                });
+        
+                secondLock = true;
+            }
+            if(tmpSeconds!=0){//снятие защиты на запись дублирующих секунд
+                secondLock = false;
+            }
+        
+        
+        }else{
+            console.log("error SQL connectionRT not found");
+        }
+        
+        
+    }
+    
+    
+    
+    //-
+    
+};
+
 function inserterDB(tube,stack){
     pool.getConnection(function(err,connection){
         if(!err){
@@ -145,13 +229,13 @@ function inserterDB(tube,stack){
                 tmpQ = 'INSERT IGNORE INTO `p_tube'+tube+'_dump` (`p_id`,`value`,`utc`) VALUES('+stack[elem].id+','+stack[elem].value+','+stack[elem].utc+')';
                 //console.log(tmpQ);
                 connection.query(tmpQ,function(err){
-                    console.log("elem:"+elem+" from "+stack.length);
+                    //console.log("elem:"+elem+" from "+stack.length);
                     tmp++; 
-                    console.log("tmp:"+tmp);
+                    //console.log("tmp:"+tmp);
                     
                     if(!err){
                         if(tmp == stack.length){
-                            console.log("yes elem:"+elem+" == "+stack.length);
+                            //console.log("yes elem:"+elem+" == "+stack.length);
                             io.sockets.emit("send_free",{});
                         }
                     }else{
@@ -159,7 +243,7 @@ function inserterDB(tube,stack){
                         io.sockets.emit("send_free",{});
                     }
                 });
-                if(stack[elem].min == 0){
+                if(stack[elem].min == 0 && stack[elem].sec == 0){
                     tmpQ = 'INSERT IGNORE INTO `p_tube'+tube+'_h` (`p_id`,`value`,`utc`) VALUES('+stack[elem].id+','+stack[elem].value+','+stack[elem].utc+')';
                     //console.log(tmpQ);
                     connection.query(tmpQ,function(err){
@@ -205,9 +289,8 @@ function rcvTubes(){
         res[3] = WordToFloat(resp.register[7],resp.register[6]).toFixed(2);
         console.log("1:"+res[0]+" 2:"+res[1]+" 3:"+res[2]+" 4:"+res[3]+" heap = "+process.memoryUsage().heapUsed);
         var nowdt = Date.now();
-        //--------temp
         FESender(res,nowdt);
-        //DBWriter(res,nowdt);
+        //DBWriter(res,nowdt);//temp
     }).fail(function(e){
         if(Global.schedullerTube){
             clearInterval(Global.schedullerTube);
@@ -261,8 +344,7 @@ function DBWriter(data,nowdt){
                 }
             });
         }
-    }       
-    FESender(data,nowdt);
+    }
 };
 function FESender(data,nowdt){
     //nowdt = Number(nowdt);

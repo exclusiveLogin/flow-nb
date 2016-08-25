@@ -2,6 +2,9 @@ function trendToggle(state,tube) {
     if(state){
         $("#tubecard").removeClass("transparent",function () {
             $("#arj_tube_num").text(tube);
+            if(Global.MainTrend){
+                Global.MainTrend.setTitle({text:"Анализ трубы "+tube});
+            }
             //Global.trend.reflow();
             //Global.trend.series[0].setData([]);
             //Global.trend.series[1].setData([]);
@@ -33,10 +36,11 @@ function resultToggle(state){
         $('#result').addClass("transparent");
     }
 }
-function refreshLog() {
+function refreshLog() {//поведение авторизации 
     if(Global.authkey){
         if(Global.jqready){
             $("#wrapper").removeClass("transparent");
+            $("#panel_sku").removeClass("transparent");
             setTimeout(function () {
                 $("#panel").removeClass("transparent");
             },500);
