@@ -80,6 +80,8 @@ $(document).ready(function(){
         var num = $(this).data("num");
         //console.log("btn_tube num = "+num);
         if(num){
+            Global.currentTube = num;
+            minMax(num);
             trendToggle(true,num);
         }
     });
@@ -109,7 +111,7 @@ function showSysMsg(msg,state) {
     //$("#sysmsg").show();
     $("#sysmsg").removeClass("myhide");
     $("#sysmsg_val").html(msg);
-    setTimeout(hideSysMsg,5000);
+    setTimeout(hideSysMsg,20000);
     function hideSysMsg() {
         $("#sysmsg").addClass("myhide");
         

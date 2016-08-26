@@ -1,4 +1,5 @@
 Global = {
+    currentTube:null,
     jqready:false,
     swready:false,
     notifyallow:false,

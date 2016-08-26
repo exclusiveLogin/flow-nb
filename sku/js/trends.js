@@ -231,7 +231,7 @@ $(document).ready(function(){
         series:[{
             type: 'line',
             name: 'Нефтебаза',
-            data:[0,3,4,3,12,15,2],
+            //data:[0,3,4,3,12,15,2],
             tooltip: {
                 valueDecimals: 2,
                 valueSuffix:' кг/см2'
@@ -240,7 +240,7 @@ $(document).ready(function(){
         },{
             type: 'line',
             name: 'Причал',
-            data:[0,5,2,7,1,4,7],
+            //data:[0,5,2,7,1,4,7],
             tooltip: {
                 valueDecimals: 2,
                 valueSuffix:' кг/см2'
@@ -285,7 +285,7 @@ $(document).ready(function(){
         series:[{
             type: 'line',
             name: 'Нефтебаза',
-            data:[0,3,4,3,12,15,2],
+            //data:[0,3,4,3,12,15,2],
             tooltip: {
                 valueDecimals: 2,
                 valueSuffix:' кг/см2'
@@ -294,7 +294,7 @@ $(document).ready(function(){
         },{
             type: 'line',
             name: 'Причал',
-            data:[0,5,2,7,1,4,7],
+            //data:[0,5,2,7,1,4,7],
             tooltip: {
                 valueDecimals: 2,
                 valueSuffix:' кг/см2'
@@ -339,7 +339,7 @@ $(document).ready(function(){
         series:[{
             type: 'line',
             name: 'Нефтебаза',
-            data:[0,3,4,3,12,15,2],
+            //data:[0,3,4,3,12,15,2],
             tooltip: {
                 valueDecimals: 2,
                 valueSuffix:' кг/см2'
@@ -348,7 +348,7 @@ $(document).ready(function(){
         },{
             type: 'line',
             name: 'Причал',
-            data:[0,5,2,7,1,4,7],
+            //data:[0,5,2,7,1,4,7],
             tooltip: {
                 valueDecimals: 2,
                 valueSuffix:' кг/см2'
@@ -393,7 +393,7 @@ $(document).ready(function(){
         series:[{
             type: 'line',
             name: 'Нефтебаза',
-            data:[0,3,4,3,12,15,2],
+            //data:[0,3,4,3,12,15,2],
             tooltip: {
                 valueDecimals: 2,
                 valueSuffix:' кг/см2'
@@ -402,7 +402,7 @@ $(document).ready(function(){
         },{
             type: 'line',
             name: 'Причал',
-            data:[0,5,2,7,1,4,7],
+            //data:[0,5,2,7,1,4,7],
             tooltip: {
                 valueDecimals: 2,
                 valueSuffix:' кг/см2'
@@ -414,11 +414,41 @@ $(document).ready(function(){
         credits:{enabled:false},
         chart: {
             //height:250,
-            renderTo:Global.mainTrendContainer,            
+            renderTo:Global.mainTrendContainer,  
+            zoomType:"x"
         },
         title: {
             //enabled:false,
             text: ''
+        },
+        scrollbar:{
+            enabled:false,
+            //liveRedraw:false
+        },
+        navigator:{
+            //adaptToUpdatedData:false,
+            height:10
+        },
+        rangeSelector:{
+            
+            buttons:[{
+                type:"hour",
+                count:8,
+                text:"8ч"
+            },{
+                type:"day",
+                count:1,
+                text:"1д"
+            },{
+                type:"week",
+                count:1,
+                text:"7д"
+            },{
+                type:"all",
+                text:"Все"
+            }],
+            selected:1,
+            inputEnabled: false
         },
         legend: {
             enabled: false
@@ -426,11 +456,17 @@ $(document).ready(function(){
         xAxis: {
             type: 'datetime',
             ordinal:false,
+            events:{
+                afterSetExtremes:function(e){
+                    //trendDetail(e);
+                    console.log(e);
+                }
+            }
         },
         yAxis: {
             //min:0,
             //max:16,
-            minRange:3,
+            //minRange:3,
             title: {
                 text: 'Давление'
             },
@@ -448,7 +484,7 @@ $(document).ready(function(){
         series:[{
             type: 'line',
             name: 'Нефтебаза',
-            data:[0,3,4,3,12,15,2],
+            //data:[0,3,4,3,12,15,2],
             tooltip: {
                 valueDecimals: 2,
                 valueSuffix:' кг/см2'
@@ -457,7 +493,7 @@ $(document).ready(function(){
         },{
             type: 'line',
             name: 'Причал',
-            data:[0,5,2,7,1,4,7],
+            //data:[0,5,2,7,1,4,7],
             tooltip: {
                 valueDecimals: 2,
                 valueSuffix:' кг/см2'
