@@ -1,4 +1,5 @@
 var Global = {};
+Global.RTsecondLock = false;
 Global.freeLock = false;
 Global.clients = [];
 //----------------UTILS-------------------
@@ -330,11 +331,11 @@ function inserterRT(tubes,time){
     var tmpMinutes = tmpDate.getMinutes();
     for(var elem in tubes){//перебор 4 труб
         var tmpTube = Number(elem)+1;
+        console.log("second:"+tmpSeconds+" locker:"+util.inspect(Global.RTsecondLock,{colors:true}));
         //console.log("id:"+elem+" tube:"+tmpTube+" value:"+tubes[elem]+" utc:"+time);
         
 
-        if(Global.connectionRT){
-            var secondLock = false;
+        if(Global.connectionRT){            
             tmpQ = 'INSERT IGNORE INTO `p_tube'+tmpTube+'_dump` (`value`,`utc`) VALUES('+tubes[elem]+','+time+')';
             
             Global.connectionRT.query(tmpQ,function(err){
@@ -347,7 +348,7 @@ function inserterRT(tubes,time){
             });
          
             
-            if(tmpSeconds==0 && tmpMinutes == 0 && !secondLock){//Пишем в часовой (одну запись!!!!)
+            if(tmpSeconds==0 && tmpMinutes == 0 && !Global.RTsecondLock){//Пишем в часовой (одну запись!!!!)
                 tmpQ = 'INSERT IGNORE INTO `p_tube'+tmpTube+'_h` (`value`,`utc`) VALUES('+tubes[elem]+','+time+')';
                 Global.connectionRT.query(tmpQ,function(err){
                     if(err){
@@ -357,25 +358,23 @@ function inserterRT(tubes,time){
                         console.log("Data RT Hourly saved in DB successuful");
                     }
                 });
-                secondLock = true;
+                //Global.RTsecondLock = true;
             }
-            if(tmpSeconds==0 && !secondLock){//Пишем в минутный (одну запись!!!!)
+            if(tmpSeconds==0 && !Global.RTsecondLock){//Пишем в минутный (одну запись!!!!)
                 tmpQ = 'INSERT IGNORE INTO `p_tube'+tmpTube+'_m` (`value`,`utc`) VALUES('+tubes[elem]+','+time+')';
-                
+                console.log("Data RT Minutly saved in DB successuful on tube PLANNED"+tmpTube);
                 Global.connectionRT.query(tmpQ,function(err){
                     if(err){
                         console.log("error SQL insert RT:"+util.inspect(err,{colors:true}));
                         socketServ.sockets.emit("mysql_error",{});
                     }else{
-                        console.log("Data RT Minutly saved in DB successuful");
+                        console.log("Data RT Minutly saved in DB successuful on tube"+tmpTube);
                     }
                 });
         
-                secondLock = true;
+                //Global.RTsecondLock = true;
             }
-            if(tmpSeconds!=0){//снятие защиты на запись дублирующих секунд
-                secondLock = false;
-            }
+            
         
         
         }else{
@@ -384,10 +383,12 @@ function inserterRT(tubes,time){
         
         
     }
-    
-    
-    
-    //-
+    if(tmpSeconds == 0 && !Global.RTsecondLock){//снятие защиты на запись дублирующих секунд
+                Global.RTsecondLock = true;
+            }
+    if(tmpSeconds!=0 && Global.RTsecondLock){//снятие защиты на запись дублирующих секунд
+                Global.RTsecondLock = false;
+            }
     
 };
 

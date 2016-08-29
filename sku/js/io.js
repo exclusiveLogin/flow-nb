@@ -157,12 +157,16 @@ $(document).ready(function(){
                 Global.MainTrend_DataNB.push([data.trendNB[index].utc,data.trendNB[index].value]);
             }
             console.log("data RCVED");
+            
+            Global.MainTrend.series[0].setData([]);
+            Global.MainTrend.series[1].setData([]); 
+            
             Global.MainTrend.series[0].setData(Global.MainTrend_DataNB);
             Global.MainTrend.series[1].setData(Global.MainTrend_DataP); 
             Global.MainTrend.series[0].addPoint([Global.minArjTrend-1,0]);
-            Global.MainTrend.series[0].addPoint([Global.maxArjTrend+1,0]);
+            //Global.MainTrend.series[0].addPoint([Global.maxArjTrend+1,0]);
             Global.MainTrend.series[1].addPoint([Global.minArjTrend-1,0]);
-            Global.MainTrend.series[1].addPoint([Global.maxArjTrend+1,0]);
+            //Global.MainTrend.series[1].addPoint([Global.maxArjTrend+1,0]);
             
         }
     });

@@ -41,6 +41,9 @@ $(document).ready(function(){
         $(this).addClass('disabled active');
         $('#loginform').show(500);
     });
+    $('.btn_rt_toggle').on('click',function(){
+        rtToggle();
+    });
     $('#btnloginenter').on('click',function(){
         Global.loginData.login = $('#loginName').val();
         Global.loginData.password = $('#passwordName').val();

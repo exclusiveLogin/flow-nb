@@ -14,6 +14,7 @@ function trendToggle(state,tube) {
         });
     }else {
         $("#tubecard").addClass("transparent",function () {
+            
 
         });
     }
@@ -34,6 +35,16 @@ function resultToggle(state){
     }
     else{
         $('#result').addClass("transparent");
+    }
+}
+function rtToggle(){
+    if($(".btn_rt_toggle").hasClass("active")){
+        $(".btn_rt_toggle").removeClass("active");
+        Global.RTToggle = false;
+    }
+    else{
+        $(".btn_rt_toggle").addClass("active");
+        Global.RTToggle = true;
     }
 }
 function refreshLog() {//поведение авторизации 
