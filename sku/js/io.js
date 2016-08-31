@@ -60,8 +60,17 @@ $(document).ready(function(){
     Global.socketToNB.on("all_ok", function(data){
         $('#status_node_nb').html('<h2 class="label label-lg label-success">Система работает</h2>');
         if(data && Global.RTToggle){
+            /*if(Global.IntRTT){//Дельта-сигма RT
+                data.tube1[1] = Global.RTI1.Integrity(data.tube1[1]);
+                data.tube2[1] = Global.RTI2.Integrity(data.tube2[1]);
+                data.tube3[1] = Global.RTI3.Integrity(data.tube3[1]);
+                data.tube4[1] = Global.RTI4.Integrity(data.tube4[1]);
+            }*/
             if(data.tube1){
-                if(Global.Trend1.series[0].xData.length<100){
+                if(Global.IntRTT){//Дельта-сигма RT
+                    data.tube1[1] = Global.RTI1.Integrity(data.tube1[1]);
+                }
+                if(Global.Trend1.series[0].xData.length<60){
                     Global.Trend1.series[0].addPoint(data.tube1,true,false,false);
                 }else{
                     Global.Trend1.series[0].addPoint(data.tube1,true,true,false);
@@ -69,7 +78,10 @@ $(document).ready(function(){
             }
             
             if(data.tube2){
-                if(Global.Trend2.series[0].xData.length<100){
+                if(Global.IntRTT){//Дельта-сигма RT
+                    data.tube2[1] = Global.RTI2.Integrity(data.tube2[1]);
+                }
+                if(Global.Trend2.series[0].xData.length<60){
                     Global.Trend2.series[0].addPoint(data.tube2,true,false,false);
                 }else{
                     Global.Trend2.series[0].addPoint(data.tube2,true,true,false);
@@ -77,7 +89,10 @@ $(document).ready(function(){
             }
                 
             if(data.tube3){
-                if(Global.Trend3.series[0].xData.length<100){
+                if(Global.IntRTT){//Дельта-сигма RT
+                    data.tube3[1] = Global.RTI3.Integrity(data.tube3[1]);
+                }
+                if(Global.Trend3.series[0].xData.length<60){
                     Global.Trend3.series[0].addPoint(data.tube3,true,false,false);
                 }else{
                     Global.Trend3.series[0].addPoint(data.tube3,true,true,false);
@@ -85,7 +100,10 @@ $(document).ready(function(){
             }
                 
             if(data.tube4){
-                if(Global.Trend4.series[0].xData.length<100){
+                if(Global.IntRTT){//Дельта-сигма RT
+                    data.tube4[1] = Global.RTI4.Integrity(data.tube4[1]);
+                }
+                if(Global.Trend4.series[0].xData.length<60){
                     Global.Trend4.series[0].addPoint(data.tube4,true,false,false);
                 }else{
                     Global.Trend4.series[0].addPoint(data.tube4,true,true,false);
@@ -95,9 +113,18 @@ $(document).ready(function(){
     });
     Global.socketToP.on("all_ok", function(data){
         $('#status_node_p').html('<h2 class="label label-lg label-success">Система работает</h2>');
-        if(data && Global.RTToggle){           
+        if(data && Global.RTToggle){   
+            /*if(Global.IntRTT){//Дельта-сигма RT
+                data.tube1[1] = Global.RTI1p.Integrity(data.tube1[1]);
+                data.tube2[1] = Global.RTI2p.Integrity(data.tube2[1]);
+                data.tube3[1] = Global.RTI3p.Integrity(data.tube3[1]);
+                data.tube4[1] = Global.RTI4p.Integrity(data.tube4[1]);
+            }*/
             if(data.tube1){
-                if(Global.Trend1.series[1].xData.length<100){
+                if(Global.IntRTT){//Дельта-сигма RT LOC
+                    data.tube1[1] = Global.RTI1p.Integrity(data.tube1[1]);
+                }
+                if(Global.Trend1.series[1].xData.length<60){
                     Global.Trend1.series[1].addPoint(data.tube1,true,false,false);
                 }else{
                     Global.Trend1.series[1].addPoint(data.tube1,true,true,false);
@@ -105,7 +132,10 @@ $(document).ready(function(){
             }
         
             if(data.tube2){
-                if(Global.Trend2.series[1].xData.length<100){
+                if(Global.IntRTT){//Дельта-сигма RT LOC
+                    data.tube2[1] = Global.RTI2p.Integrity(data.tube2[1]);
+                }
+                if(Global.Trend2.series[1].xData.length<60){
                     Global.Trend2.series[1].addPoint(data.tube2,true,false,false);
                 }else{
                     Global.Trend2.series[1].addPoint(data.tube2,true,true,false);
@@ -113,7 +143,10 @@ $(document).ready(function(){
             }
                 
             if(data.tube3){
-                if(Global.Trend3.series[1].xData.length<100){
+                if(Global.IntRTT){//Дельта-сигма RT LOC
+                    data.tube3[1] = Global.RTI3p.Integrity(data.tube3[1]);
+                }
+                if(Global.Trend3.series[1].xData.length<60){
                     Global.Trend3.series[1].addPoint(data.tube3,true,false,false);
                 }else{
                     Global.Trend3.series[1].addPoint(data.tube3,true,true,false);
@@ -121,7 +154,10 @@ $(document).ready(function(){
             }
                 
             if(data.tube4){
-                if(Global.Trend4.series[1].xData.length<100){
+                if(Global.IntRTT){//Дельта-сигма RT LOC
+                    data.tube4[1] = Global.RTI4p.Integrity(data.tube4[1]);
+                }
+                if(Global.Trend4.series[1].xData.length<60){
                     Global.Trend4.series[1].addPoint(data.tube4,true,false,false);
                 }else{
                     Global.Trend4.series[1].addPoint(data.tube4,true,true,false);
@@ -151,10 +187,20 @@ $(document).ready(function(){
         Global.MainTrend_DataNB = [];
         if(data.trendNB && data.trendP){
             for(var index in data.trendP){
-                Global.MainTrend_DataP.push([data.trendP[index].utc,data.trendP[index].value]);
+                if(Global.IntARJT){
+                    var tmpVal = Global.ARJI.Integrity(data.trendP[index].value);
+                    Global.MainTrend_DataP.push([data.trendP[index].utc,tmpVal]);
+                }else{
+                    Global.MainTrend_DataP.push([data.trendP[index].utc,data.trendP[index].value]);
+                }
             }
             for(var index in data.trendNB){
-                Global.MainTrend_DataNB.push([data.trendNB[index].utc,data.trendNB[index].value]);
+                if(Global.IntARJT){
+                    var tmpVal = Global.ARJIp.Integrity(data.trendNB[index].value);
+                    Global.MainTrend_DataNB.push([data.trendNB[index].utc,tmpVal]);
+                }else{
+                    Global.MainTrend_DataNB.push([data.trendNB[index].utc,data.trendNB[index].value]);
+                }
             }
             console.log("data RCVED");
             
@@ -164,17 +210,50 @@ $(document).ready(function(){
             Global.MainTrend.series[0].setData(Global.MainTrend_DataNB);
             Global.MainTrend.series[1].setData(Global.MainTrend_DataP); 
             Global.MainTrend.series[0].addPoint([Global.minArjTrend-1,0]);
-            //Global.MainTrend.series[0].addPoint([Global.maxArjTrend+1,0]);
+            var tmpMaxPval = 0;
+            var tmpMaxNBval = 0;
+            var tmpMinUTC = false;
+            var tmpMaxUTC = false;
+            
+            if(data.min && data.max){
+                tmpMinUTC = data.min;
+                tmpMaxUTC = data.max;
+            }else{
+                tmpMinUTC = Global.minArjTrend;
+                tmpMaxUTC = Global.maxArjTrend; 
+            }
+            
+            
+            if(Global.MainTrend_DataNB.length){
+                tmpMaxNBval = Global.MainTrend_DataNB[Global.MainTrend_DataNB.length-1][1];
+                
+            }else{
+                tmpMaxNBval = 0;
+    
+            }
+            //----------------------------
+            if(Global.MainTrend_DataP.length){
+                tmpMaxPval = Global.MainTrend_DataP[Global.MainTrend_DataP.length-1][1];
+            }else{
+                tmpMaxPval = 0;
+        
+            }
+            //------------------------------
+            Global.MainTrend.series[0].addPoint([Global.maxArjTrend+1,tmpMaxNBval]);
             Global.MainTrend.series[1].addPoint([Global.minArjTrend-1,0]);
-            //Global.MainTrend.series[1].addPoint([Global.maxArjTrend+1,0]);
+            Global.MainTrend.series[1].addPoint([Global.maxArjTrend+1,tmpMaxPval]);
+            
+            Global.MainTrend.xAxis[0].setExtremes(tmpMinUTC,tmpMaxUTC);
             
         }
     });
     
 });
 function trendDetail(e){
-    if(e.min && e.max && Global.NB_Con){//если интервал менее суток
-        Global.socketToNB.emit("arjLoad",{min:e.min,max:e.max, tube:Global.currentTube});
+    if(e.min && e.max && Global.NB_Con && e.trigger){
+        if(e.trigger == "rangeSelectorButton" || e.trigger == "zoom"){
+            Global.socketToNB.emit("arjLoad",{min:e.min,max:e.max, tube:Global.currentTube});
+        }
     }
 }
 

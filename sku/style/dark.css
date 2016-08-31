@@ -62,6 +62,14 @@ small{
     border-top: 1px solid red;
     display: none;
 }
+#integratorSetting{
+    padding: 10px;
+    border-top: 1px solid red;
+    display: none;
+}
+.slider{
+    margin: 10px;
+}
 #fancytemp{
     display: none;
 }

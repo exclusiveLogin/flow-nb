@@ -196,7 +196,7 @@ $(document).ready(function(){
     var Trend_rt_setting1 = {
         credits:{enabled:false},
         chart: {
-            //animation:false,
+            animation:false,
             height:250,
             renderTo:Global.trend1Container,            
         },
@@ -213,7 +213,7 @@ $(document).ready(function(){
         yAxis: {
             //min:0,
             //max:16,
-            minRange:3,
+            minRange:.5,
             title: {
                 text: 'Давление'
             },
@@ -251,6 +251,7 @@ $(document).ready(function(){
     var Trend_rt_setting2 = {
         credits:{enabled:false},
         chart: {
+            animation:false,
             height:250,
             renderTo:Global.trend2Container,            
         },
@@ -267,7 +268,7 @@ $(document).ready(function(){
         yAxis: {
             //min:0,
             //max:16,
-            minRange:3,
+            minRange:.5,
             title: {
                 text: 'Давление'
             },
@@ -305,6 +306,7 @@ $(document).ready(function(){
     var Trend_rt_setting3 = {
         credits:{enabled:false},
         chart: {
+            animation:false,
             height:250,
             renderTo:Global.trend3Container,            
         },
@@ -321,7 +323,7 @@ $(document).ready(function(){
         yAxis: {
             //min:0,
             //max:16,
-            minRange:3,
+            minRange:.5,
             title: {
                 text: 'Давление'
             },
@@ -359,6 +361,7 @@ $(document).ready(function(){
     var Trend_rt_setting4 = {
         credits:{enabled:false},
         chart: {
+            animation:false,
             height:250,
             renderTo:Global.trend4Container,            
         },
@@ -375,7 +378,7 @@ $(document).ready(function(){
         yAxis: {
             //min:0,
             //max:16,
-            minRange:3,
+            minRange:.5,
             title: {
                 text: 'Давление'
             },
@@ -451,14 +454,14 @@ $(document).ready(function(){
             inputEnabled: false
         },
         legend: {
-            enabled: false
+            enabled: true
         },
         xAxis: {
             type: 'datetime',
             ordinal:false,
             events:{
                 afterSetExtremes:function(e){
-                    //trendDetail(e);
+                    trendDetail(e);
                     console.log(e);
                 }
             }

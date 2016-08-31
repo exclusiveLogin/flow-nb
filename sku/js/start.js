@@ -26,7 +26,30 @@ function tooltipHandler() {
                 "left" : 0
             });
     });
-}
+};
+
+document.addEventListener("DOMContentLoaded", function(){
+        console.log("DOMContentLoaded");
+        if(Global.IntegratorCon){
+            console.log("Integrator connected success");
+            Global.RTI1 = new Integrator();
+            Global.RTI2 = new Integrator();
+            Global.RTI3 = new Integrator();
+            Global.RTI4 = new Integrator();
+            
+            Global.RTI1p = new Integrator();
+            Global.RTI2p = new Integrator();
+            Global.RTI3p = new Integrator();
+            Global.RTI4p = new Integrator();
+            
+            Global.ARJI = new Integrator();
+            Global.ARJIp = new Integrator();
+        }else{
+            console.log("Integrator connected ERROR");
+        }
+});
+
+
 $(document).ready(function(){
     Global.jqready = true;
 
@@ -34,6 +57,97 @@ $(document).ready(function(){
     Global.loggedAs = "ssv";
 
     refreshLog();
+    
+    //JQUI - init
+    $('#int_pre_slider').slider({
+        range:false,
+        min:1,
+        max:20,
+        value:1,
+        //orientation:"vertical",
+        slide:function(event,ui){
+            $('#int_prebuffer').val(ui.value);
+            $('#btn_intSetting').removeClass("disabled");
+        },
+        create:function(){
+            $('#int_prebuffer').val("1");
+        }
+    });
+    $('#int_post_slider').slider({
+        range:false,
+        min:1,
+        max:20,
+        value:1,
+        //orientation:"vertical",
+        slide:function(event,ui){
+            $('#int_postbuffer').val(ui.value);
+            $('#btn_intSetting').removeClass("disabled");
+        },
+        create:function(){
+            $('#int_postbuffer').val("1");
+        }
+    });
+    
+    $('#btn_intSetting').on("click",function(){
+        $('#btn_intSetting').addClass("disabled");
+        Global.INTSettings = {
+            post:Number($('#int_postbuffer').val()),
+            pre:Number($('#int_prebuffer').val())
+        };
+        console.log(Global.INTSettings);
+        Global.RTI1.setFilter(Global.INTSettings.pre,Global.INTSettings.post);
+        Global.RTI2.setFilter(Global.INTSettings.pre,Global.INTSettings.post);
+        Global.RTI3.setFilter(Global.INTSettings.pre,Global.INTSettings.post);
+        Global.RTI4.setFilter(Global.INTSettings.pre,Global.INTSettings.post);
+        
+        Global.RTI1p.setFilter(Global.INTSettings.pre,Global.INTSettings.post);
+        Global.RTI2p.setFilter(Global.INTSettings.pre,Global.INTSettings.post);
+        Global.RTI3p.setFilter(Global.INTSettings.pre,Global.INTSettings.post);
+        Global.RTI4p.setFilter(Global.INTSettings.pre,Global.INTSettings.post);
+        
+        Global.ARJI.setFilter(Global.INTSettings.pre,Global.INTSettings.post);
+        Global.ARJIp.setFilter(Global.INTSettings.pre,Global.INTSettings.post);
+    });
+    
+    $('#btn_intToggleRT').on("click",function(){
+        if($(this).hasClass("active")){
+            $(this).removeClass("active");
+            $(this).removeClass("btn-danger");
+            $(this).text("Включить в RT");
+            Global.IntRTT = false;
+        }else{
+            $(this).addClass("active");
+            $(this).addClass("btn-danger");
+            $(this).text("Отключить в RT");
+            Global.IntRTT = true;
+        }
+    });
+    $('#btn_intToggleArj').on("click",function(){
+        if($(this).hasClass("active")){
+            $(this).removeClass("active");
+            $(this).removeClass("btn-danger");
+            $(this).text("Включить в Архиве");
+            Global.IntARJT = false;
+        }else{
+            $(this).addClass("active");
+            $(this).addClass("btn-danger");
+            $(this).text("Отключить в Архиве");
+            Global.IntARJT = true;
+        }
+    });
+    
+    $('.btn_int_close').on("click",function(){
+        $('#integratorSetting').hide(500);
+    });
+    $('.btn_intset_toggle').on("click",function(){
+        $('#integratorSetting').show(500);
+    })
+    
+    
+    
+    
+    //------------
+    
     $.ajaxSetup({
         cache:false
     });

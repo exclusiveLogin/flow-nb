@@ -53,6 +53,7 @@
     <script src="https://code.highcharts.com/highcharts-more.js"></script>
     <script src="js/socket.io.js"></script>
     <script src="js/io.js"></script>
+    <script src="js/integrator.js"></script>
 
 
 
@@ -67,13 +68,35 @@
         <div class="logo col-xs-12 col-sm-6 visible-xs  text-center">Система Контроля Утечек</div>
 
         <div id="menu" class="col-lg-5 col-md-5 col-sm-5 text-right hidden-xs">
+            <button class="btn btn-success btn_intset_toggle">Настройки DeltaSigma</button>
             <button class="btn btn-success btn_rt_toggle">RT</button>
+            
             <button class="btn btn-success btnlogin">Войти в систему</button>
             <button class="btn btn-danger btnlogout">Выйти из системы</button>
         </div>
         <div id="menupda" class="col-xs-12 visible-xs text-center">
             <button class="btn btn-success btnlogin">Войти в систему</button>
             <button class="btn btn-danger btnlogout">Выйти из системы</button>
+        </div>
+        
+        <div id="integratorSetting" class="col-xs-12 text-center form-inline">
+            <header>Настройки Delta-sigma</header>
+            <div class="form-group">
+                <label>PreBuffer</label>
+                <input id="int_prebuffer" type="text" class="form-control" readonly>
+                <div id="int_pre_slider" class="slider"></div>
+            </div>
+            <div class="form-group">
+                <label>PostBuffer</label>
+                <input id="int_postbuffer" type="text" class="form-control" readonly>
+                <div id="int_post_slider" class="slider"></div>
+            </div>
+            <div class="col-xs-12 text-center">
+                <button id="btn_intToggleRT" class="btn btn-success btn-group-sm" autofocus>Включить в RT</button>
+                <button id="btn_intToggleArj" class="btn btn-success btn-group-sm" autofocus>Включить в Архиве</button>
+                <button id="btn_intSetting" class="btn btn-success btn-group-sm disabled" autofocus>Установить</button>
+                <button class="btn_int_close btn btn-danger btn-group-sm">Закрыть</button>
+            </div>
         </div>
 
         <div id="loginform" class="col-xs-12 text-center form-inline">
