@@ -458,7 +458,9 @@ function rcvTubes(){
         res[2] = WordToFloat(resp.register[5],resp.register[4]).toFixed(2);
         res[3] = WordToFloat(resp.register[7],resp.register[6]).toFixed(2);
         //console.log("1:"+res[0]+" 2:"+res[1]+" 3:"+res[2]+" 4:"+res[3]+" heap = "+process.memoryUsage().heapUsed);
-        console.log(process.memoryUsage());
+        //console.log(process.memoryUsage());
+        socketServ.emit("heap",process.memoryUsage());
+
         var nowdt = Date.now();
         FESender(res,nowdt);//отдаем клиенту  
         DBWriter(res,nowdt);//пишем в БД
