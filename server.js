@@ -32,7 +32,7 @@ socketServ.on("connection",function(socket){
                     console.log("ArjLoad Pool OK");
                     connection.query(query_p, function(err,data){
                         if(err){
-                            socketServ.sockets.emit("mysql_error",{});
+                            socketServ.emit("mysql_error",{});
                             console.log("ARJLOAD error SQL query P");
                         }else{
                             //console.log(util.inspect(data,{colors:true}));
@@ -43,7 +43,7 @@ socketServ.on("connection",function(socket){
                     });
                     connection.query(query_nb, function(err,data){
                         if(err){
-                            socketServ.sockets.emit("mysql_error",{});
+                            socketServ.emit("mysql_error",{});
                             console.log("ARJLOAD error SQL query NB");
                         }else{
                             //console.log(util.inspect(data,{colors:true}));
@@ -59,6 +59,8 @@ socketServ.on("connection",function(socket){
                             socketServ.sockets.emit("arj_load_res",{trendP:trendP, trendNB:trendNB,min:data.min,max:data.max});
                             localNB = false;
                             localP = false;
+                            trendP = null;
+                            trendNB = null;
                         }
                     };
                 }else{
@@ -223,10 +225,10 @@ client.on('connect', function () {
             socketServ.sockets.emit("all_ok",{});
             console.log("No error SQL {LOCAL} all ok");
             Global.connection = connection;
-            //Global.schedullerTube = setInterval(function(){
+            Global.schedullerTube = setInterval(function(){
                 rcvTubes();  
                 //console.log(process.memoryUsage().heapUsed);
-            //},60);
+            },125);
         }    
     });
 });
@@ -400,7 +402,7 @@ function inserterDB(tube,stack){
             for(var elem in stack){
                 console.log('row:'+elem+" id:"+stack[elem].id+" value:"+stack[elem].value+"time:"+stack[elem].datetime+" utc:"+stack[elem].utc);
 
-                tmpQ = 'INSERT IGNORE INTO `p_tube'+tube+'_dump` (`p_id`,`value`,`utc`) VALUES('+stack[elem].id+','+stack[elem].value+','+stack[elem].utc+')';
+                tmpQ = 'INSERT IGNORE INTO `p_tube'+tube+'_dump` (`value`,`utc`) VALUES('+stack[elem].id+','+stack[elem].value+','+stack[elem].utc+')';
                 //console.log(tmpQ);
                 connection.query(tmpQ,function(err){
                     //console.log("elem:"+elem+" from "+stack.length);
@@ -418,7 +420,7 @@ function inserterDB(tube,stack){
                     }
                 });
                 if(stack[elem].min == 0 && stack[elem].sec == 0){
-                    tmpQ = 'INSERT IGNORE INTO `p_tube'+tube+'_h` (`p_id`,`value`,`utc`) VALUES('+stack[elem].id+','+stack[elem].value+','+stack[elem].utc+')';
+                    tmpQ = 'INSERT IGNORE INTO `p_tube'+tube+'_h` (`value`,`utc`) VALUES('+stack[elem].id+','+stack[elem].value+','+stack[elem].utc+')';
                     //console.log(tmpQ);
                     connection.query(tmpQ,function(err){
                         if(!err){
@@ -430,7 +432,7 @@ function inserterDB(tube,stack){
                     });
                 }
                 if(stack[elem].sec == 0){
-                    tmpQ = 'INSERT IGNORE INTO `p_tube'+tube+'_m` (`p_id`,`value`,`utc`) VALUES('+stack[elem].id+','+stack[elem].value+','+stack[elem].utc+')';
+                    tmpQ = 'INSERT IGNORE INTO `p_tube'+tube+'_m` (`value`,`utc`) VALUES('+stack[elem].id+','+stack[elem].value+','+stack[elem].utc+')';
                     //console.log(tmpQ);
                     connection.query(tmpQ,function(err){
                         if(!err){
@@ -464,28 +466,20 @@ function rcvTubes(){
         //console.log("1:"+res[0]+" 2:"+res[1]+" 3:"+res[2]+" 4:"+res[3]+" heap = "+process.memoryUsage().heapUsed);
         console.log(process.memoryUsage());
         var nowdt = Date.now();
-        FESender(res,nowdt);
-        if(process.memoryUsage().heapUsed>30000000){
-            if(!Global.DBLock){
-                Global.DBLock = true;
-                setTimeout(function(){
-                    //Global.DBLock =false;
-                },60000);
-            }
+        FESender(res,nowdt);//отдаем клиенту  
+        //DBWriter(res,nowdt);//пишем в БД
+        if(process.memoryUsage().heapUsed>300000000){//Защита от переполнения стека
+            Global.DBLock = true; 
         }else{
-            if(!Global.DBLock)DBWriter(res,nowdt);
+            if(!Global.DBLock)DBWriter(res,nowdt);//пишем в БД
+            if(process.memoryUsage().heapUsed<30000000){
+                    Global.DBLock =false;
+            }
         }
-        
-        //if(process.memoryUsage().heapUsed>30000000){
-        //    setTimeout(rcvTubes,500);
-        //}else{
-            setTimeout(rcvTubes,125);
-        //}
-        //setTimeout(rcvTubes,60);
     }).fail(function(e){
-        //if(Global.schedullerTube){
-            //clearInterval(Global.schedullerTube);
-        //}
+        if(Global.schedullerTube){
+            clearInterval(Global.schedullerTube);
+        }
         socketServ.emit("mb_error",{});
     });
 };
@@ -494,8 +488,74 @@ function rcvTubes(){
 //----------------------------------
 function DBWriter(data,nowdt){
     var tmpQ = "";
-    if(data!=undefined){
-        if(data[0]!=undefined){
+    if(data){
+        if(data[0]!=undefined && data[1]!=undefined && data[2]!=undefined && data[3]!=undefined){
+            console.log("data rcv RT:"+util.inspect(tubes,{colors:true}));
+            var tmpDate = new Date(nowdt);
+            var tmpSeconds = tmpDate.getSeconds();
+            var tmpMinutes = tmpDate.getMinutes();
+            for(var elem in data){//перебор 4 труб
+                var tmpTube = Number(elem)+1;
+                //console.log("second:"+tmpSeconds+" locker:"+util.inspect(Global.RTsecondLock,{colors:true}));
+                //console.log("id:"+elem+" tube:"+tmpTube+" value:"+tubes[elem]+" utc:"+time);
+
+
+                if(Global.connection){            
+                    tmpQ = 'INSERT IGNORE INTO `tube'+tmpTube+'_dump` (`value`,`utc`) VALUES('+data[elem]+','+nowdt+')';
+
+                    Global.connection.query(tmpQ,function(err){
+                        if(err){
+                            console.log("error SQL insert RT:"+util.inspect(err,{colors:true}));
+                            socketServ.sockets.emit("mysql_error",{});
+                        }else{
+                            //console.log("Data RT saved in DB successuful");
+                        }
+                    });
+
+
+                    if(tmpSeconds==0 && tmpMinutes == 0 && !Global.RTsecondLock){//Пишем в часовой (одну запись!!!!)
+                        tmpQ = 'INSERT IGNORE INTO `tube'+tmpTube+'_h` (`value`,`utc`) VALUES('+data[elem]+','+nowdt+')';
+                        Global.connection.query(tmpQ,function(err){
+                            if(err){
+                                console.log("error SQL insert RT:"+util.inspect(err,{colors:true}));
+                                socketServ.sockets.emit("mysql_error",{});
+                            }else{
+                                //console.log("Data RT Hourly saved in DB successuful");
+                            }
+                        });
+                        //Global.RTsecondLock = true;
+                    }
+                    if(tmpSeconds==0 && !Global.RTsecondLock){//Пишем в минутный (одну запись!!!!)
+                        tmpQ = 'INSERT IGNORE INTO `tube'+tmpTube+'_m` (`value`,`utc`) VALUES('+data[elem]+','+nowdt+')';
+                        //console.log("Data RT Minutly saved in DB successuful on tube PLANNED"+tmpTube);
+                        Global.connection.query(tmpQ,function(err){
+                            if(err){
+                                console.log("error SQL insert RT:"+util.inspect(err,{colors:true}));
+                                socketServ.sockets.emit("mysql_error",{});
+                            }else{
+                                //console.log("Data RT Minutly saved in DB successuful on tube"+tmpTube);
+                            }
+                        });
+
+                        //Global.RTsecondLock = true;
+                    }
+
+
+
+                }else{
+                    console.log("error SQL connection RT not found");
+
+                }
+
+
+            }
+            //------------------
+        }
+        
+        
+        
+        
+        /*if(data[0]!=undefined){
             tmpQ = "INSERT INTO `tube1_dump`(value,utc) VALUES("+data[0]+","+nowdt+")";
             Global.connection.query(tmpQ,function (err){
                 if(err){
@@ -530,7 +590,7 @@ function DBWriter(data,nowdt){
                     console.log("Ошибка БД");
                 }
             });
-        }
+        }*/
     }
 };
 function FESender(data,nowdt){

@@ -222,14 +222,14 @@ $(document).ready(function(){
             series: {
                 threshold:40
             },
-            line:{
+            spline:{
                 marker:{
                     enabled:false
                 },
             },
         },
         series:[{
-            type: 'line',
+            type: 'spline',
             name: 'Нефтебаза',
             //data:[0,3,4,3,12,15,2],
             tooltip: {
@@ -238,7 +238,7 @@ $(document).ready(function(){
             },
             color:"orange"
         },{
-            type: 'line',
+            type: 'spline',
             name: 'Причал',
             //data:[0,5,2,7,1,4,7],
             tooltip: {
@@ -469,7 +469,7 @@ $(document).ready(function(){
         yAxis: {
             //min:0,
             //max:16,
-            //minRange:3,
+            minRange:.5,
             title: {
                 text: 'Давление'
             },
