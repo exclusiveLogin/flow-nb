@@ -1,11 +1,11 @@
 function Integrator(){
     this.lastPoint = 0;
-    this.filtered = false;
-    this.prefilterPoints = 0;
-    this.postfilterPoints = 0;
+    this.filtered = true;
+    this.prefilterPoints = 1;
+    this.postfilterPoints = 1;
     
     
-    this.Buffer = [];
+    this.Buffer = [0,0];
     
     this.setFilter = function(pre, post){
         this.Buffer = [];
