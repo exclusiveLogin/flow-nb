@@ -11,31 +11,36 @@ $(document).ready(function () {
 });
 
 function InitMap() {
-    map = new google.maps.Map(domobjjq[0], {
-        center: {lat: 53.167097, lng: 48.477003},
-        zoom: 10
+    var map = new google.maps.Map(domobjjq[0], {
+        center: {lat: 53.172579, lng: 48.560600},
+        zoom: 13
     });
     //animation = new google.map.Animation.DROP;
-    marker1 = new google.maps.Marker({
+    var marker1 = new google.maps.Marker({
         map:map,
-        position:{lat: 53.167097, lng: 48.477003},
-        title:"Вас засекли здесь",
+        position:{lat: 53.166353, lng: 48.560643},
+        title:"Причал",
         animation:google.maps.Animation.DROP
     });
-    marker2 = new google.maps.Marker({
+    var marker2 = new google.maps.Marker({
         map:map,
-        position:{lat: 53.177097, lng: 48.487003},
-        title:"Вас засекли здесь",
+        position:{lat: 53.179009, lng: 48.561373},
+        title:"Нефтебаза",
         animation:google.maps.Animation.DROP
     });
-    circleAccuracy = new google.maps.Circle({
+    
+    var circleAccuracy = new google.maps.Circle({
         map:map,
-        center:{lat: 53.167097, lng: 48.477003},
-        radius:5000,
+        center:{lat: 53.172579, lng: 48.560600},
+        radius:700,
         fillColor:"#009999",
         fillOpacity:0.2,
         strokeColor:"#004444",
         strokeOpacity:0.3,
         strokeWeight:2
+    });
+    var tube = new google.maps.Polyline({
+        path:[{lat: 53.166353, lng: 48.560643},{lat: 53.179009, lng: 48.561373}],
+        map:map
     });
 }
