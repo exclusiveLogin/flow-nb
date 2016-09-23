@@ -3,6 +3,10 @@ Global.RTsecondLock = false;
 Global.DBsecondLock = false;
 Global.freeLock = false;
 Global.clients = [];
+Global.poolReset = false;
+Global.conReQueryLocal = false;
+Global.conReQueryRT = false;
+Global.conReQueryReplica = false;
 //----------------UTILS-------------------
 const util = require("util");
 
@@ -57,6 +61,7 @@ socketServ.on("connection",function(socket){
                         if(localNB && localP){
                             connection.release();
                             console.log("ArjLoad connection released");
+                            checkPool("arj");
                             socketServ.sockets.emit("arj_load_res",{trendP:trendP, trendNB:trendNB,min:data.min,max:data.max});
                             localNB = false;
                             localP = false;
@@ -187,19 +192,34 @@ socketServ.on("connection",function(socket){
     });
 });
 
-
-
-
 //----------------MYSQL------------------
 var mysql = require("mysql");
 
 var pool  = mysql.createPool({
+    waitForConnections:false,
     connectionLimit : 20,
     host     : 'localhost',
     user     : 'root',
     password : '123',
     database : 'flow_nb'
 });
+
+var resetPool = function(){
+    if(pool){
+        console.log("pool established, reset success");
+    }else{
+        console.log("pool not established, reset unsuccess");
+    }
+}
+var checkPool = function(str){
+    if(pool){
+        console.log(str+":");
+        console.log("all con:"+util.inspect(pool._allConnections.length,{colors:true}));
+        console.log("free con:"+util.inspect(pool._freeConnections.length,{colors:true}));
+    }else{
+        console.log("pool not defined");
+    }
+}
 //--------------MODBUS-------------------
 
 var modbus = require("jsmodbus");
@@ -219,6 +239,7 @@ client.connect();
 client.on('connect', function () {
     console.log("PLC connected");
     pool.getConnection(function(err, connection) {
+        checkPool("PLC connected");
         if(err){
             socketServ.sockets.emit("mysql_error",{});
             console.log("error SQL pool");
@@ -228,7 +249,6 @@ client.on('connect', function () {
             Global.connection = connection;
             Global.schedullerTube = setInterval(function(){
                 rcvTubes();  
-                //console.log(process.memoryUsage().heapUsed);
             },1000);
         }    
     });
@@ -243,16 +263,29 @@ client.on('error', function (err) {
         Global.connection.release();
         Global.connection=null;
     }
-    //if(Global.schedullerTube){
-        //clearInterval(Global.schedullerTube);
-    //}
+    if(Global.schedullerTube){
+        clearInterval(Global.schedullerTube);
+    }
 });
 //-----------------SERVER TO PRICHAL----------------------
+Global.disconQ = false;
+
+
+function forceDisconCl(){
+    if(!Global.disconQ){
+        socket.emit("discon");
+        socket.disconnect();
+        console.log("disconnect emited");
+        Global.disconQ = true;
+    }
+}
+
 
 var io = require('socket.io').listen(3001);
 
 io.on("connection",function(socket){
     pool.getConnection(function(err, connection) {
+        checkPool("io connection");
         if(err){
             socketServ.sockets.emit("mysql_error",{});
             console.log("error SQL pool");
@@ -263,8 +296,8 @@ io.on("connection",function(socket){
         }    
     });
     
-    console.log("IO connected");
-    socket.emit("msg",{data:"connection to server established"});
+    console.log("Prichal connected");
+    //socket.emit("msg",{data:"connection to server established"});
     socket.on('id',function(data){
           if(data.name){
               socket.opc = data.name;
@@ -278,8 +311,11 @@ io.on("connection",function(socket){
     });
     socket.on('disconnect',function(){
         //---------------pool free------------
-        Global.connectionRT.release();
-        Global.connectionRT = null;
+        if(Global.connectionRT){
+            Global.connectionRT.release();
+            Global.connectionRT = null;
+        }
+        checkPool("prichal disconnect RT");
         //------------------------------------
         console.log("IO disconnected");
         var index = Global.clients.indexOf(socket);
@@ -374,6 +410,7 @@ function inserterRT(tubes,time){
             }
         }else{
             console.log("error SQL connection RT not found");
+            checkPool("error SQL inserter RT");
         }
     }
     if(tmpSeconds == 0 && !Global.RTsecondLock){//снятие защиты на запись дублирующих секунд
@@ -441,6 +478,7 @@ function inserterDB(tube,stack){
             connection.release();
         }else{
             console.log("pool SQL error");
+            checkPool("error SQL InserterDB");
         }
     });  
     
@@ -459,7 +497,6 @@ function rcvTubes(){
         res[3] = WordToFloat(resp.register[7],resp.register[6]).toFixed(2);
         //console.log("1:"+res[0]+" 2:"+res[1]+" 3:"+res[2]+" 4:"+res[3]+" heap = "+process.memoryUsage().heapUsed);
         //console.log(process.memoryUsage());
-        socketServ.emit("heap",process.memoryUsage());
 
         var nowdt = Date.now();
         FESender(res,nowdt);//отдаем клиенту  
@@ -542,46 +579,10 @@ function DBWriter(data,nowdt){
                 }
             }else{
                 console.log("error SQL connection not found");
+                checkPool("error SQL DBWriter")
 
             }
         }
-        
-        /*if(data[0]!=undefined){
-            tmpQ = "INSERT INTO `tube1_dump`(value,utc) VALUES("+data[0]+","+nowdt+")";
-            Global.connection.query(tmpQ,function (err){
-                if(err){
-                    socketServ.sockets.emit("mysql_error",{});
-                    console.log("Ошибка БД");
-                }
-            });
-        }
-        if(data[1]!=undefined){
-            tmpQ = "INSERT INTO `tube2_dump`(value,utc) VALUES("+data[1]+","+nowdt+")";
-            Global.connection.query(tmpQ,function (err){
-                if(err){
-                    socketServ.sockets.emit("mysql_error",{});
-                    console.log("Ошибка БД");
-                }
-            });
-        }
-        if(data[2]!=undefined){
-            tmpQ = "INSERT INTO `tube3_dump`(value,utc) VALUES("+data[2]+","+nowdt+")";
-            Global.connection.query(tmpQ,function (err){
-                if(err){
-                    socketServ.sockets.emit("mysql_error",{});
-                    console.log("Ошибка БД");
-                }
-            });
-        }
-        if(data[3]!=undefined){
-            tmpQ = "INSERT INTO `tube4_dump`(value,utc) VALUES("+data[3]+","+nowdt+")";
-            Global.connection.query(tmpQ,function (err){
-                if(err){
-                    socketServ.sockets.emit("mysql_error",{});
-                    console.log("Ошибка БД");
-                }
-            });
-        }*/
     }else{
         console.log("No data");
     }
@@ -594,6 +595,16 @@ function FESender(data,nowdt){
         "tube3":[nowdt,Number(data[2])],
         "tube4":[nowdt,Number(data[3])]
     });
+    var heap = process.memoryUsage();
+    if(pool){
+        heap.sqlcon = pool._allConnections.length;
+        heap.sqlfree = pool._freeConnections.length;
+    }else{
+        heap.sqlcon = 0;
+        heap.sqlfree = 0;
+    }
+    
+    socketServ.emit("heap",heap);
 };
 
 
