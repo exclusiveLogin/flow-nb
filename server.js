@@ -195,20 +195,48 @@ socketServ.on("connection",function(socket){
 //----------------MYSQL------------------
 var mysql = require("mysql");
 
-var pool  = mysql.createPool({
+var pool;
+function crPool(){
+    pool = mysql.createPool({
     waitForConnections:false,
     connectionLimit : 20,
     host     : 'localhost',
     user     : 'root',
     password : '123',
     database : 'flow_nb'
-});
+    }); 
+}
+crPool();//Первичная инициация pool
+
+Global.sqlConRemoteQuery = false;
+Global.sqlConLocalQuery = false;
+Global.sqlResetQuery = false;
 
 var resetPool = function(){
-    if(pool){
-        console.log("pool established, reset success");
-    }else{
-        console.log("pool not established, reset unsuccess");
+    if(!Global.sqlResetQuery){
+        Global.sqlResetQuery = true;
+        if(pool){
+            console.log("pool established, reset success");
+            pool.end(function(err){//delete pool
+                pool = null;
+                if(!err){
+                    console.log("pool end without error");
+                    crPool();
+                    regConSQLLocal();
+                    regConSQLRemote();
+                }else{
+                    console.log("pool end with ERROR");
+                    console.log("ERROR:"+util.inspect(err,{colors:true}));
+                }
+                Global.sqlResetQuery = false;
+            });
+        }else{
+            console.log("pool not established, create new pool");
+            crPool();
+            regConSQLLocal();
+            regConSQLRemote();
+            Global.sqlResetQuery = false; 
+        }
     }
 }
 var checkPool = function(str){
@@ -220,6 +248,69 @@ var checkPool = function(str){
         console.log("pool not defined");
     }
 }
+
+
+var regConSQLRemote = function(){
+    if(!Global.sqlConRemoteQuery){
+        Global.sqlConRemoteQuery = true;
+        if(Global.connectionRT){
+            Global.connectionRT.release();
+            Global.connectionRT = null;
+        }
+        pool.getConnection(function(err, connection) {
+            if(err){
+                console.log("pool RT register error");
+                resetPool();
+            }else{
+                socketServ.sockets.emit("all_ok",{});
+                console.log("Register SQL local success");
+                Global.connectionRT = connection;
+                Global.sqlConRemoteQuery = false;
+            }    
+        });
+    }
+};
+var regConSQLLocal = function(){
+    if(!Global.sqlConLocalQuery){
+        Global.sqlConLocalQuery = true;
+        if(Global.connection){
+            Global.connection.release();
+            Global.connection = null;
+        }
+        if(Global.schedullerTube){
+                clearInterval(Global.schedullerTube);
+                console.log("interval clear reset");
+        }
+        pool.getConnection(function(err, connection) {
+            if(err){
+                console.log("pool LOCAL register error");
+                resetPool();
+            }else{
+                socketServ.sockets.emit("all_ok",{});
+                console.log("Register SQL local success");
+                Global.connection = connection;
+                Global.schedullerTube = setInterval(rcvTubes,1000);
+                Global.sqlConLocalQuery = false;
+            }    
+        });
+    }
+};
+var sqlCloseRemote = function(){
+    if(Global.connectionRT){
+        Global.connectionRT.release();
+        Global.connectionRT = null;
+    }
+};
+var sqlCloseLocal = function(){
+    if(Global.connection){
+        Global.connection.release();
+        Global.connection = null;
+    }
+    if(Global.schedullerTube){
+        clearInterval(Global.schedullerTube);
+        console.log("interval clear reset");
+    }
+};
 //--------------MODBUS-------------------
 
 var modbus = require("jsmodbus");
@@ -238,45 +329,25 @@ client.connect();
 
 client.on('connect', function () {
     console.log("PLC connected");
-    pool.getConnection(function(err, connection) {
-        checkPool("PLC connected");
-        if(err){
-            socketServ.sockets.emit("mysql_error",{});
-            console.log("error SQL pool");
-        }else{
-            socketServ.sockets.emit("all_ok",{});
-            console.log("No error SQL {LOCAL} all ok");
-            Global.connection = connection;
-            Global.schedullerTube = setInterval(function(){
-                rcvTubes();  
-            },1000);
-        }    
-    });
+    regConSQLLocal();
 });
 
 client.on('error', function (err) {
     socketServ.sockets.emit("mb_error",{});
     console.log("ERROR MODBUS");
-    //console.log(err);
-    
-    if(Global.connection){
-        Global.connection.release();
-        Global.connection=null;
-    }
-    if(Global.schedullerTube){
-        clearInterval(Global.schedullerTube);
-    }
+    sqlCloseLocal();
 });
 //-----------------SERVER TO PRICHAL----------------------
 Global.disconQ = false;
 
 
-function forceDisconCl(){
+function forceDisconCl(socket){
     if(!Global.disconQ){
+        Global.disconQ = true;
         socket.emit("discon");
         socket.disconnect();
         console.log("disconnect emited");
-        Global.disconQ = true;
+        //Global.disconQ = false;
     }
 }
 
@@ -284,17 +355,8 @@ function forceDisconCl(){
 var io = require('socket.io').listen(3001);
 
 io.on("connection",function(socket){
-    pool.getConnection(function(err, connection) {
-        checkPool("io connection");
-        if(err){
-            socketServ.sockets.emit("mysql_error",{});
-            console.log("error SQL pool");
-        }else{
-            socketServ.sockets.emit("all_ok",{});
-            console.log("No error SQL {REMOTE RT} all ok");
-            Global.connectionRT = connection;
-        }    
-    });
+    Global.disconQ = false;
+    regConSQLRemote();
     
     console.log("Prichal connected");
     //socket.emit("msg",{data:"connection to server established"});
@@ -311,10 +373,8 @@ io.on("connection",function(socket){
     });
     socket.on('disconnect',function(){
         //---------------pool free------------
-        if(Global.connectionRT){
-            Global.connectionRT.release();
-            Global.connectionRT = null;
-        }
+        forceDisconCl(socket);
+        sqlCloseRemote();
         checkPool("prichal disconnect RT");
         //------------------------------------
         console.log("IO disconnected");
@@ -324,6 +384,7 @@ io.on("connection",function(socket){
             Global.clients.splice(index,1);
         }
         //console.log("ad:"+Global.clients);
+        
     });
     socket.on("replica",function(cont){
         
@@ -411,6 +472,7 @@ function inserterRT(tubes,time){
         }else{
             console.log("error SQL connection RT not found");
             checkPool("error SQL inserter RT");
+            regConSQLRemote();
         }
     }
     if(tmpSeconds == 0 && !Global.RTsecondLock){//снятие защиты на запись дублирующих секунд
@@ -496,31 +558,16 @@ function rcvTubes(){
         res[2] = WordToFloat(resp.register[5],resp.register[4]).toFixed(2);
         res[3] = WordToFloat(resp.register[7],resp.register[6]).toFixed(2);
         //console.log("1:"+res[0]+" 2:"+res[1]+" 3:"+res[2]+" 4:"+res[3]+" heap = "+process.memoryUsage().heapUsed);
-        //console.log(process.memoryUsage());
 
         var nowdt = Date.now();
         FESender(res,nowdt);//отдаем клиенту  
         DBWriter(res,nowdt);//пишем в БД
-        /*
-        if(process.memoryUsage().heapUsed>300000000){//Защита от переполнения стека
-            Global.DBLock = true; 
-        }else{
-            if(!Global.DBLock){
-                //DBWriter(res,nowdt);//пишем в БД
-            }
-            if(process.memoryUsage().heapUsed<30000000){
-                    Global.DBLock =false;
-            }
-        }*/
+        
     }).fail(function(e){
-        if(Global.schedullerTube){
-            clearInterval(Global.schedullerTube);
-        }
+        console.log("MB fail");
         socketServ.emit("mb_error",{});
     });
 };
-//console.log("hello world");
-//socketServ.sockets.emit("all_ok",{"tube1":[Number(nowdt),Number(tube1)]});
 //----------------------------------
 function DBWriter(data,nowdt){
     var tmpQ = "";
@@ -536,10 +583,8 @@ function DBWriter(data,nowdt){
             //console.log("id:"+elem+" tube:"+tmpTube+" value:"+tubes[elem]+" utc:"+time);
 
 
-            if(Global.connection){   
-                //console.log("connection ok");
+            if(Global.connection){
                 tmpQ = 'INSERT IGNORE INTO `tube'+tmpTube+'_dump` (`value`,`utc`) VALUES('+data[elem]+','+nowdt+')';
-                //console.log(tmpQ);
 
                 Global.connection.query(tmpQ,function(err){
                     if(err){
@@ -550,8 +595,7 @@ function DBWriter(data,nowdt){
                     }
                 });
 
-
-                if(tmpSeconds==0 && tmpMinutes == 0 && !Global.RTsecondLock){//Пишем в часовой (одну запись!!!!)
+                if(tmpSeconds==0 && tmpMinutes == 0 && !Global.DBsecondLock){//Пишем в часовой (одну запись!!!!)
                     tmpQ = 'INSERT IGNORE INTO `tube'+tmpTube+'_h` (`value`,`utc`) VALUES('+data[elem]+','+nowdt+')';
                     Global.connection.query(tmpQ,function(err){
                         if(err){
@@ -561,9 +605,8 @@ function DBWriter(data,nowdt){
                             console.log("Data RT Hourly saved in DB successuful");
                         }
                     });
-                    //Global.RTsecondLock = true;
                 }
-                if(tmpSeconds==0 && !Global.RTsecondLock){//Пишем в минутный (одну запись!!!!)
+                if(tmpSeconds==0 && !Global.DBsecondLock){//Пишем в минутный (одну запись!!!!)
                     tmpQ = 'INSERT IGNORE INTO `tube'+tmpTube+'_m` (`value`,`utc`) VALUES('+data[elem]+','+nowdt+')';
                     //console.log("Data RT Minutly saved in DB successuful on tube PLANNED"+tmpTube);
                     Global.connection.query(tmpQ,function(err){
@@ -575,12 +618,18 @@ function DBWriter(data,nowdt){
                         }
                     });
 
-                    //Global.RTsecondLock = true;
+                    if(tmpSeconds == 0 && !Global.DBsecondLock){//снятие защиты на запись дублирующих секунд
+                        Global.DBsecondLock = true;
+                    }
+                    if(tmpSeconds!=0 && Global.DBsecondLock){//снятие защиты на запись дублирующих секунд
+                        Global.DBsecondLock = false;
+                    }
                 }
             }else{
-                console.log("error SQL connection not found");
+                console.log("error SQL connection LOCAL not found");
                 checkPool("error SQL DBWriter")
-
+                //создаем новый коннект
+                regConSQLLocal();
             }
         }
     }else{
