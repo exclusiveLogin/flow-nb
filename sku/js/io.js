@@ -76,10 +76,18 @@ $(document).ready(function(){
                 if(Global.IntRTT){//Дельта-сигма RT
                     data.tube1[1] = Global.RTI1.Integrity(data.tube1[1]);
                 }
-                if(Global.Trend1.series[0].xData.length<60){
+                if(Global.Trend1.series[0].xData.length<Global.RTbuffer){
                     Global.Trend1.series[0].addPoint(data.tube1,true,false,false);
                 }else{
                     Global.Trend1.series[0].addPoint(data.tube1,true,true,false);
+                    var tmpDiff = Global.Trend1.series[0].xData.length - Global.RTbuffer;
+                    //console.log("tube1-series0 разница:"+tmpDiff);
+                    if(tmpDiff>0){
+                        for(var index=0; index < tmpDiff; index++){
+                            Global.Trend1.series[0].removePoint(index,false);
+                        }
+                        Global.Trend1.redraw();
+                    }
                 } 
             }
             
@@ -87,10 +95,18 @@ $(document).ready(function(){
                 if(Global.IntRTT){//Дельта-сигма RT
                     data.tube2[1] = Global.RTI2.Integrity(data.tube2[1]);
                 }
-                if(Global.Trend2.series[0].xData.length<60){
+                if(Global.Trend2.series[0].xData.length<Global.RTbuffer){
                     Global.Trend2.series[0].addPoint(data.tube2,true,false,false);
                 }else{
                     Global.Trend2.series[0].addPoint(data.tube2,true,true,false);
+                    var tmpDiff = Global.Trend2.series[0].xData.length - Global.RTbuffer;
+                    //console.log("tube1-series0 разница:"+tmpDiff);
+                    if(tmpDiff>0){
+                        for(var index=0; index < tmpDiff; index++){
+                            Global.Trend2.series[0].removePoint(index,false);
+                        }
+                        Global.Trend2.redraw();
+                    }
                 }
             }
                 
@@ -98,10 +114,18 @@ $(document).ready(function(){
                 if(Global.IntRTT){//Дельта-сигма RT
                     data.tube3[1] = Global.RTI3.Integrity(data.tube3[1]);
                 }
-                if(Global.Trend3.series[0].xData.length<60){
+                if(Global.Trend3.series[0].xData.length<Global.RTbuffer){
                     Global.Trend3.series[0].addPoint(data.tube3,true,false,false);
                 }else{
                     Global.Trend3.series[0].addPoint(data.tube3,true,true,false);
+                    var tmpDiff = Global.Trend3.series[0].xData.length - Global.RTbuffer;
+                    //console.log("tube1-series0 разница:"+tmpDiff);
+                    if(tmpDiff>0){
+                        for(var index=0; index < tmpDiff; index++){
+                            Global.Trend3.series[0].removePoint(index,false);
+                        }
+                        Global.Trend3.redraw();
+                    }
                 }
             }
                 
@@ -109,10 +133,18 @@ $(document).ready(function(){
                 if(Global.IntRTT){//Дельта-сигма RT
                     data.tube4[1] = Global.RTI4.Integrity(data.tube4[1]);
                 }
-                if(Global.Trend4.series[0].xData.length<60){
+                if(Global.Trend4.series[0].xData.length<Global.RTbuffer){
                     Global.Trend4.series[0].addPoint(data.tube4,true,false,false);
                 }else{
                     Global.Trend4.series[0].addPoint(data.tube4,true,true,false);
+                    var tmpDiff = Global.Trend4.series[0].xData.length - Global.RTbuffer;
+                    //console.log("tube1-series0 разница:"+tmpDiff);
+                    if(tmpDiff>0){
+                        for(var index=0; index < tmpDiff; index++){
+                            Global.Trend4.series[0].removePoint(index,false);
+                        }
+                        Global.Trend4.redraw();
+                    }
                 }
             }
         }
@@ -130,10 +162,18 @@ $(document).ready(function(){
                 if(Global.IntRTT){//Дельта-сигма RT LOC
                     data.tube1[1] = Global.RTI1p.Integrity(data.tube1[1]);
                 }
-                if(Global.Trend1.series[1].xData.length<60){
+                if(Global.Trend1.series[1].xData.length<Global.RTbuffer){
                     Global.Trend1.series[1].addPoint(data.tube1,true,false,false);
                 }else{
                     Global.Trend1.series[1].addPoint(data.tube1,true,true,false);
+                    var tmpDiff = Global.Trend1.series[1].xData.length - Global.RTbuffer;
+                    //console.log("tube1-series0 разница:"+tmpDiff);
+                    if(tmpDiff>0){
+                        for(var index=0; index < tmpDiff; index++){
+                            Global.Trend1.series[1].removePoint(index,false);
+                        }
+                        Global.Trend1.redraw();
+                    }
                 } 
             }
         
@@ -141,10 +181,18 @@ $(document).ready(function(){
                 if(Global.IntRTT){//Дельта-сигма RT LOC
                     data.tube2[1] = Global.RTI2p.Integrity(data.tube2[1]);
                 }
-                if(Global.Trend2.series[1].xData.length<60){
+                if(Global.Trend2.series[1].xData.length<Global.RTbuffer){
                     Global.Trend2.series[1].addPoint(data.tube2,true,false,false);
                 }else{
                     Global.Trend2.series[1].addPoint(data.tube2,true,true,false);
+                    var tmpDiff = Global.Trend2.series[1].xData.length - Global.RTbuffer;
+                    //console.log("tube1-series0 разница:"+tmpDiff);
+                    if(tmpDiff>0){
+                        for(var index=0; index < tmpDiff; index++){
+                            Global.Trend2.series[1].removePoint(index,false);
+                        }
+                        Global.Trend2.redraw();
+                    }
                 }
             }
                 
@@ -152,10 +200,18 @@ $(document).ready(function(){
                 if(Global.IntRTT){//Дельта-сигма RT LOC
                     data.tube3[1] = Global.RTI3p.Integrity(data.tube3[1]);
                 }
-                if(Global.Trend3.series[1].xData.length<60){
+                if(Global.Trend3.series[1].xData.length<Global.RTbuffer){
                     Global.Trend3.series[1].addPoint(data.tube3,true,false,false);
                 }else{
                     Global.Trend3.series[1].addPoint(data.tube3,true,true,false);
+                    var tmpDiff = Global.Trend3.series[1].xData.length - Global.RTbuffer;
+                    //console.log("tube1-series0 разница:"+tmpDiff);
+                    if(tmpDiff>0){
+                        for(var index=0; index < tmpDiff; index++){
+                            Global.Trend3.series[1].removePoint(index,false);
+                        }
+                        Global.Trend3.redraw();
+                    }
                 }
             }
                 
@@ -163,10 +219,18 @@ $(document).ready(function(){
                 if(Global.IntRTT){//Дельта-сигма RT LOC
                     data.tube4[1] = Global.RTI4p.Integrity(data.tube4[1]);
                 }
-                if(Global.Trend4.series[1].xData.length<60){
+                if(Global.Trend4.series[1].xData.length<Global.RTbuffer){
                     Global.Trend4.series[1].addPoint(data.tube4,true,false,false);
                 }else{
                     Global.Trend4.series[1].addPoint(data.tube4,true,true,false);
+                    var tmpDiff = Global.Trend4.series[1].xData.length - Global.RTbuffer;
+                    //console.log("tube1-series0 разница:"+tmpDiff);
+                    if(tmpDiff>0){
+                        for(var index=0; index < tmpDiff; index++){
+                            Global.Trend4.series[1].removePoint(index,false);
+                        }
+                        Global.Trend4.redraw();
+                    }
                 }
             }
         }

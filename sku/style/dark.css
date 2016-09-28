@@ -62,7 +62,7 @@ small{
     border-top: 1px solid red;
     display: none;
 }
-#integratorSetting{
+#integratorSetting, #rtSetting{
     padding: 10px;
     border-top: 1px solid red;
     display: none;

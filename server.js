@@ -198,7 +198,8 @@ socketServ.on("connection",function(socket){
         });
     });
     socket.on("disconnect",function(){
-       var index = Global.FEclients.indexOf(socket);
+        console.log("client Front End DISCONNECTED");
+        var index = Global.FEclients.indexOf(socket);
         if(index!=-1){
             Global.clients.splice(index,1);
         }

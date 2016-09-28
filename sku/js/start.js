@@ -88,6 +88,38 @@ $(document).ready(function(){
         }
     });
     
+    $('#rt_buffer_slider').slider({
+        range:false,
+        min:1,
+        max:500,
+        value:300,
+        //orientation:"vertical",
+        slide:function(event,ui){
+            $('#rt_buffer').val(ui.value);
+            $('#btn_rtSetting').removeClass("disabled");
+        },
+        create:function(){
+            $('#rt_buffer').val(300);
+        }
+    });
+    
+    $('#rt_vertRange_slider').slider({
+        range:false,
+        min:1,
+        max:200,
+        value:50,
+        //orientation:"vertical",
+        slide:function(event,ui){
+            $('#rt_vertRange').val(ui.value/100);
+            $('#btn_rtSetting').removeClass("disabled");
+        },
+        create:function(){
+            $('#rt_vertRange').val(0.5);
+        }
+    });
+    
+    //-------------------------------------------
+    
     $('#btn_intSetting').on("click",function(){
         $('#btn_intSetting').addClass("disabled");
         Global.INTSettings = {
@@ -136,16 +168,38 @@ $(document).ready(function(){
         }
     });
     
+    //-----------------Integrator-----------------
     $('.btn_int_close').on("click",function(){
         $('#integratorSetting').hide(500);
     });
     $('.btn_intset_toggle').on("click",function(){
         $('#integratorSetting').show(500);
-    })
+    });
+    //---------------RT setting--------------------
+    $('.btn_rtSet_close').on("click",function(){
+        $('#rtSetting').hide(500);
+    });
+    $('.btn_rtSet_open').on("click",function(){
+        $('#rtSetting').show(500);
+    });
     
-    
-    
-    
+    $('#btn_rtSetting').on("click",function(){
+        $('#btn_rtSetting').addClass("disabled");
+        Global.RTSettings = {
+            buffer:Number($('#rt_buffer').val()),
+            vertRange:Number($('#rt_vertRange').val())
+        };
+        console.log(Global.RTSettings);
+        //update RT trends
+        Global.RTbuffer = Global.RTSettings.buffer;
+        var tmpOptions = {
+            minRange:Global.RTSettings.vertRange
+        };
+        Global.Trend1.yAxis[0].update(tmpOptions);
+        Global.Trend2.yAxis[0].update(tmpOptions);
+        Global.Trend3.yAxis[0].update(tmpOptions);
+        Global.Trend4.yAxis[0].update(tmpOptions);
+    });
     //------------
     
     $.ajaxSetup({

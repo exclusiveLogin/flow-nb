@@ -69,6 +69,7 @@
 
         <div id="menu" class="col-lg-5 col-md-5 col-sm-5 text-right hidden-xs">
             <button class="btn btn-success btn_intset_toggle">Настройки DeltaSigma</button>
+            <button class="btn btn-success btn_rtSet_open">Настройки RT графиков</button>
             <button class="btn btn-success btn_rt_toggle">RT</button>
                         
             <button class="btn btn-success btnlogin">Войти в систему</button>
@@ -78,7 +79,25 @@
             <button class="btn btn-success btnlogin">Войти в систему</button>
             <button class="btn btn-danger btnlogout">Выйти из системы</button>
         </div>
-        
+        <!--***********************Настройки RT графиков******************************************-->
+        <div id="rtSetting" class="col-xs-12 text-center form-inline">
+            <header>Настройки Графиков реального времени</header>
+            <div class="form-group">
+                <label>Буффер реального времени</label>
+                <input id="rt_buffer" type="text" class="form-control" readonly>
+                <div id="rt_buffer_slider" class="slider"></div>
+            </div>
+            <div class="form-group">
+                <label>Вертикальный масштаб</label>
+                <input id="rt_vertRange" type="text" class="form-control" readonly>
+                <div id="rt_vertRange_slider" class="slider"></div>
+            </div>
+            <div class="col-xs-12 text-center">
+                <button id="btn_rtSetting" class="btn btn-success btn-group-sm disabled" autofocus>Установить</button>
+                <button class="btn_rtSet_close btn btn-danger btn-group-sm">Закрыть</button>
+            </div>
+        </div>
+        <!--***********************Настройки DeltaSigma******************************************-->
         <div id="integratorSetting" class="col-xs-12 text-center form-inline">
             <header>Настройки Delta-sigma</header>
             <div class="form-group">

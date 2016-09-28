@@ -15,6 +15,6 @@ Global = {
     loggedAs:"",		
     opened:false,
     users:[],
-    
+    RTbuffer:300
 };
 
