@@ -283,10 +283,11 @@ a:hover{
     line-height: 15px;
     border-top:3px solid #FFD100;
 }
-#panel_sku{
+#panel_sku, #panel_rt{
     font-weight: bold;
     font-size: 120%;
     color: orange;
+    text-align: center;
 }
 
 /*-------------------------------trends---------------------------*/

@@ -158,6 +158,18 @@ $(document).ready(function(){
     $('.btn_rt_toggle').on('click',function(){
         rtToggle();
     });
+    $('.btn_rt1_t').on('click',function(){
+        rt1T();
+    });
+    $('.btn_rt2_t').on('click',function(){
+        rt2T();
+    });
+    $('.btn_rt3_t').on('click',function(){
+        rt3T();
+    });
+    $('.btn_rt4_t').on('click',function(){
+        rt4T();
+    });
     $('#btnloginenter').on('click',function(){
         Global.loginData.login = $('#loginName').val();
         Global.loginData.password = $('#passwordName').val();

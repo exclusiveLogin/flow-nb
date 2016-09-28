@@ -3,6 +3,12 @@ Global.socketToLH = undefined;
 Global.RTToggle = false;
 Global.NB_Con = false;
 Global.P_Con = false;
+
+Global.tube1T = true;
+Global.tube2T = true;
+Global.tube3T = true;
+Global.tube4T = true;
+
 $(document).ready(function(){
     $('#status_node_nb').html('<h2 class="label label-lg label-warning">Попытка установить связь</h2>');
     $('#status_node_p').html('<h2 class="label label-lg label-warning">Попытка установить связь</h2>');
@@ -66,7 +72,7 @@ $(document).ready(function(){
                 data.tube3[1] = Global.RTI3.Integrity(data.tube3[1]);
                 data.tube4[1] = Global.RTI4.Integrity(data.tube4[1]);
             }*/
-            if(data.tube1){
+            if(data.tube1 && Global.tube1T){
                 if(Global.IntRTT){//Дельта-сигма RT
                     data.tube1[1] = Global.RTI1.Integrity(data.tube1[1]);
                 }
@@ -77,7 +83,7 @@ $(document).ready(function(){
                 } 
             }
             
-            if(data.tube2){
+            if(data.tube2 && Global.tube2T){
                 if(Global.IntRTT){//Дельта-сигма RT
                     data.tube2[1] = Global.RTI2.Integrity(data.tube2[1]);
                 }
@@ -88,7 +94,7 @@ $(document).ready(function(){
                 }
             }
                 
-            if(data.tube3){
+            if(data.tube3 && Global.tube3T){
                 if(Global.IntRTT){//Дельта-сигма RT
                     data.tube3[1] = Global.RTI3.Integrity(data.tube3[1]);
                 }
@@ -99,7 +105,7 @@ $(document).ready(function(){
                 }
             }
                 
-            if(data.tube4){
+            if(data.tube4 && Global.tube4T){
                 if(Global.IntRTT){//Дельта-сигма RT
                     data.tube4[1] = Global.RTI4.Integrity(data.tube4[1]);
                 }
@@ -120,7 +126,7 @@ $(document).ready(function(){
                 data.tube3[1] = Global.RTI3p.Integrity(data.tube3[1]);
                 data.tube4[1] = Global.RTI4p.Integrity(data.tube4[1]);
             }*/
-            if(data.tube1){
+            if(data.tube1 && Global.tube1T){
                 if(Global.IntRTT){//Дельта-сигма RT LOC
                     data.tube1[1] = Global.RTI1p.Integrity(data.tube1[1]);
                 }
@@ -131,7 +137,7 @@ $(document).ready(function(){
                 } 
             }
         
-            if(data.tube2){
+            if(data.tube2 && Global.tube2T){
                 if(Global.IntRTT){//Дельта-сигма RT LOC
                     data.tube2[1] = Global.RTI2p.Integrity(data.tube2[1]);
                 }
@@ -142,7 +148,7 @@ $(document).ready(function(){
                 }
             }
                 
-            if(data.tube3){
+            if(data.tube3 && Global.tube3T){
                 if(Global.IntRTT){//Дельта-сигма RT LOC
                     data.tube3[1] = Global.RTI3p.Integrity(data.tube3[1]);
                 }
@@ -153,7 +159,7 @@ $(document).ready(function(){
                 }
             }
                 
-            if(data.tube4){
+            if(data.tube4 && Global.tube4T){
                 if(Global.IntRTT){//Дельта-сигма RT LOC
                     data.tube4[1] = Global.RTI4p.Integrity(data.tube4[1]);
                 }

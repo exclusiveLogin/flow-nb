@@ -47,11 +47,54 @@ function rtToggle(){
         Global.RTToggle = true;
     }
 }
+//-----------------------------------------------------
+function rt1T(){
+    if($(".btn_rt1_t").hasClass("active")){
+        $(".btn_rt1_t").removeClass("active");
+        Global.tube1T = false;
+    }
+    else{
+        $(".btn_rt1_t").addClass("active");
+        Global.tube1T = true;
+    }
+}
+function rt2T(){
+    if($(".btn_rt2_t").hasClass("active")){
+        $(".btn_rt2_t").removeClass("active");
+        Global.tube2T = false;
+    }
+    else{
+        $(".btn_rt2_t").addClass("active");
+        Global.tube2T = true;
+    }
+}
+function rt3T(){
+    if($(".btn_rt3_t").hasClass("active")){
+        $(".btn_rt3_t").removeClass("active");
+        Global.tube3T = false;
+    }
+    else{
+        $(".btn_rt3_t").addClass("active");
+        Global.tube3T = true;
+    }
+}
+function rt4T(){
+    if($(".btn_rt4_t").hasClass("active")){
+        $(".btn_rt4_t").removeClass("active");
+        Global.tube4T = false;
+    }
+    else{
+        $(".btn_rt4_t").addClass("active");
+        Global.tube4T = true;
+    }
+}
+//------------------------------------------------
 function refreshLog() {//поведение авторизации 
     if(Global.authkey){
         if(Global.jqready){
             $("#wrapper").removeClass("transparent");
             $("#panel_sku").removeClass("transparent");
+            $("#panel_rt").removeClass("transparent");
             setTimeout(function () {
                 $("#panel").removeClass("transparent");
             },500);
@@ -65,6 +108,7 @@ function refreshLog() {//поведение авторизации
             $('#result').addClass("transparent");
             setTimeout(function () {
                 $("#panel").addClass("transparent");
+                $("#panel_rt").addClass("transparent");
             },500);
             setTimeout(function () {
                 $("#wrapper").addClass("transparent");

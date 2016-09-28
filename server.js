@@ -2,11 +2,14 @@ var Global = {};
 Global.RTsecondLock = false;
 Global.DBsecondLock = false;
 Global.freeLock = false;
-Global.clients = [];
+
 Global.poolReset = false;
 Global.conReQueryLocal = false;
 Global.conReQueryRT = false;
 Global.conReQueryReplica = false;
+
+Global.clients = [];
+Global.FEclients = [];
 //----------------UTILS-------------------
 const util = require("util");
 
@@ -15,6 +18,10 @@ var socketServ = require('socket.io').listen(3000);
 
 socketServ.on("connection",function(socket){
     console.log("client Front End connected");
+    console.log(util.inspect(socket,{colors:true}));
+    
+    Global.FEclients.push(socket);
+    
     socket.on("arjLoad",function(data){
         localP = false;
         localNB = false;
@@ -189,6 +196,12 @@ socketServ.on("connection",function(socket){
                 console.log("error SQL pool");
             }
         });
+    });
+    socket.on("disconnect",function(){
+       var index = Global.FEclients.indexOf(socket);
+        if(index!=-1){
+            Global.clients.splice(index,1);
+        }
     });
 });
 
