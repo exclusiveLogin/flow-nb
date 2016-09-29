@@ -476,7 +476,8 @@ $(document).ready(function(){
         },
         plotOptions: {
             series: {
-                threshold:40
+                threshold:40,
+                allowPointSelect:true
             },
             line:{
                 marker:{
@@ -492,7 +493,24 @@ $(document).ready(function(){
                 valueDecimals: 2,
                 valueSuffix:' кг/см2'
             },
-            color:"orange"
+            color:"orange",
+            //line:{
+                point:{
+                    events:{
+                        select:function(point){
+                            console.log("Point NB selected");
+                            console.log(point);
+                            //------------------
+                            $(".pointNButc").text(point.target.x);
+                            $(".pointNBval").text(point.target.y+" кг/м2");
+                            Global.manPointNB = true;
+                            if(Global.manPointNB && Global.manPointP){
+                                $("#btn_calc").removeClass("disabled");
+                            }
+                        }
+                    }
+                }
+            //},
         },{
             type: 'line',
             name: 'Причал',
@@ -501,7 +519,24 @@ $(document).ready(function(){
                 valueDecimals: 2,
                 valueSuffix:' кг/см2'
             },
-            color:"cyan"
+            color:"cyan",
+            //line:{
+                point:{
+                    events:{
+                        select:function(point){
+                            console.log("Point Prichal selected");
+                            console.log(point);
+                            //------------------
+                            $(".pointPutc").text(point.target.x);
+                            $(".pointPval").text(point.target.y+" кг/м2");
+                            Global.manPointP = true;
+                            if(Global.manPointNB && Global.manPointP){
+                                $("#btn_calc").removeClass("disabled");
+                            }
+                        }
+                    }
+                }
+            //},
         }]
     };
     Global.Trend1 = new Highcharts.Chart(Trend_rt_setting1);

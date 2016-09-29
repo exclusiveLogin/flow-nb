@@ -184,21 +184,26 @@
                     <div class="row">
                         <div id="map"></div>
                         <div id="info">
-                            <div class="pointcont">
-                                <span>Выбранная точка:</span><br>
-                                <span>время:</span><span class="dt_time">------------------</span><br>
-                                <span>значение:</span><span class="dt_val">------------------</span><br>
+                            <div class="panel panel-warning">
+                                <div class="panel-heading">Нефтебаза</div>
+                                <div class="panel-body">
+                                    <span>время:</span><strong class="pointNButc">---</strong><br>
+                                    <span>значение:</span><strong class="pointNBval">---</strong><br>
+                                </div>
                             </div>
-                            <div class="infotext">Точка на графике (Причал)</div>
-                            <div class="btn btn-success btn-block disabled">Установить выбранную точку</div>
-                            <div class="infotext">Точка на графике (Нефтебаза)</div>
-                            <div class="btn btn-success btn-block disabled">Установить выбранную точку</div>
+                            <div class="panel panel-info">
+                                <div class="panel-heading">Причал</div>
+                                <div class="panel-body">
+                                    <span>время:</span><strong class="pointPutc">---</strong><br>
+                                    <span>значение:</span><strong class="pointPval">---</strong><br>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
                 <div id="arj_trend" class="col-md-8"></div>
             </div>
-            <div class="btn btn-warning btn-block" id="btn_calc">Расчитать место протечки</div>
+            <div class="btn btn-warning btn-block disabled" id="btn_calc">Расчитать место протечки</div>
         </div>
     </div>
     <div id="result" class="container-fluid transparent">

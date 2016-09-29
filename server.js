@@ -42,46 +42,59 @@ socketServ.on("connection",function(socket){
             }
             pool.getConnection(function(err,connection){
                 if(!err){
-                    console.log("ArjLoad Pool OK");
+                    console.log("ArjLoad Pool Prichal OK");
                     connection.query(query_p, function(err,data){
                         if(err){
                             socketServ.emit("mysql_error",{});
                             console.log("ARJLOAD error SQL query P");
                         }else{
                             //console.log(util.inspect(data,{colors:true}));
+                            connection.release();
                             localP = true;
                             trendP = data;
                             ret();
                         }
                     });
+                }else{
+                    socketServ.emit("mysql_error",{}); 
+                    console.log("error SQL pool");
+                    resetArjPool();
+                }
+            });
+            pool.getConnection(function(err,connection){
+                if(!err){
+                    console.log("ArjLoad Pool NB OK");
                     connection.query(query_nb, function(err,data){
                         if(err){
                             socketServ.emit("mysql_error",{});
                             console.log("ARJLOAD error SQL query NB");
                         }else{
                             //console.log(util.inspect(data,{colors:true}));
+                            connection.release();
                             localNB = true;
                             trendNB = data;
                             ret();
                         }
                     });
-                    function ret(){
-                        if(localNB && localP){
-                            connection.release();
-                            console.log("ArjLoad connection released");
-                            checkPool("arj");
-                            socketServ.sockets.emit("arj_load_res",{trendP:trendP, trendNB:trendNB,min:data.min,max:data.max});
-                            localNB = false;
-                            localP = false;
-                            trendP = null;
-                            trendNB = null;
-                        }
-                    };
                 }else{
                     socketServ.emit("mysql_error",{}); 
                     console.log("error SQL pool");
+                    resetArjPool();
                 }
             });
+                
+            function ret(){
+                if(localNB && localP){
+                    //connection.release();
+                    //console.log("ArjLoad connection released");
+                    checkPoolArj("arj");
+                    socketServ.sockets.emit("arj_load_res",{trendP:trendP, trendNB:trendNB,min:data.min,max:data.max});
+                    localNB = false;
+                    localP = false;
+                    trendP = null;
+                    trendNB = null;
+                }
+            }
         }
     });
     socket.on("min_max",function(data){
@@ -98,105 +111,138 @@ socketServ.on("connection",function(socket){
             max:null
         }
         console.log("min_max");
-        pool.getConnection(function(err,connection){
-            if(!err){
-                console.log("MinMax Pool OK");
+        poolArj.getConnection(function(err,connection){
+            if(err){
+                console.error("error create Arj con");
+                console.log(err);
+                resetArjPool();
+            }else{
+                //--------------------------------1-----------------------------------------
                 var query = "SELECT MIN(`utc`) AS `minimum` FROM `p_tube"+data.tube+"_dump`";
                 connection.query(query,function(err,data,row){
                     if(err){
                         socketServ.sockets.emit("mysql_error",{});
                         console.log("error SQL pool");
                     }else{
+                        connection.release();
                         console.log(util.inspect(data,{colors:true}));
                         RcvMin = data[0].minimum;
                         localMin = true;
                         ret();
                     }
                 });
+            }
+        });
+        
+        poolArj.getConnection(function(err,connection){
+            if(err){
+                console.error("error create Arj con");
+                console.log(err);
+                resetArjPool();
+            }else{
+                //-------------------------------2-----------------------------------------
                 var query = "SELECT MAX(`utc`) AS `maximum` FROM `p_tube"+data.tube+"_dump`";
                 connection.query(query,function(err,data,row){
                     if(err){
                         socketServ.sockets.emit("mysql_error",{});
                         console.log("error SQL pool");
                     }else{
+                        connection.release();
                         console.log(util.inspect(data,{colors:true}));
                         RcvMax = data[0].maximum;
                         localMax = true;
                         ret();
                     }
                 });
+            }
+        });
+        
+        poolArj.getConnection(function(err,connection){
+            if(err){
+                console.error("error create Arj con");
+                console.log(err);
+                resetArjPool();
+            }else{
+                //--------------------------------3-----------------------------------------
                 var query = "SELECT MIN(`utc`) AS `minimum` FROM `tube"+data.tube+"_dump`";
                 connection.query(query,function(err,data,row){
                     if(err){
                         socketServ.sockets.emit("mysql_error",{});
                         console.log("error SQL pool");
                     }else{
+                        connection.release();
                         console.log(util.inspect(data,{colors:true}));
                         RcvMin2 = data[0].minimum;
                         localMin2 = true;
                         ret();
                     }
                 });
+            }
+        });
+        
+        poolArj.getConnection(function(err,connection){
+            if(err){
+                console.error("error create Arj con");
+                console.log(err);
+                resetArjPool();
+            }else{
+                //--------------------------------4-----------------------------------------
                 var query = "SELECT MAX(`utc`) AS `maximum` FROM `tube"+data.tube+"_dump`";
                 connection.query(query,function(err,data,row){
                     if(err){
                         socketServ.sockets.emit("mysql_error",{});
                         console.log("error SQL pool");
                     }else{
+                        connection.release();
                         console.log(util.inspect(data,{colors:true}));
                         RcvMax2 = data[0].maximum;
                         localMax2 = true;
                         ret();
                     }
                 });
-                                      
-                
-                
-                function ret(){
-                    if(localMax && localMin && localMax2 && localMin2){
-                        connection.release();
-                        console.log("MinMax connection released");
-                        
-                        console.log("min:"+RcvMin+" max:"+RcvMax);
-                        console.log("min:"+RcvMin2+" max:"+RcvMax2);
-                        if(RcvMax >= RcvMax2){
-                            result.max = RcvMax;
-                        }else{
-                            result.max = RcvMax2;
-                        }
-                        //обработка нуля min Interval
-                        if(RcvMin == null && RcvMin2 == null){
-                            socketServ.sockets.emit("min_null",{});
-                            console.log("min_max null SQL error");
-                        }else if(RcvMin == null){
-                            RcvMin = RcvMin2;
-                        }else{
-                            RcvMin2 = RcvMin;
-                        }
-                        //------------------------------
-                        
-                        
-                        if(RcvMin <= RcvMin2){
-                            result.min = RcvMin;
-                        }else{
-                            result.min = RcvMin2;
-                        }
-                        result.tube = data.tube;
-                        console.log(util.inspect(result));
-                        //сюда пишем вывод значений для тренда
-                        socketServ.sockets.emit("min_max_res",result);
-                        localMax = false;
-                        localMax2 = false;
-                        localMin = false;
-                        localMin2 = false;
-                    }
-                };
-                
-            }else{
-                socketServ.sockets.emit("mysql_error",{});
-                console.log("error SQL pool");
             }
         });
+        
+        function ret(){
+            if(localMax && localMin && localMax2 && localMin2){
+                //connection.release();
+                //console.log("MinMax connection released");
+                checkPoolArj();
+
+                console.log("min:"+RcvMin+" max:"+RcvMax);
+                console.log("min:"+RcvMin2+" max:"+RcvMax2);
+                if(RcvMax >= RcvMax2){
+                    result.max = RcvMax;
+                }else{
+                    result.max = RcvMax2;
+                }
+                //обработка нуля min Interval
+                if(RcvMin == null && RcvMin2 == null){
+                    socketServ.sockets.emit("min_null",{});
+                    console.log("min_max null SQL error");
+                }else if(RcvMin == null){
+                    RcvMin = RcvMin2;
+                }else{
+                    RcvMin2 = RcvMin;
+                }
+                
+                if(RcvMin <= RcvMin2){
+                    result.min = RcvMin;
+                }else{
+                    result.min = RcvMin2;
+                }
+                result.tube = data.tube;
+                console.log(util.inspect(result,{colors:true}));
+                //сюда пишем вывод значений для тренда
+                socketServ.sockets.emit("min_max_res",result);
+                localMax = false;
+                localMax2 = false;
+                localMin = false;
+                localMin2 = false;
+            }
+        }
+            
+        
     });
     socket.on("disconnect",function(){
         console.log("client Front End DISCONNECTED");
@@ -213,19 +259,55 @@ var mysql = require("mysql");
 var pool;
 function crPool(){
     pool = mysql.createPool({
-    waitForConnections:false,
-    connectionLimit : 20,
-    host     : 'localhost',
-    user     : 'root',
-    password : '123',
-    database : 'flow_nb'
+        waitForConnections:false,
+        connectionLimit : 20,
+        host     : 'localhost',
+        user     : 'root',
+        password : '123',
+        database : 'flow_nb'
     }); 
 }
 crPool();//Первичная инициация pool
 
+var poolArj;
+function crPoolArj(){
+    poolArj = mysql.createPool({
+        waitForConnections:false,
+        connectionLimit : 20,
+        host     : 'localhost',
+        user     : 'root',
+        password : '123',
+        database : 'flow_nb'
+    }); 
+}
+crPool();//Первичная инициация pool
+crPoolArj();//Первичная инициация pool
+
+function checkArjCon(callback){
+    if(Global.ArjConnection){
+        if(callback){
+            callback();
+        }
+    }else{
+        poolArj.getConnection(function(err,connection){
+            if(err){
+                console.log("ARJ con not created");
+            }else{
+                Global.ArjConnection = connection;
+                if(callback){
+                    callback();
+                }
+            }
+        });
+    }
+}
+
+
+
 Global.sqlConRemoteQuery = false;
 Global.sqlConLocalQuery = false;
 Global.sqlResetQuery = false;
+Global.sqlResetArjQuery = false;
 
 var resetPool = function(){
     if(!Global.sqlResetQuery){
@@ -254,6 +336,29 @@ var resetPool = function(){
         }
     }
 }
+var resetArjPool = function(){
+    if(!Global.sqlResetArjQuery){
+        Global.sqlResetArjQuery = true;
+        if(poolArj){
+            console.log("pool Arj established, reset success");
+            poolArj.end(function(err){//delete pool
+                poolArj = null;
+                if(!err){
+                    console.log("pool ARJ end without error");
+                    crPoolArj();
+                }else{
+                    console.log("pool ARJ end with ERROR");
+                    console.log("ERROR:"+util.inspect(err,{colors:true}));
+                }
+                Global.sqlResetArjQuery = false;
+            });
+        }else{
+            console.log("pool Arj not established, create new pool");
+            crPoolArj();
+            Global.sqlResetArjQuery = false; 
+        }
+    }
+}
 var checkPool = function(str){
     if(pool){
         console.log(str+":");
@@ -262,7 +367,17 @@ var checkPool = function(str){
     }else{
         console.log("pool not defined");
     }
-}
+};
+        
+var checkPoolArj = function(str){
+    if(poolArj){
+        console.log(str+":");
+        console.log("all con:"+util.inspect(poolArj._allConnections.length,{colors:true}));
+        console.log("free con:"+util.inspect(poolArj._freeConnections.length,{colors:true}));
+    }else{
+        console.log("pool not defined");
+    }
+};
 
 
 var regConSQLRemote = function(){
