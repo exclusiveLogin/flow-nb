@@ -718,6 +718,7 @@ function DBWriter(data,nowdt){
                     if(err){
                         console.log("error SQL insert RT:"+util.inspect(err,{colors:true}));
                         socketServ.sockets.emit("mysql_error",{});
+                        regConSQLLocal();
                     }else{
                         //console.log("Data RT saved in DB successuful");
                     }

@@ -13,7 +13,7 @@ $(document).ready(function () {
 function InitMap() {
     var map = new google.maps.Map(domobjjq[0], {
         center: {lat: 53.172579, lng: 48.560600},
-        zoom: 13
+        zoom: 14
     });
     //animation = new google.map.Animation.DROP;
     var marker1 = new google.maps.Marker({

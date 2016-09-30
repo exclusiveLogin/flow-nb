@@ -1,4 +1,14 @@
 PLC connected
+Register SQL local success
+Prichal connected
+Register SQL local success
+curent name:OPC_Prichal
+data rcv RT:[ [32m'0.00'[39m, [32m'4.25'[39m, [32m'3.13'[39m, [32m'0.00'[39m ]
+data rcv RT:[ [32m'0.00'[39m, [32m'4.34'[39m, [32m'3.05'[39m, [32m'0.07'[39m ]
+1:0.01 2:1.67 3:1.69 4:0.00 heap = 15073176
+data rcv RT:[ [32m'0.00'[39m, [32m'4.35'[39m, [32m'3.10'[39m, [32m'0.00'[39m ]
+1:0.07 2:1.71 3:1.68 4:0.06 heap = 15199360
+data rcv RT:[ [32m'0.00'[39m, [32m'4.32'[39m, [32m'3.05'[39m, [32m'0.00'[39m ]
 client Front End connected
 Socket {
   nsp: 
@@ -15,8 +25,8 @@ Socket {
         eio: [36m[Object][39m,
         httpServer: [36m[Object][39m,
         engine: [36m[Object][39m },
-     sockets: { [32m'/#7fSI22S5h8YoQ_UjAAAA'[39m: [36m[Circular][39m },
-     connected: { [32m'/#7fSI22S5h8YoQ_UjAAAA'[39m: [36m[Circular][39m },
+     sockets: { [32m'/#qphTraiv7n5dYetkAAAB'[39m: [36m[Circular][39m },
+     connected: { [32m'/#qphTraiv7n5dYetkAAAB'[39m: [36m[Circular][39m },
      fns: [],
      ids: [33m0[39m,
      adapter: 
@@ -111,10 +121,10 @@ Socket {
         adapter: [36m[Circular][39m,
         _events: [36m[Object][39m,
         _eventsCount: [33m1[39m },
-     rooms: { [32m'/#7fSI22S5h8YoQ_UjAAAA'[39m: [36m[Object][39m },
-     sids: { [32m'/#7fSI22S5h8YoQ_UjAAAA'[39m: [36m[Object][39m },
+     rooms: { [32m'/#qphTraiv7n5dYetkAAAB'[39m: [36m[Object][39m },
+     sids: { [32m'/#qphTraiv7n5dYetkAAAB'[39m: [36m[Object][39m },
      encoder: Encoder {} },
-  id: [32m'/#7fSI22S5h8YoQ_UjAAAA'[39m,
+  id: [32m'/#qphTraiv7n5dYetkAAAB'[39m,
   client: 
    Client {
      server: 
@@ -130,7 +140,7 @@ Socket {
         engine: [36m[Object][39m },
      conn: 
       Socket {
-        id: [32m'7fSI22S5h8YoQ_UjAAAA'[39m,
+        id: [32m'qphTraiv7n5dYetkAAAB'[39m,
         server: [36m[Object][39m,
         upgrading: [33mfalse[39m,
         upgraded: [33mfalse[39m,
@@ -140,7 +150,7 @@ Socket {
         sentCallbackFn: [],
         cleanupFn: [36m[Object][39m,
         request: [36m[Object][39m,
-        remoteAddress: [32m'::ffff:10.210.30.41'[39m,
+        remoteAddress: [32m'::ffff:10.210.30.32'[39m,
         checkIntervalTimer: [1mnull[22m,
         upgradeTimeoutTimer: [1mnull[22m,
         pingTimeoutTimer: [36m[Object][39m,
@@ -149,7 +159,7 @@ Socket {
         _eventsCount: [33m3[39m },
      encoder: Encoder {},
      decoder: Decoder { reconstructor: [1mnull[22m, _callbacks: [36m[Object][39m },
-     id: [32m'7fSI22S5h8YoQ_UjAAAA'[39m,
+     id: [32m'qphTraiv7n5dYetkAAAB'[39m,
      request: 
       IncomingMessage {
         _readableState: [36m[Object][39m,
@@ -169,7 +179,7 @@ Socket {
         trailers: {},
         rawTrailers: [],
         upgrade: [33mfalse[39m,
-        url: [32m'/socket.io/?EIO=3&transport=polling&t=LTr_82r'[39m,
+        url: [32m'/socket.io/?EIO=3&transport=polling&t=LTvcPCO'[39m,
         method: [32m'GET'[39m,
         statusCode: [1mnull[22m,
         statusMessage: [1mnull[22m,
@@ -183,12 +193,12 @@ Socket {
      ondata: [36m[Function: bound ][39m,
      onerror: [36m[Function: bound ][39m,
      ondecoded: [36m[Function: bound ][39m,
-     sockets: { [32m'/#7fSI22S5h8YoQ_UjAAAA'[39m: [36m[Circular][39m },
+     sockets: { [32m'/#qphTraiv7n5dYetkAAAB'[39m: [36m[Circular][39m },
      nsps: { [32m'/'[39m: [36m[Circular][39m },
      connectBuffer: [] },
   conn: 
    Socket {
-     id: [32m'7fSI22S5h8YoQ_UjAAAA'[39m,
+     id: [32m'qphTraiv7n5dYetkAAAB'[39m,
      server: 
       Server {
         clients: [36m[Object][39m,
@@ -233,7 +243,7 @@ Socket {
         trailers: {},
         rawTrailers: [],
         upgrade: [33mfalse[39m,
-        url: [32m'/socket.io/?EIO=3&transport=polling&t=LTr_82r'[39m,
+        url: [32m'/socket.io/?EIO=3&transport=polling&t=LTvcPCO'[39m,
         method: [32m'GET'[39m,
         statusCode: [1mnull[22m,
         statusMessage: [1mnull[22m,
@@ -243,7 +253,7 @@ Socket {
         _query: [36m[Object][39m,
         res: [36m[Object][39m,
         cleanup: [36m[Function: cleanup][39m },
-     remoteAddress: [32m'::ffff:10.210.30.41'[39m,
+     remoteAddress: [32m'::ffff:10.210.30.32'[39m,
      checkIntervalTimer: [1mnull[22m,
      upgradeTimeoutTimer: [1mnull[22m,
      pingTimeoutTimer: 
@@ -252,7 +262,7 @@ Socket {
         _idleTimeout: [33m85000[39m,
         _idlePrev: [36m[Object][39m,
         _idleNext: [36m[Object][39m,
-        _idleStart: [33m198[39m,
+        _idleStart: [33m3124[39m,
         _onTimeout: [36m[Function][39m,
         _repeat: [1mnull[22m },
      transport: 
@@ -265,7 +275,7 @@ Socket {
         supportsBinary: [33mtrue[39m,
         _events: [36m[Object][39m,
         _eventsCount: [33m5[39m,
-        sid: [32m'7fSI22S5h8YoQ_UjAAAA'[39m,
+        sid: [32m'qphTraiv7n5dYetkAAAB'[39m,
         req: [1mnull[22m,
         res: [1mnull[22m,
         writable: [33mfalse[39m },
@@ -288,15 +298,49 @@ Socket {
         referer: [32m'http://10.210.30.148/sku/'[39m,
         [32m'accept-encoding'[39m: [32m'gzip, deflate, sdch'[39m,
         [32m'accept-language'[39m: [32m'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4'[39m,
-        cookie: [32m'io=uPLG9zulIu1C5fTzAAAE'[39m },
-     time: [32m'Thu Sep 29 2016 16:47:41 GMT+0400 (SAMT)'[39m,
-     address: [32m'::ffff:10.210.30.41'[39m,
+        cookie: [32m'io=s9hdVpWCiiGV-VirAAAH'[39m },
+     time: [32m'Fri Sep 30 2016 09:36:37 GMT+0400 (SAMT)'[39m,
+     address: [32m'::ffff:10.210.30.32'[39m,
      xdomain: [33mtrue[39m,
      secure: [33mfalse[39m,
-     issued: [33m1475153261828[39m,
-     url: [32m'/socket.io/?EIO=3&transport=polling&t=LTr_82r'[39m,
-     query: { EIO: [32m'3'[39m, transport: [32m'polling'[39m, t: [32m'LTr_82r'[39m } } }
-Register SQL local success
+     issued: [33m1475213797764[39m,
+     url: [32m'/socket.io/?EIO=3&transport=polling&t=LTvcPCO'[39m,
+     query: { EIO: [32m'3'[39m, transport: [32m'polling'[39m, t: [32m'LTvcPCO'[39m } } }
+1:0.05 2:1.71 3:1.74 4:0.05 heap = 17318320
+disconnect emited
+prichal disconnect RT:
+all con:[33m2[39m
+free con:[33m1[39m
+IO disconnected
+1:0.03 2:1.71 3:1.70 4:0.00 heap = 17538584
+1:0.00 2:1.68 3:1.69 4:0.00 heap = 17668792
+1:0.02 2:1.67 3:1.67 4:0.00 heap = 17736096
+1:0.06 2:1.68 3:1.68 4:0.06 heap = 17801816
+1:0.05 2:1.72 3:1.73 4:0.07 heap = 17866976
+1:0.06 2:1.73 3:1.72 4:0.03 heap = 17935488
+1:0.00 2:1.69 3:1.70 4:0.00 heap = 17999536
+1:0.04 2:1.69 3:1.71 4:0.01 heap = 18080744
+1:0.07 2:1.68 3:1.69 4:0.06 heap = 18228520
+1:0.05 2:1.72 3:1.74 4:0.05 heap = 18317192
+1:0.01 2:1.70 3:1.72 4:0.01 heap = 18393112
+1:0.00 2:1.69 3:1.68 4:0.00 heap = 18489112
+1:0.03 2:1.69 3:1.68 4:0.00 heap = 18596928
+1:0.03 2:1.67 3:1.67 4:0.04 heap = 18657936
+1:0.04 2:1.74 3:1.72 4:0.05 heap = 18726216
+1:0.01 2:1.68 3:1.67 4:0.00 heap = 15930256
+1:0.01 2:1.68 3:1.67 4:0.00 heap = 16046736
+1:0.04 2:1.69 3:1.69 4:0.00 heap = 16114480
+1:0.07 2:1.68 3:1.70 4:0.05 heap = 16180056
+1:0.06 2:1.74 3:1.73 4:0.05 heap = 16248640
+1:0.03 2:1.73 3:1.73 4:0.00 heap = 16306720
+1:0.01 2:1.69 3:1.68 4:0.00 heap = 16365216
+1:0.03 2:1.65 3:1.68 4:0.03 heap = 16425440
+Data Local Minutly saved in DB successuful
+Data Local Minutly saved in DB successuful
+Data Local Minutly saved in DB successuful
+Data Local Minutly saved in DB successuful
+1:0.08 2:1.73 3:1.71 4:0.06 heap = 16510640
+1:0.04 2:1.70 3:1.72 4:0.01 heap = 16616128
 client Front End connected
 Socket {
   nsp: 
@@ -314,11 +358,11 @@ Socket {
         httpServer: [36m[Object][39m,
         engine: [36m[Object][39m },
      sockets: 
-      { [32m'/#7fSI22S5h8YoQ_UjAAAA'[39m: [36m[Object][39m,
-        [32m'/#zjSnoWc0-LpfoveeAAAB'[39m: [36m[Circular][39m },
+      { [32m'/#qphTraiv7n5dYetkAAAB'[39m: [36m[Object][39m,
+        [32m'/#pLzpTyZNjLM5eer7AAAC'[39m: [36m[Circular][39m },
      connected: 
-      { [32m'/#7fSI22S5h8YoQ_UjAAAA'[39m: [36m[Object][39m,
-        [32m'/#zjSnoWc0-LpfoveeAAAB'[39m: [36m[Circular][39m },
+      { [32m'/#qphTraiv7n5dYetkAAAB'[39m: [36m[Object][39m,
+        [32m'/#pLzpTyZNjLM5eer7AAAC'[39m: [36m[Circular][39m },
      fns: [],
      ids: [33m0[39m,
      adapter: 
@@ -414,13 +458,13 @@ Socket {
         _events: [36m[Object][39m,
         _eventsCount: [33m1[39m },
      rooms: 
-      { [32m'/#7fSI22S5h8YoQ_UjAAAA'[39m: [36m[Object][39m,
-        [32m'/#zjSnoWc0-LpfoveeAAAB'[39m: [36m[Object][39m },
+      { [32m'/#qphTraiv7n5dYetkAAAB'[39m: [36m[Object][39m,
+        [32m'/#pLzpTyZNjLM5eer7AAAC'[39m: [36m[Object][39m },
      sids: 
-      { [32m'/#7fSI22S5h8YoQ_UjAAAA'[39m: [36m[Object][39m,
-        [32m'/#zjSnoWc0-LpfoveeAAAB'[39m: [36m[Object][39m },
+      { [32m'/#qphTraiv7n5dYetkAAAB'[39m: [36m[Object][39m,
+        [32m'/#pLzpTyZNjLM5eer7AAAC'[39m: [36m[Object][39m },
      encoder: Encoder {} },
-  id: [32m'/#zjSnoWc0-LpfoveeAAAB'[39m,
+  id: [32m'/#pLzpTyZNjLM5eer7AAAC'[39m,
   client: 
    Client {
      server: 
@@ -436,7 +480,7 @@ Socket {
         engine: [36m[Object][39m },
      conn: 
       Socket {
-        id: [32m'zjSnoWc0-LpfoveeAAAB'[39m,
+        id: [32m'pLzpTyZNjLM5eer7AAAC'[39m,
         server: [36m[Object][39m,
         upgrading: [33mfalse[39m,
         upgraded: [33mfalse[39m,
@@ -446,7 +490,7 @@ Socket {
         sentCallbackFn: [],
         cleanupFn: [36m[Object][39m,
         request: [36m[Object][39m,
-        remoteAddress: [32m'::ffff:10.210.30.41'[39m,
+        remoteAddress: [32m'::ffff:10.210.30.32'[39m,
         checkIntervalTimer: [1mnull[22m,
         upgradeTimeoutTimer: [1mnull[22m,
         pingTimeoutTimer: [36m[Object][39m,
@@ -455,7 +499,7 @@ Socket {
         _eventsCount: [33m3[39m },
      encoder: Encoder {},
      decoder: Decoder { reconstructor: [1mnull[22m, _callbacks: [36m[Object][39m },
-     id: [32m'zjSnoWc0-LpfoveeAAAB'[39m,
+     id: [32m'pLzpTyZNjLM5eer7AAAC'[39m,
      request: 
       IncomingMessage {
         _readableState: [36m[Object][39m,
@@ -475,7 +519,7 @@ Socket {
         trailers: {},
         rawTrailers: [],
         upgrade: [33mfalse[39m,
-        url: [32m'/socket.io/?EIO=3&transport=polling&t=LTr_8Zj'[39m,
+        url: [32m'/socket.io/?EIO=3&transport=polling&t=LTvcVQS'[39m,
         method: [32m'GET'[39m,
         statusCode: [1mnull[22m,
         statusMessage: [1mnull[22m,
@@ -489,12 +533,12 @@ Socket {
      ondata: [36m[Function: bound ][39m,
      onerror: [36m[Function: bound ][39m,
      ondecoded: [36m[Function: bound ][39m,
-     sockets: { [32m'/#zjSnoWc0-LpfoveeAAAB'[39m: [36m[Circular][39m },
+     sockets: { [32m'/#pLzpTyZNjLM5eer7AAAC'[39m: [36m[Circular][39m },
      nsps: { [32m'/'[39m: [36m[Circular][39m },
      connectBuffer: [] },
   conn: 
    Socket {
-     id: [32m'zjSnoWc0-LpfoveeAAAB'[39m,
+     id: [32m'pLzpTyZNjLM5eer7AAAC'[39m,
      server: 
       Server {
         clients: [36m[Object][39m,
@@ -539,7 +583,7 @@ Socket {
         trailers: {},
         rawTrailers: [],
         upgrade: [33mfalse[39m,
-        url: [32m'/socket.io/?EIO=3&transport=polling&t=LTr_8Zj'[39m,
+        url: [32m'/socket.io/?EIO=3&transport=polling&t=LTvcVQS'[39m,
         method: [32m'GET'[39m,
         statusCode: [1mnull[22m,
         statusMessage: [1mnull[22m,
@@ -549,7 +593,7 @@ Socket {
         _query: [36m[Object][39m,
         res: [36m[Object][39m,
         cleanup: [36m[Function: cleanup][39m },
-     remoteAddress: [32m'::ffff:10.210.30.41'[39m,
+     remoteAddress: [32m'::ffff:10.210.30.32'[39m,
      checkIntervalTimer: [1mnull[22m,
      upgradeTimeoutTimer: [1mnull[22m,
      pingTimeoutTimer: 
@@ -558,7 +602,7 @@ Socket {
         _idleTimeout: [33m85000[39m,
         _idlePrev: [36m[Object][39m,
         _idleNext: [36m[Object][39m,
-        _idleStart: [33m1084[39m,
+        _idleStart: [33m28597[39m,
         _onTimeout: [36m[Function][39m,
         _repeat: [1mnull[22m },
      transport: 
@@ -571,7 +615,7 @@ Socket {
         supportsBinary: [33mtrue[39m,
         _events: [36m[Object][39m,
         _eventsCount: [33m5[39m,
-        sid: [32m'zjSnoWc0-LpfoveeAAAB'[39m,
+        sid: [32m'pLzpTyZNjLM5eer7AAAC'[39m,
         req: [1mnull[22m,
         res: [1mnull[22m,
         writable: [33mfalse[39m },
@@ -591,18 +635,36 @@ Socket {
         [32m'user-agent'[39m: [32m'Mozilla/5.0 (Windows NT 5.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.112 Safari/537.36'[39m,
         origin: [32m'http://10.210.30.148'[39m,
         accept: [32m'*/*'[39m,
-        referer: [32m'http://10.210.30.148/'[39m,
+        referer: [32m'http://10.210.30.148/sku/'[39m,
         [32m'accept-encoding'[39m: [32m'gzip, deflate, sdch'[39m,
         [32m'accept-language'[39m: [32m'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4'[39m,
-        cookie: [32m'io=7fSI22S5h8YoQ_UjAAAA'[39m },
-     time: [32m'Thu Sep 29 2016 16:47:42 GMT+0400 (SAMT)'[39m,
-     address: [32m'::ffff:10.210.30.41'[39m,
+        cookie: [32m'io=qphTraiv7n5dYetkAAAB'[39m },
+     time: [32m'Fri Sep 30 2016 09:37:03 GMT+0400 (SAMT)'[39m,
+     address: [32m'::ffff:10.210.30.32'[39m,
      xdomain: [33mtrue[39m,
      secure: [33mfalse[39m,
-     issued: [33m1475153262710[39m,
-     url: [32m'/socket.io/?EIO=3&transport=polling&t=LTr_8Zj'[39m,
-     query: { EIO: [32m'3'[39m, transport: [32m'polling'[39m, t: [32m'LTr_8Zj'[39m } } }
-1:0.05 2:1.72 3:0.99 4:0.03 heap = 17639944
+     issued: [33m1475213823236[39m,
+     url: [32m'/socket.io/?EIO=3&transport=polling&t=LTvcVQS'[39m,
+     query: { EIO: [32m'3'[39m, transport: [32m'polling'[39m, t: [32m'LTvcVQS'[39m } } }
+1:0.00 2:1.69 3:1.71 4:0.00 heap = 16436240
+1:0.02 2:1.66 3:1.67 4:0.00 heap = 16501640
+1:0.03 2:1.69 3:1.69 4:0.01 heap = 16565688
+1:0.07 2:1.70 3:1.72 4:0.06 heap = 16637656
+1:0.05 2:1.74 3:1.71 4:0.02 heap = 16701664
+1:0.04 2:1.73 3:1.70 4:0.00 heap = 16785888
+1:0.00 2:1.66 3:1.67 4:0.00 heap = 16849264
+1:0.04 2:1.69 3:1.67 4:0.00 heap = 16913096
+1:0.08 2:1.72 3:1.68 4:0.07 heap = 16976792
+1:0.05 2:1.71 3:1.73 4:0.06 heap = 17040264
+1:0.05 2:1.71 3:1.70 4:0.02 heap = 17130640
+1:0.00 2:1.68 3:1.66 4:0.00 heap = 17194280
+1:0.01 2:1.68 3:1.67 4:0.00 heap = 17264464
+client Front End DISCONNECTED
+1:0.04 2:1.67 3:1.71 4:0.05 heap = 17382864
+1:0.07 2:1.74 3:1.73 4:0.06 heap = 17443728
+1:0.02 2:1.71 3:1.69 4:0.01 heap = 16674664
+1:0.01 2:1.71 3:1.68 4:0.00 heap = 16757048
+1:0.02 2:1.68 3:1.67 4:0.00 heap = 16817720
 client Front End connected
 Socket {
   nsp: 
@@ -620,13 +682,11 @@ Socket {
         httpServer: [36m[Object][39m,
         engine: [36m[Object][39m },
      sockets: 
-      { [32m'/#7fSI22S5h8YoQ_UjAAAA'[39m: [36m[Object][39m,
-        [32m'/#zjSnoWc0-LpfoveeAAAB'[39m: [36m[Object][39m,
-        [32m'/#iJV3mzfYKrrGADHOAAAC'[39m: [36m[Circular][39m },
+      { [32m'/#pLzpTyZNjLM5eer7AAAC'[39m: [36m[Object][39m,
+        [32m'/#aHLMYPVbgYZPe4CbAAAD'[39m: [36m[Circular][39m },
      connected: 
-      { [32m'/#7fSI22S5h8YoQ_UjAAAA'[39m: [36m[Object][39m,
-        [32m'/#zjSnoWc0-LpfoveeAAAB'[39m: [36m[Object][39m,
-        [32m'/#iJV3mzfYKrrGADHOAAAC'[39m: [36m[Circular][39m },
+      { [32m'/#pLzpTyZNjLM5eer7AAAC'[39m: [36m[Object][39m,
+        [32m'/#aHLMYPVbgYZPe4CbAAAD'[39m: [36m[Circular][39m },
      fns: [],
      ids: [33m0[39m,
      adapter: 
@@ -658,7 +718,7 @@ Socket {
      eio: 
       Server {
         clients: [36m[Object][39m,
-        clientsCount: [33m3[39m,
+        clientsCount: [33m2[39m,
         pingTimeout: [33m60000[39m,
         pingInterval: [33m25000[39m,
         upgradeTimeout: [33m10000[39m,
@@ -679,7 +739,7 @@ Socket {
         _events: [36m[Object][39m,
         _eventsCount: [33m4[39m,
         _maxListeners: [90mundefined[39m,
-        _connections: [33m3[39m,
+        _connections: [33m2[39m,
         _handle: [36m[Object][39m,
         _usingSlaves: [33mfalse[39m,
         _slaves: [],
@@ -693,7 +753,7 @@ Socket {
      engine: 
       Server {
         clients: [36m[Object][39m,
-        clientsCount: [33m3[39m,
+        clientsCount: [33m2[39m,
         pingTimeout: [33m60000[39m,
         pingInterval: [33m25000[39m,
         upgradeTimeout: [33m10000[39m,
@@ -722,15 +782,13 @@ Socket {
         _events: [36m[Object][39m,
         _eventsCount: [33m1[39m },
      rooms: 
-      { [32m'/#7fSI22S5h8YoQ_UjAAAA'[39m: [36m[Object][39m,
-        [32m'/#zjSnoWc0-LpfoveeAAAB'[39m: [36m[Object][39m,
-        [32m'/#iJV3mzfYKrrGADHOAAAC'[39m: [36m[Object][39m },
+      { [32m'/#pLzpTyZNjLM5eer7AAAC'[39m: [36m[Object][39m,
+        [32m'/#aHLMYPVbgYZPe4CbAAAD'[39m: [36m[Object][39m },
      sids: 
-      { [32m'/#7fSI22S5h8YoQ_UjAAAA'[39m: [36m[Object][39m,
-        [32m'/#zjSnoWc0-LpfoveeAAAB'[39m: [36m[Object][39m,
-        [32m'/#iJV3mzfYKrrGADHOAAAC'[39m: [36m[Object][39m },
+      { [32m'/#pLzpTyZNjLM5eer7AAAC'[39m: [36m[Object][39m,
+        [32m'/#aHLMYPVbgYZPe4CbAAAD'[39m: [36m[Object][39m },
      encoder: Encoder {} },
-  id: [32m'/#iJV3mzfYKrrGADHOAAAC'[39m,
+  id: [32m'/#aHLMYPVbgYZPe4CbAAAD'[39m,
   client: 
    Client {
      server: 
@@ -746,7 +804,7 @@ Socket {
         engine: [36m[Object][39m },
      conn: 
       Socket {
-        id: [32m'iJV3mzfYKrrGADHOAAAC'[39m,
+        id: [32m'aHLMYPVbgYZPe4CbAAAD'[39m,
         server: [36m[Object][39m,
         upgrading: [33mfalse[39m,
         upgraded: [33mfalse[39m,
@@ -756,7 +814,7 @@ Socket {
         sentCallbackFn: [],
         cleanupFn: [36m[Object][39m,
         request: [36m[Object][39m,
-        remoteAddress: [32m'::ffff:10.210.30.41'[39m,
+        remoteAddress: [32m'::ffff:10.210.30.32'[39m,
         checkIntervalTimer: [1mnull[22m,
         upgradeTimeoutTimer: [1mnull[22m,
         pingTimeoutTimer: [36m[Object][39m,
@@ -765,7 +823,7 @@ Socket {
         _eventsCount: [33m3[39m },
      encoder: Encoder {},
      decoder: Decoder { reconstructor: [1mnull[22m, _callbacks: [36m[Object][39m },
-     id: [32m'iJV3mzfYKrrGADHOAAAC'[39m,
+     id: [32m'aHLMYPVbgYZPe4CbAAAD'[39m,
      request: 
       IncomingMessage {
         _readableState: [36m[Object][39m,
@@ -785,7 +843,7 @@ Socket {
         trailers: {},
         rawTrailers: [],
         upgrade: [33mfalse[39m,
-        url: [32m'/socket.io/?EIO=3&transport=polling&t=LTr_8rW'[39m,
+        url: [32m'/socket.io/?EIO=3&transport=polling&t=LTvcZnV'[39m,
         method: [32m'GET'[39m,
         statusCode: [1mnull[22m,
         statusMessage: [1mnull[22m,
@@ -799,16 +857,16 @@ Socket {
      ondata: [36m[Function: bound ][39m,
      onerror: [36m[Function: bound ][39m,
      ondecoded: [36m[Function: bound ][39m,
-     sockets: { [32m'/#iJV3mzfYKrrGADHOAAAC'[39m: [36m[Circular][39m },
+     sockets: { [32m'/#aHLMYPVbgYZPe4CbAAAD'[39m: [36m[Circular][39m },
      nsps: { [32m'/'[39m: [36m[Circular][39m },
      connectBuffer: [] },
   conn: 
    Socket {
-     id: [32m'iJV3mzfYKrrGADHOAAAC'[39m,
+     id: [32m'aHLMYPVbgYZPe4CbAAAD'[39m,
      server: 
       Server {
         clients: [36m[Object][39m,
-        clientsCount: [33m3[39m,
+        clientsCount: [33m2[39m,
         pingTimeout: [33m60000[39m,
         pingInterval: [33m25000[39m,
         upgradeTimeout: [33m10000[39m,
@@ -849,7 +907,7 @@ Socket {
         trailers: {},
         rawTrailers: [],
         upgrade: [33mfalse[39m,
-        url: [32m'/socket.io/?EIO=3&transport=polling&t=LTr_8rW'[39m,
+        url: [32m'/socket.io/?EIO=3&transport=polling&t=LTvcZnV'[39m,
         method: [32m'GET'[39m,
         statusCode: [1mnull[22m,
         statusMessage: [1mnull[22m,
@@ -859,7 +917,7 @@ Socket {
         _query: [36m[Object][39m,
         res: [36m[Object][39m,
         cleanup: [36m[Function: cleanup][39m },
-     remoteAddress: [32m'::ffff:10.210.30.41'[39m,
+     remoteAddress: [32m'::ffff:10.210.30.32'[39m,
      checkIntervalTimer: [1mnull[22m,
      upgradeTimeoutTimer: [1mnull[22m,
      pingTimeoutTimer: 
@@ -868,7 +926,7 @@ Socket {
         _idleTimeout: [33m85000[39m,
         _idlePrev: [36m[Object][39m,
         _idleNext: [36m[Object][39m,
-        _idleStart: [33m1974[39m,
+        _idleStart: [33m46456[39m,
         _onTimeout: [36m[Function][39m,
         _repeat: [1mnull[22m },
      transport: 
@@ -881,7 +939,7 @@ Socket {
         supportsBinary: [33mtrue[39m,
         _events: [36m[Object][39m,
         _eventsCount: [33m5[39m,
-        sid: [32m'iJV3mzfYKrrGADHOAAAC'[39m,
+        sid: [32m'aHLMYPVbgYZPe4CbAAAD'[39m,
         req: [1mnull[22m,
         res: [1mnull[22m,
         writable: [33mfalse[39m },
@@ -898,167 +956,669 @@ Socket {
    { headers: 
       { host: [32m'10.210.30.148:3000'[39m,
         connection: [32m'keep-alive'[39m,
+        [32m'cache-control'[39m: [32m'max-age=0'[39m,
         [32m'user-agent'[39m: [32m'Mozilla/5.0 (Windows NT 5.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.112 Safari/537.36'[39m,
         origin: [32m'http://10.210.30.148'[39m,
         accept: [32m'*/*'[39m,
         referer: [32m'http://10.210.30.148/sku/'[39m,
         [32m'accept-encoding'[39m: [32m'gzip, deflate, sdch'[39m,
         [32m'accept-language'[39m: [32m'ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4'[39m,
-        cookie: [32m'io=zjSnoWc0-LpfoveeAAAB'[39m },
-     time: [32m'Thu Sep 29 2016 16:47:43 GMT+0400 (SAMT)'[39m,
-     address: [32m'::ffff:10.210.30.41'[39m,
+        cookie: [32m'io=pLzpTyZNjLM5eer7AAAC'[39m },
+     time: [32m'Fri Sep 30 2016 09:37:21 GMT+0400 (SAMT)'[39m,
+     address: [32m'::ffff:10.210.30.32'[39m,
      xdomain: [33mtrue[39m,
      secure: [33mfalse[39m,
-     issued: [33m1475153263599[39m,
-     url: [32m'/socket.io/?EIO=3&transport=polling&t=LTr_8rW'[39m,
-     query: { EIO: [32m'3'[39m, transport: [32m'polling'[39m, t: [32m'LTr_8rW'[39m } } }
-1:0.09 2:1.72 3:0.99 4:0.08 heap = 15828240
-1:0.05 2:1.75 3:1.00 4:0.02 heap = 15914160
-1:0.01 2:1.70 3:0.97 4:0.00 heap = 16008360
-1:0.01 2:1.68 3:0.98 4:0.00 heap = 16114656
+     issued: [33m1475213841095[39m,
+     url: [32m'/socket.io/?EIO=3&transport=polling&t=LTvcZnV'[39m,
+     query: { EIO: [32m'3'[39m, transport: [32m'polling'[39m, t: [32m'LTvcZnV'[39m } } }
+1:0.02 2:1.68 3:1.68 4:0.02 heap = 16942168
+1:0.07 2:1.69 3:1.70 4:0.06 heap = 17023104
+client Front End DISCONNECTED
+1:0.05 2:1.74 3:1.73 4:0.04 heap = 17110456
+1:0.01 2:1.73 3:1.73 4:0.00 heap = 17171152
 min_max
-[ RowDataPacket { minimum: [33m1475132843650[39m } ]
-[ RowDataPacket { maximum: [33m1475153214074[39m } ]
+[ RowDataPacket { maximum: [33m1475213797640[39m } ]
 [ RowDataPacket { minimum: [33m1475132865570[39m } ]
-[ RowDataPacket { maximum: [33m1475153266883[39m } ]
+[ RowDataPacket { maximum: [33m1475213845043[39m } ]
+[ RowDataPacket { minimum: [33m1475132843650[39m } ]
 undefined:
 all con:[33m4[39m
 free con:[33m4[39m
-min:1475132843650 max:1475153214074
-min:1475132865570 max:1475153266883
-{ min: [33m1475132843650[39m, max: [33m1475153266883[39m, tube: [33m2[39m }
+min:1475132843650 max:1475213797640
+min:1475132865570 max:1475213845043
+{ min: [33m1475132843650[39m, max: [33m1475213845043[39m, tube: [33m3[39m }
+1:0.00 2:1.66 3:1.67 4:0.00 heap = 17557080
 ARJ LOAD started
-interval:20423233
-ArjLoad Pool NB OK
-ArjLoad Pool Prichal OK
-arj:
-all con:[33m4[39m
-free con:[33m4[39m
-1:0.01 2:1.74 3:1.05 4:0.00 heap = 42841688
-ARJ LOAD started
-interval:20423233
+interval:81001393
 ArjLoad Pool Prichal OK
 ArjLoad Pool NB OK
 arj:
 all con:[33m4[39m
 free con:[33m4[39m
-1:0.01 2:1.72 3:0.99 4:0.00 heap = 50975072
-1:0.02 2:1.69 3:0.99 4:0.02 heap = 51057736
-min_max
-[ RowDataPacket { minimum: [33m1475132843650[39m } ]
-[ RowDataPacket { maximum: [33m1475153214074[39m } ]
-[ RowDataPacket { minimum: [33m1475132865570[39m } ]
-[ RowDataPacket { maximum: [33m1475153270104[39m } ]
-undefined:
-all con:[33m4[39m
-free con:[33m4[39m
-min:1475132843650 max:1475153214074
-min:1475132865570 max:1475153270104
-{ min: [33m1475132843650[39m, max: [33m1475153270104[39m, tube: [33m3[39m }
-1:0.06 2:1.70 3:1.00 4:0.07 heap = 51264760
+1:0.00 2:1.69 3:1.68 4:0.00 heap = 65824256
+1:0.01 2:1.67 3:1.68 4:0.01 heap = 66088616
+1:0.06 2:1.72 3:1.72 4:0.06 heap = 66162256
+1:0.04 2:1.72 3:1.68 4:0.03 heap = 66227656
+1:0.02 2:1.73 3:1.73 4:0.00 heap = 66293080
+1:0.00 2:1.68 3:1.66 4:0.00 heap = 66380152
+1:0.04 2:1.69 3:1.67 4:0.02 heap = 66456312
+1:0.04 2:1.71 3:1.72 4:0.05 heap = 66520088
+1:0.05 2:1.72 3:1.72 4:0.05 heap = 66582536
 ARJ LOAD started
-interval:20426454
+interval:7149571.2978515625
 ArjLoad Pool Prichal OK
 ArjLoad Pool NB OK
 arj:
 all con:[33m4[39m
 free con:[33m4[39m
-1:0.07 2:1.74 3:1.01 4:0.06 heap = 73349480
+1:0.07 2:1.74 3:1.71 4:0.05 heap = 75522672
+1:0.07 2:1.75 3:1.72 4:0.05 heap = 75594128
+1:0.01 2:1.70 3:1.69 4:0.00 heap = 75654400
+1:0.01 2:1.70 3:1.73 4:0.00 heap = 75716200
 ARJ LOAD started
-interval:20426454
+interval:1075662.6826171875
 ArjLoad Pool Prichal OK
 ArjLoad Pool NB OK
 arj:
 all con:[33m4[39m
 free con:[33m4[39m
-1:0.03 2:1.73 3:0.99 4:0.00 heap = 27277976
-min_max
-[ RowDataPacket { minimum: [33m1475132843650[39m } ]
-[ RowDataPacket { maximum: [33m1475153214074[39m } ]
-[ RowDataPacket { minimum: [33m1475132865570[39m } ]
-[ RowDataPacket { maximum: [33m1475153273116[39m } ]
-undefined:
-all con:[33m4[39m
-free con:[33m4[39m
-min:1475132843650 max:1475153214074
-min:1475132865570 max:1475153273116
-{ min: [33m1475132843650[39m, max: [33m1475153273116[39m, tube: [33m2[39m }
+1:0.00 2:1.65 3:1.66 4:0.00 heap = 80118840
+1:0.06 2:1.67 3:1.66 4:0.04 heap = 80193488
+1:0.05 2:1.71 3:1.72 4:0.07 heap = 80253696
+1:0.04 2:1.73 3:1.71 4:0.03 heap = 80313920
+1:0.03 2:1.74 3:1.72 4:0.00 heap = 80374328
+1:0.01 2:1.66 3:1.66 4:0.00 heap = 80451120
+1:0.03 2:1.69 3:1.66 4:0.01 heap = 80511304
+1:0.06 2:1.74 3:1.73 4:0.06 heap = 80571952
+1:0.06 2:1.71 3:1.73 4:0.04 heap = 13752416
+1:0.02 2:1.75 3:1.75 4:0.00 heap = 13834960
+1:0.02 2:1.66 3:1.66 4:0.00 heap = 13905864
+1:0.02 2:1.69 3:1.70 4:0.01 heap = 13981320
+1:0.08 2:1.70 3:1.70 4:0.07 heap = 14046912
+1:0.06 2:1.73 3:1.72 4:0.06 heap = 12275080
+1:0.00 2:1.69 3:1.70 4:0.00 heap = 12353072
 ARJ LOAD started
-interval:20429466
+interval:173702.80029296875
 ArjLoad Pool Prichal OK
 ArjLoad Pool NB OK
 arj:
 all con:[33m4[39m
 free con:[33m4[39m
-1:0.04 2:1.66 3:0.95 4:0.04 heap = 33954136
-1:0.09 2:1.74 3:1.01 4:0.08 heap = 34133792
-ARJ LOAD started
-interval:20429466
-ArjLoad Pool Prichal OK
-ArjLoad Pool NB OK
-arj:
-all con:[33m4[39m
-free con:[33m4[39m
-1:0.03 2:1.72 3:1.02 4:0.03 heap = 45116040
-1:0.07 2:1.74 3:1.02 4:0.06 heap = 45215640
-1:0.01 2:1.69 3:1.00 4:0.00 heap = 45297736
-1:0.03 2:1.69 3:0.95 4:0.00 heap = 20475272
-1:0.05 2:1.70 3:0.99 4:0.04 heap = 20557240
+1:0.00 2:1.66 3:1.66 4:0.00 heap = 13285616
+1:0.02 2:1.69 3:1.67 4:0.00 heap = 12395728
+1:0.08 2:1.72 3:1.70 4:0.07 heap = 12491072
+1:0.04 2:1.73 3:1.75 4:0.05 heap = 12328896
+1:0.02 2:1.70 3:1.69 4:0.00 heap = 12402368
 Data Local Minutly saved in DB successuful
 Data Local Minutly saved in DB successuful
 Data Local Minutly saved in DB successuful
 Data Local Minutly saved in DB successuful
-min_max
-[ RowDataPacket { minimum: [33m1475132843650[39m } ]
-[ RowDataPacket { maximum: [33m1475153214074[39m } ]
-[ RowDataPacket { minimum: [33m1475132865570[39m } ]
-[ RowDataPacket { maximum: [33m1475153280583[39m } ]
-undefined:
-all con:[33m4[39m
-free con:[33m4[39m
-min:1475132843650 max:1475153214074
-min:1475132865570 max:1475153280583
-{ min: [33m1475132843650[39m, max: [33m1475153280583[39m, tube: [33m3[39m }
+1:0.00 2:1.68 3:1.68 4:0.00 heap = 12520000
+1:0.04 2:1.69 3:1.65 4:0.00 heap = 12595352
+1:0.05 2:1.66 3:1.65 4:0.03 heap = 12662768
+1:0.06 2:1.73 3:1.74 4:0.06 heap = 12729824
+1:0.05 2:1.73 3:1.69 4:0.02 heap = 12796840
+1:0.00 2:1.67 3:1.69 4:0.00 heap = 12905824
+1:0.03 2:1.69 3:1.67 4:0.00 heap = 12971064
+1:0.03 2:1.69 3:1.69 4:0.00 heap = 13033560
+1:0.07 2:1.72 3:1.74 4:0.06 heap = 13116736
+1:0.05 2:1.73 3:1.74 4:0.04 heap = 13179360
+1:0.01 2:1.72 3:1.74 4:0.00 heap = 13266064
+1:0.00 2:1.68 3:1.67 4:0.00 heap = 13332056
+1:0.03 2:1.67 3:1.65 4:0.02 heap = 13394800
+1:0.06 2:1.73 3:1.69 4:0.05 heap = 12542424
+1:0.05 2:1.72 3:1.72 4:0.03 heap = 12631144
+1:0.03 2:1.75 3:1.72 4:0.00 heap = 12701672
+1:0.02 2:1.67 3:1.65 4:0.00 heap = 12784584
+1:0.00 2:1.67 3:1.67 4:0.00 heap = 12849944
+1:0.07 2:1.71 3:1.68 4:0.05 heap = 12937720
+1:0.06 2:1.73 3:1.75 4:0.05 heap = 13004968
+1:0.01 2:1.71 3:1.72 4:0.00 heap = 13088448
+1:0.00 2:1.65 3:1.68 4:0.00 heap = 13150544
+1:0.03 2:1.68 3:1.67 4:0.00 heap = 13212872
+1:0.05 2:1.68 3:1.67 4:0.03 heap = 13275000
+1:0.05 2:1.74 3:1.73 4:0.06 heap = 13350880
+1:0.06 2:1.72 3:1.70 4:0.03 heap = 13413088
+1:0.00 2:1.70 3:1.69 4:0.00 heap = 13474704
+1:0.01 2:1.69 3:1.66 4:0.00 heap = 13535624
+1:0.07 2:1.70 3:1.66 4:0.05 heap = 13596576
+1:0.05 2:1.73 3:1.70 4:0.06 heap = 12880688
+1:0.02 2:1.71 3:1.70 4:0.02 heap = 12939360
+1:0.00 2:1.71 3:1.71 4:0.00 heap = 12998232
+1:0.00 2:1.67 3:1.67 4:0.00 heap = 13060096
+1:0.04 2:1.67 3:1.67 4:0.02 heap = 13121824
+1:0.07 2:1.74 3:1.73 4:0.06 heap = 13180568
+1:0.05 2:1.73 3:1.70 4:0.01 heap = 13249992
+1:0.00 2:1.66 3:1.66 4:0.00 heap = 13308536
+1:0.01 2:1.68 3:1.69 4:0.00 heap = 13380752
+1:0.02 2:1.68 3:1.69 4:0.02 heap = 13439224
+1:0.07 2:1.75 3:1.73 4:0.04 heap = 13498160
+1:0.02 2:1.72 3:1.71 4:0.02 heap = 13561872
+1:0.02 2:1.68 3:1.65 4:0.00 heap = 13620352
+1:0.01 2:1.67 3:1.69 4:0.00 heap = 13678808
+1:0.03 2:1.66 3:1.66 4:0.04 heap = 13737280
+1:0.04 2:1.72 3:1.70 4:0.04 heap = 13802672
+1:0.00 2:1.73 3:1.75 4:0.00 heap = 13861120
+1:0.02 2:1.69 3:1.65 4:0.00 heap = 13069760
+1:0.02 2:1.68 3:1.69 4:0.01 heap = 13159824
+1:0.05 2:1.69 3:1.68 4:0.03 heap = 13221912
+1:0.08 2:1.74 3:1.71 4:0.07 heap = 13280616
+1:0.01 2:1.70 3:1.70 4:0.00 heap = 13339056
+1:0.00 2:1.67 3:1.69 4:0.00 heap = 13397456
+1:0.03 2:1.68 3:1.67 4:0.00 heap = 13455840
+1:0.04 2:1.69 3:1.69 4:0.04 heap = 13528144
+1:0.07 2:1.72 3:1.72 4:0.06 heap = 13586520
+1:0.03 2:1.73 3:1.74 4:0.03 heap = 13644896
+1:0.00 2:1.68 3:1.69 4:0.00 heap = 13703240
+1:0.00 2:1.67 3:1.65 4:0.00 heap = 13761776
+1:0.06 2:1.67 3:1.66 4:0.05 heap = 13821040
+1:0.07 2:1.74 3:1.72 4:0.06 heap = 13879416
+Data Local Minutly saved in DB successuful
+Data Local Minutly saved in DB successuful
+Data Local Minutly saved in DB successuful
+Data Local Minutly saved in DB successuful
+1:0.05 2:1.74 3:1.71 4:0.04 heap = 13972704
+1:0.01 2:1.71 3:1.70 4:0.00 heap = 14044792
+1:0.00 2:1.66 3:1.67 4:0.00 heap = 13289792
+1:0.02 2:1.69 3:1.68 4:0.00 heap = 13348568
+1:0.08 2:1.73 3:1.72 4:0.07 heap = 13406920
+1:0.06 2:1.74 3:1.69 4:0.03 heap = 13465528
+1:0.00 2:1.69 3:1.71 4:0.00 heap = 13523872
+1:0.00 2:1.66 3:1.68 4:0.00 heap = 13621360
+1:0.04 2:1.69 3:1.67 4:0.00 heap = 13679488
+1:0.06 2:1.70 3:1.73 4:0.06 heap = 13756328
+1:0.05 2:1.72 3:1.72 4:0.02 heap = 13835856
+1:0.03 2:1.74 3:1.70 4:0.00 heap = 13906584
+1:0.01 2:1.68 3:1.69 4:0.00 heap = 13964728
+1:0.03 2:1.68 3:1.68 4:0.00 heap = 14022872
+1:0.05 2:1.69 3:1.71 4:0.05 heap = 14081264
+1:0.08 2:1.74 3:1.72 4:0.05 heap = 14139448
+1:0.05 2:1.74 3:1.70 4:0.02 heap = 14197632
+1:0.01 2:1.70 3:1.69 4:0.00 heap = 14256240
+1:0.03 2:1.69 3:1.67 4:0.00 heap = 14314384
+1:0.06 2:1.68 3:1.68 4:0.04 heap = 13535304
+1:0.06 2:1.70 3:1.73 4:0.07 heap = 13627520
+1:0.03 2:1.72 3:1.72 4:0.02 heap = 13685640
+1:0.00 2:1.71 3:1.69 4:0.00 heap = 13743728
+1:0.00 2:1.66 3:1.67 4:0.00 heap = 13802008
+1:0.01 2:1.69 3:1.65 4:0.00 heap = 13865128
+1:0.08 2:1.72 3:1.70 4:0.07 heap = 13923224
+1:0.04 2:1.73 3:1.73 4:0.03 heap = 13991848
+1:0.00 2:1.71 3:1.67 4:0.00 heap = 14049936
+1:0.01 2:1.69 3:1.67 4:0.00 heap = 14108232
+1:0.02 2:1.66 3:1.66 4:0.00 heap = 14166312
+1:0.07 2:1.71 3:1.68 4:0.07 heap = 14224848
+1:0.05 2:1.74 3:1.71 4:0.03 heap = 14282968
+1:0.02 2:1.74 3:1.74 4:0.00 heap = 14341304
+1:0.00 2:1.67 3:1.69 4:0.00 heap = 14431864
+1:0.02 2:1.69 3:1.67 4:0.00 heap = 14495440
+1:0.06 2:1.72 3:1.72 4:0.07 heap = 14573712
+1:0.06 2:1.74 3:1.73 4:0.05 heap = 13807944
+1:0.01 2:1.73 3:1.75 4:0.00 heap = 13866424
+1:0.00 2:1.68 3:1.66 4:0.00 heap = 13924424
+1:0.02 2:1.67 3:1.67 4:0.00 heap = 13982424
+1:0.07 2:1.70 3:1.70 4:0.05 heap = 14040456
+1:0.06 2:1.71 3:1.71 4:0.05 heap = 14098736
+1:0.04 2:1.71 3:1.69 4:0.00 heap = 14156792
+1:0.00 2:1.66 3:1.68 4:0.00 heap = 14214792
+1:0.04 2:1.69 3:1.67 4:0.02 heap = 14273248
+1:0.06 2:1.70 3:1.72 4:0.07 heap = 14334368
+1:0.06 2:1.73 3:1.72 4:0.05 heap = 14397408
+1:0.02 2:1.70 3:1.71 4:0.00 heap = 14455448
+1:0.01 2:1.69 3:1.66 4:0.00 heap = 14513464
+1:0.02 2:1.68 3:1.67 4:0.00 heap = 14571480
+1:0.07 2:1.70 3:1.69 4:0.07 heap = 14629744
+1:0.04 2:1.73 3:1.71 4:0.04 heap = 14698992
+1:0.01 2:1.73 3:1.69 4:0.00 heap = 14767008
+1:0.00 2:1.68 3:1.69 4:0.00 heap = 13986984
+1:0.00 2:0.00 3:1.66 4:0.04 heap = 14045456
+1:0.08 2:1.71 3:1.71 4:0.07 heap = 14103288
+1:0.04 2:1.72 3:1.74 4:0.05 heap = 14161160
+1:0.04 2:1.71 3:1.70 4:0.01 heap = 14219032
+1:0.00 2:1.66 3:1.67 4:0.00 heap = 14276872
+1:0.02 2:1.66 3:1.65 4:0.00 heap = 14334920
+Data Local Minutly saved in DB successuful
+Data Local Minutly saved in DB successuful
+Data Local Minutly saved in DB successuful
+Data Local Minutly saved in DB successuful
+1:0.08 2:1.71 3:1.70 4:0.06 heap = 14416672
+1:0.05 2:1.75 3:1.71 4:0.04 heap = 14474984
+1:0.05 2:1.73 3:1.68 4:0.01 heap = 14533088
+1:0.01 2:1.70 3:1.69 4:0.00 heap = 14590944
+1:0.03 2:1.69 3:1.65 4:0.00 heap = 14648776
+1:0.06 2:1.71 3:1.70 4:0.06 heap = 14710392
+1:0.06 2:1.74 3:1.71 4:0.05 heap = 14777344
+1:0.04 2:1.73 3:1.71 4:0.02 heap = 14835448
+1:0.01 2:1.69 3:1.67 4:0.00 heap = 14893744
+1:0.00 2:1.67 3:1.68 4:0.00 heap = 14951576
+1:0.06 2:1.69 3:1.68 4:0.04 heap = 14168952
+1:0.04 2:1.73 3:1.74 4:0.05 heap = 14227056
+1:0.04 2:1.75 3:1.72 4:0.00 heap = 14284912
+1:0.01 2:1.66 3:1.65 4:0.00 heap = 14342744
+1:0.02 2:1.68 3:1.68 4:0.00 heap = 14400576
+1:0.04 2:1.68 3:1.69 4:0.05 heap = 14459096
+1:0.06 2:1.74 3:1.69 4:0.03 heap = 14516968
+1:0.01 2:1.71 3:1.72 4:0.00 heap = 14585328
+1:0.01 2:1.65 3:1.67 4:0.00 heap = 14643160
+1:0.05 2:1.69 3:1.68 4:0.04 heap = 14701008
+1:0.05 2:1.71 3:1.72 4:0.05 heap = 14759112
+1:0.04 2:1.71 3:1.71 4:0.01 heap = 14817424
+1:0.02 2:1.70 3:1.71 4:0.00 heap = 14875280
+1:0.02 2:1.66 3:1.64 4:0.00 heap = 14933112
+1:0.07 2:1.70 3:1.68 4:0.05 heap = 14991192
+1:0.08 2:1.74 3:1.71 4:0.06 heap = 15049064
+1:0.03 2:1.73 3:1.72 4:0.01 heap = 15106936
+1:0.00 2:1.66 3:1.67 4:0.00 heap = 14353600
+1:0.02 2:1.67 3:1.68 4:0.00 heap = 14411856
+1:0.03 2:1.70 3:1.69 4:0.02 heap = 14469936
+1:0.05 2:1.74 3:1.73 4:0.06 heap = 14527808
+1:0.02 2:1.72 3:1.70 4:0.00 heap = 14585680
+1:0.01 2:1.71 3:1.69 4:0.00 heap = 14653872
+1:0.01 2:1.68 3:1.67 4:0.00 heap = 14711904
+1:0.04 2:1.70 3:1.68 4:0.06 heap = 14769720
+1:0.07 2:1.72 3:1.71 4:0.06 heap = 14828000
+1:0.04 2:1.71 3:1.69 4:0.02 heap = 14885840
+1:0.01 2:1.69 3:1.68 4:0.00 heap = 14943896
+1:0.03 2:1.68 3:1.66 4:0.00 heap = 15014296
+1:0.05 2:1.70 3:1.66 4:0.02 heap = 15076040
+1:0.07 2:1.74 3:1.71 4:0.04 heap = 15133880
+1:0.03 2:1.72 3:1.71 4:0.01 heap = 15191720
+1:0.00 2:1.68 3:1.67 4:0.00 heap = 15250200
+1:0.02 2:1.68 3:1.66 4:0.00 heap = 15318488
+1:0.05 2:1.69 3:1.67 4:0.02 heap = 14541536
+1:0.05 2:1.73 3:1.75 4:0.06 heap = 14599376
+1:0.04 2:1.73 3:1.69 4:0.00 heap = 14657448
+1:0.00 2:1.69 3:1.70 4:0.00 heap = 14715232
+1:0.00 2:1.68 3:1.67 4:0.00 heap = 14773440
+1:0.04 2:1.68 3:1.69 4:0.05 heap = 14831240
+1:0.07 2:1.73 3:1.73 4:0.05 heap = 14889080
+1:0.05 2:1.74 3:1.71 4:0.04 heap = 14947152
+1:0.02 2:1.72 3:1.70 4:0.00 heap = 15004976
+1:0.02 2:1.67 3:1.66 4:0.00 heap = 15062776
+1:0.03 2:1.69 3:1.67 4:0.02 heap = 15120592
+1:0.07 2:1.74 3:1.71 4:0.06 heap = 15197840
+1:0.05 2:1.74 3:1.71 4:0.03 heap = 15255488
+1:0.01 2:1.70 3:1.67 4:0.00 heap = 15313120
+1:0.03 2:1.68 3:1.67 4:0.00 heap = 15370728
+Data Local Minutly saved in DB successuful
+Data Local Minutly saved in DB successuful
+Data Local Minutly saved in DB successuful
+Data Local Minutly saved in DB successuful
+1:0.07 2:1.70 3:1.67 4:0.05 heap = 15452488
+1:0.08 2:1.74 3:1.70 4:0.06 heap = 15510136
+1:0.05 2:1.72 3:1.71 4:0.04 heap = 14728848
+1:0.02 2:1.74 3:1.73 4:0.00 heap = 14786920
+1:0.01 2:1.66 3:1.66 4:0.00 heap = 14844760
+1:0.04 2:1.68 3:1.70 4:0.04 heap = 14902384
+1:0.06 2:1.74 3:1.69 4:0.06 heap = 14960032
+1:0.04 2:1.71 3:1.71 4:0.02 heap = 15017680
+1:0.00 2:1.69 3:1.68 4:0.00 heap = 15075528
+1:0.00 2:1.66 3:1.68 4:0.00 heap = 15133104
+1:0.04 2:1.70 3:1.67 4:0.01 heap = 15201464
+1:0.05 2:1.68 3:1.71 4:0.07 heap = 15259112
+1:0.04 2:1.71 3:1.72 4:0.03 heap = 15316760
+1:0.02 2:1.71 3:1.70 4:0.00 heap = 15375064
+1:0.02 2:1.68 3:1.65 4:0.00 heap = 15432672
+1:0.03 2:1.69 3:1.67 4:0.01 heap = 15490296
+1:0.08 2:1.72 3:1.69 4:0.07 heap = 15547944
+1:0.04 2:1.74 3:1.73 4:0.03 heap = 15605824
+1:0.02 2:1.70 3:1.67 4:0.00 heap = 15697256
+1:0.01 2:1.69 3:1.65 4:0.00 heap = 14920088
+1:0.04 2:1.69 3:1.70 4:0.00 heap = 14977768
+1:0.06 2:1.71 3:1.71 4:0.06 heap = 15035008
+1:0.06 2:1.73 3:1.70 4:0.03 heap = 15092504
+1:0.02 2:1.72 3:1.69 4:0.00 heap = 15149752
+1:0.02 2:1.68 3:1.64 4:0.00 heap = 15206976
+1:0.05 2:1.69 3:1.66 4:0.01 heap = 15264216
+1:0.08 2:1.72 3:1.73 4:0.07 heap = 15321712
+1:0.06 2:1.72 3:1.74 4:0.03 heap = 15379416
+1:0.00 2:1.72 3:1.68 4:0.00 heap = 15436648
+1:0.00 2:1.66 3:1.68 4:0.00 heap = 15493856
+1:0.03 2:1.66 3:1.64 4:0.03 heap = 15551312
+1:0.06 2:1.68 3:1.65 4:0.07 heap = 15608576
+1:0.01 2:1.71 3:1.70 4:0.00 heap = 15665840
+1:0.00 2:1.69 3:1.69 4:0.00 heap = 15723048
+1:0.01 2:1.68 3:1.69 4:0.00 heap = 15780696
+1:0.04 2:1.69 3:1.70 4:0.02 heap = 15838168
+1:0.07 2:1.74 3:1.71 4:0.06 heap = 15064888
+1:0.03 2:1.70 3:1.72 4:0.01 heap = 15122152
+1:0.01 2:1.68 3:1.65 4:0.00 heap = 15179400
+1:0.04 2:1.68 3:1.65 4:0.00 heap = 15236872
+1:0.06 2:1.71 3:1.70 4:0.05 heap = 15294552
+1:0.02 2:1.72 3:1.68 4:0.01 heap = 15351816
+1:0.02 2:1.72 3:1.68 4:0.00 heap = 15409064
+1:0.02 2:1.68 3:1.69 4:0.00 heap = 15466288
+1:0.05 2:1.69 3:1.69 4:0.02 heap = 15523760
+1:0.07 2:1.74 3:1.72 4:0.05 heap = 15581024
+1:0.05 2:1.74 3:1.73 4:0.03 heap = 15638288
+1:0.00 2:1.67 3:1.68 4:0.00 heap = 15695960
+1:0.03 2:1.68 3:1.68 4:0.00 heap = 15753400
+1:0.03 2:1.67 3:1.68 4:0.03 heap = 15810640
+1:0.04 2:1.71 3:1.72 4:0.03 heap = 15867904
+1:0.02 2:1.71 3:1.70 4:0.00 heap = 15925152
+1:0.00 2:1.66 3:1.69 4:0.00 heap = 15982592
+1:0.05 2:1.68 3:1.65 4:0.04 heap = 16039816
+1:0.07 2:1.72 3:1.71 4:0.06 heap = 15264032
+1:0.01 2:1.66 3:1.68 4:1.68 heap = 15321296
+1:0.01 2:1.66 3:1.66 4:0.00 heap = 15378544
+1:0.01 2:1.66 3:1.67 4:0.00 heap = 15436000
+1:0.06 2:1.69 3:1.70 4:0.06 heap = 15493240
+1:0.04 2:1.71 3:1.72 4:0.03 heap = 15550504
+Data Local Minutly saved in DB successuful
+Data Local Minutly saved in DB successuful
+Data Local Minutly saved in DB successuful
+Data Local Minutly saved in DB successuful
+1:0.01 2:1.71 3:1.68 4:0.00 heap = 15631272
+1:0.00 2:1.67 3:1.68 4:0.00 heap = 15689152
+1:0.06 2:1.67 3:1.66 4:0.04 heap = 15756880
+1:0.07 2:1.74 3:1.73 4:0.06 heap = 15814144
+1:0.01 2:1.71 3:1.72 4:0.01 heap = 15871408
+1:0.00 2:1.66 3:1.68 4:0.00 heap = 15928888
+1:0.03 2:1.67 3:1.70 4:0.00 heap = 15986096
+1:0.06 2:1.74 3:1.74 4:0.06 heap = 16043776
+1:0.04 2:1.71 3:1.70 4:0.01 heap = 16101040
+1:0.00 2:1.70 3:1.70 4:0.00 heap = 16158520
+1:0.02 2:1.69 3:1.65 4:0.00 heap = 16215728
+1:0.03 2:1.65 3:1.64 4:0.03 heap = 15440344
+1:0.07 2:1.72 3:1.71 4:0.06 heap = 15497608
+1:0.03 2:1.73 3:1.72 4:0.00 heap = 15554856
+1:0.00 2:1.67 3:1.67 4:0.00 heap = 15612752
+1:0.04 2:1.67 3:1.70 4:0.01 heap = 15669976
+1:0.08 2:1.74 3:1.72 4:0.07 heap = 15756152
+1:0.04 2:1.71 3:1.69 4:0.01 heap = 15813352
+1:0.00 2:1.68 3:1.65 4:0.00 heap = 15870752
+1:0.01 2:1.67 3:1.66 4:0.00 heap = 15927896
+1:0.07 2:1.71 3:1.68 4:0.06 heap = 15985072
+1:0.07 2:1.74 3:1.72 4:0.06 heap = 16042712
+1:0.01 2:1.70 3:1.71 4:0.00 heap = 16099896
+1:0.00 2:1.68 3:1.66 4:0.00 heap = 16157272
+1:0.02 2:1.68 3:1.70 4:0.02 heap = 16214432
+1:0.07 2:1.69 3:1.67 4:0.07 heap = 16271632
+1:0.03 2:1.71 3:1.70 4:0.01 heap = 16328832
+1:0.01 2:1.72 3:1.71 4:0.00 heap = 16386248
+1:0.00 2:1.65 3:1.66 4:0.00 heap = 15608184
+1:0.05 2:1.68 3:1.68 4:0.06 heap = 15665344
+1:0.06 2:1.72 3:1.72 4:0.06 heap = 15722544
+1:0.04 2:1.72 3:1.71 4:0.00 heap = 15780184
+1:0.00 2:1.69 3:1.70 4:0.00 heap = 15837560
+1:0.02 2:1.67 3:1.67 4:0.00 heap = 15894704
+1:0.03 2:1.65 3:1.65 4:0.04 heap = 15951880
+1:0.07 2:1.73 3:1.72 4:0.05 heap = 16009080
+1:0.01 2:1.70 3:1.70 4:0.01 heap = 16066512
+1:0.00 2:1.68 3:1.67 4:0.00 heap = 16123688
+1:0.01 2:1.67 3:1.68 4:0.00 heap = 16181288
+1:0.05 2:1.72 3:1.72 4:0.05 heap = 16238464
+1:0.03 2:1.73 3:1.74 4:0.01 heap = 16295896
+1:0.00 2:1.67 3:1.69 4:0.00 heap = 16353064
+1:0.03 2:1.69 3:1.68 4:0.00 heap = 16410224
+1:0.05 2:1.66 3:1.67 4:0.04 heap = 16467400
+1:0.05 2:1.72 3:1.72 4:0.05 heap = 16524600
+1:0.03 2:1.71 3:1.68 4:0.00 heap = 16582472
+1:0.01 2:1.67 3:1.65 4:0.00 heap = 15809680
+1:0.02 2:1.69 3:1.69 4:0.01 heap = 15866856
+1:0.08 2:1.74 3:1.72 4:0.06 heap = 15924056
+1:0.03 2:1.71 3:1.72 4:0.02 heap = 15981488
+1:0.01 2:1.73 3:1.72 4:0.00 heap = 16038672
+1:0.00 2:1.66 3:1.66 4:0.00 heap = 16095816
+1:0.07 2:1.70 3:1.66 4:0.05 heap = 16153416
+1:0.08 2:1.74 3:1.70 4:0.06 heap = 16210616
+1:0.03 2:1.73 3:1.71 4:0.00 heap = 16278536
+1:0.00 2:1.68 3:1.70 4:0.00 heap = 16335680
+1:0.01 2:1.68 3:1.69 4:0.00 heap = 16392824
+1:0.05 2:1.69 3:1.71 4:0.06 heap = 16450000
+1:0.04 2:1.73 3:1.69 4:0.01 heap = 16507872
+1:0.00 2:1.72 3:1.68 4:0.00 heap = 16565056
+Data Local Minutly saved in DB successuful
+Data Local Minutly saved in DB successuful
+Data Local Minutly saved in DB successuful
+Data Local Minutly saved in DB successuful
+1:0.01 2:1.68 3:1.66 4:0.00 heap = 16645656
+1:0.05 2:1.69 3:1.67 4:0.01 heap = 16702832
+1:0.08 2:1.74 3:1.74 4:0.05 heap = 16760264
+1:0.05 2:1.73 3:1.71 4:0.02 heap = 15982936
+1:0.01 2:1.68 3:1.67 4:0.00 heap = 16040120
+1:0.03 2:1.67 3:1.67 4:0.00 heap = 16097720
+1:0.01 2:0.01 3:1.67 4:0.03 heap = 16155128
+1:0.07 2:1.75 3:1.73 4:0.04 heap = 16212328
+1:0.04 2:1.73 3:1.69 4:0.00 heap = 16269528
+1:0.00 2:1.66 3:1.66 4:0.00 heap = 16326672
+1:0.03 2:1.66 3:1.67 4:0.03 heap = 16404680
+1:0.07 2:1.72 3:1.73 4:0.05 heap = 16487064
+1:0.02 2:1.71 3:1.70 4:0.02 heap = 16544584
+1:0.02 2:1.75 3:1.71 4:0.00 heap = 16601648
+1:0.02 2:1.66 3:1.65 4:0.00 heap = 16658688
+1:0.02 2:1.65 3:1.66 4:0.03 heap = 16715976
+1:0.08 2:1.72 3:1.69 4:0.07 heap = 16773056
+1:0.03 2:1.72 3:1.70 4:0.02 heap = 16830136
+1:0.01 2:1.70 3:1.69 4:0.00 heap = 16887200
+1:0.00 2:1.67 3:1.66 4:0.00 heap = 16944680
+1:0.07 2:1.69 3:1.68 4:0.06 heap = 16171048
+1:0.05 2:1.72 3:1.72 4:0.06 heap = 16228128
+1:0.05 2:1.73 3:1.72 4:0.02 heap = 16285208
+1:0.01 2:1.66 3:1.68 4:0.00 heap = 16342272
+1:0.03 2:1.67 3:1.68 4:0.00 heap = 16399544
+1:0.06 2:1.70 3:1.68 4:0.06 heap = 16457040
+1:0.05 2:1.72 3:1.71 4:0.06 heap = 16514120
+1:0.03 2:1.73 3:1.71 4:0.01 heap = 16571200
+1:0.00 2:1.68 3:1.70 4:0.00 heap = 16628480
+1:0.00 2:1.65 3:1.65 4:0.00 heap = 16685488
+1:0.04 2:1.69 3:1.68 4:0.04 heap = 16742528
+1:0.04 2:1.72 3:1.73 4:0.04 heap = 16799608
+1:0.03 2:1.72 3:1.72 4:0.01 heap = 16857128
+1:0.00 2:1.67 3:1.65 4:0.00 heap = 16914408
+1:0.03 2:1.69 3:1.68 4:0.00 heap = 16971432
+1:0.07 2:1.71 3:1.69 4:0.05 heap = 17028488
+1:0.05 2:1.72 3:1.72 4:0.07 heap = 17085568
+1:0.03 2:1.73 3:1.71 4:0.00 heap = 17142864
+1:0.02 2:1.70 3:1.69 4:0.00 heap = 16369864
+1:0.01 2:1.67 3:1.65 4:0.00 heap = 16427344
+1:0.05 2:1.68 3:1.67 4:0.04 heap = 16484400
+1:0.05 2:1.73 3:1.74 4:0.04 heap = 16541480
+1:0.04 2:1.74 3:1.73 4:0.02 heap = 16598792
+1:0.01 2:1.69 3:1.67 4:0.00 heap = 16655856
+1:0.02 2:1.68 3:1.68 4:0.00 heap = 16723400
+1:0.03 2:1.69 3:1.67 4:0.02 heap = 16780896
+1:0.04 2:1.73 3:1.73 4:0.04 heap = 16838208
+1:0.02 2:1.71 3:1.71 4:0.01 heap = 16895288
+1:0.00 2:1.68 3:1.65 4:0.00 heap = 16952336
+1:0.05 2:1.69 3:1.66 4:0.01 heap = 17009376
+1:0.07 2:1.72 3:1.68 4:0.07 heap = 17066456
+1:0.05 2:1.72 3:1.70 4:0.06 heap = 17123768
 ARJ LOAD started
-interval:20436933
+interval:1369025.2666015625
 ArjLoad Pool Prichal OK
 ArjLoad Pool NB OK
 arj:
 all con:[33m4[39m
 free con:[33m4[39m
+1:0.03 2:1.73 3:1.74 4:0.00 heap = 17850488
+1:0.00 2:1.69 3:1.68 4:0.00 heap = 17907640
+1:0.02 2:1.66 3:1.69 4:0.00 heap = 17965616
+1:0.07 2:1.71 3:1.71 4:0.06 heap = 18022952
+1:0.06 2:1.74 3:1.71 4:0.04 heap = 17266896
+1:0.02 2:1.70 3:1.71 4:0.01 heap = 17324256
+1:0.00 2:1.67 3:1.66 4:0.00 heap = 17381584
+1:0.03 2:1.68 3:1.65 4:0.00 heap = 17439120
+Data Local Minutly saved in DB successuful
+Data Local Minutly saved in DB successuful
+Data Local Minutly saved in DB successuful
+Data Local Minutly saved in DB successuful
 ARJ LOAD started
-interval:20436933
+interval:332301.017578125
 ArjLoad Pool Prichal OK
 ArjLoad Pool NB OK
 arj:
 all con:[33m4[39m
 free con:[33m4[39m
-1:0.02 2:1.70 3:0.98 4:0.00 heap = 46176496
-1:0.04 2:1.70 3:0.98 4:0.02 heap = 54758944
-1:0.06 2:1.75 3:1.03 4:0.07 heap = 54839672
-1:0.06 2:1.74 3:1.03 4:0.04 heap = 54926360
-1:0.02 2:1.72 3:0.99 4:0.00 heap = 23393168
-1:0.02 2:1.68 3:0.98 4:0.00 heap = 23518600
-ARJ LOAD started
-interval:4181679.3701171875
-ArjLoad Pool Prichal OK
-ArjLoad Pool NB OK
-arj:
-all con:[33m4[39m
-free con:[33m4[39m
-1:0.08 2:1.75 3:1.02 4:0.07 heap = 30155408
-1:0.06 2:1.74 3:1.02 4:0.01 heap = 30326320
-1:0.00 2:1.67 3:0.98 4:0.00 heap = 30404504
-1:0.00 2:1.67 3:0.98 4:0.00 heap = 30485448
-ARJ LOAD started
-interval:188741.79711914062
-ArjLoad Pool Prichal OK
-ArjLoad Pool NB OK
-arj:
-all con:[33m4[39m
-free con:[33m4[39m
-1:0.05 2:1.71 3:1.00 4:0.07 heap = 31450608
-1:0.07 2:1.75 3:1.03 4:0.07 heap = 31528016
-1:0.04 2:1.74 3:1.00 4:0.01 heap = 31604528
-1:0.00 2:1.71 3:1.02 4:0.00 heap = 31679832
-1:0.03 2:1.69 3:0.97 4:0.00 heap = 31774528
+1:0.06 2:1.66 3:1.66 4:0.04 heap = 18225800
+1:0.06 2:1.72 3:1.74 4:0.05 heap = 18283392
+1:0.04 2:1.72 3:1.69 4:0.01 heap = 17349464
+1:0.00 2:1.69 3:1.71 4:0.00 heap = 17406792
+1:0.00 2:1.68 3:1.65 4:0.00 heap = 17470240
+1:0.07 2:1.71 3:1.68 4:0.06 heap = 17527560
+1:0.06 2:1.72 3:1.72 4:0.06 heap = 17585592
+1:0.02 2:1.70 3:1.70 4:0.00 heap = 17642936
+1:0.00 2:1.67 3:1.66 4:0.00 heap = 17702480
+1:0.00 2:1.68 3:1.69 4:0.00 heap = 17772624
+1:0.04 2:1.65 3:1.63 4:0.03 heap = 17830176
+1:0.08 2:1.70 3:1.69 4:0.07 heap = 17887536
+1:0.05 2:1.72 3:1.71 4:0.04 heap = 17945336
+1:0.01 2:1.72 3:1.73 4:0.00 heap = 18002680
+1:0.02 2:1.69 3:1.66 4:0.00 heap = 18060000
+1:0.04 2:1.68 3:1.65 4:0.01 heap = 18117568
+1:0.06 2:1.72 3:1.72 4:0.06 heap = 18174928
+1:0.03 2:1.71 3:1.68 4:0.03 heap = 18239960
+1:0.01 2:1.73 3:1.73 4:0.00 heap = 18297304
+1:0.00 2:1.66 3:1.67 4:0.00 heap = 18355280
+1:0.03 2:1.68 3:1.69 4:0.00 heap = 18412584
+1:0.04 2:1.66 3:1.67 4:0.04 heap = 17575536
+1:0.07 2:1.74 3:1.70 4:0.05 heap = 17675560
+1:0.02 2:1.70 3:1.72 4:0.00 heap = 17746968
+1:0.01 2:1.69 3:1.66 4:0.00 heap = 17804432
+1:0.04 2:1.69 3:1.67 4:0.00 heap = 17861664
+1:0.04 2:1.65 3:1.66 4:0.03 heap = 17919352
+1:0.04 2:1.72 3:1.71 4:0.06 heap = 17976624
+1:0.04 2:1.71 3:1.72 4:0.01 heap = 18034128
+1:0.00 2:1.70 3:1.68 4:0.00 heap = 18091368
+1:0.01 2:1.68 3:1.68 4:0.00 heap = 18148584
+1:0.02 2:1.67 3:1.69 4:0.00 heap = 18205832
+1:0.07 2:1.71 3:1.70 4:0.07 heap = 18263312
+1:0.06 2:1.71 3:1.71 4:0.02 heap = 18321024
+1:0.02 2:1.71 3:1.72 4:0.00 heap = 18378280
+1:0.01 2:1.69 3:1.66 4:0.00 heap = 18445984
+1:0.00 2:1.66 3:1.66 4:0.00 heap = 18503216
+1:0.05 2:1.67 3:1.63 4:0.03 heap = 18560680
+1:0.05 2:1.72 3:1.73 4:0.06 heap = 17802808
+1:0.03 2:1.71 3:1.74 4:0.00 heap = 17860504
+1:0.01 2:1.71 3:1.71 4:0.00 heap = 17917736
+1:0.01 2:1.68 3:1.66 4:0.00 heap = 17975200
+1:0.05 2:1.67 3:1.66 4:0.04 heap = 18032448
+1:0.05 2:1.72 3:1.69 4:0.07 heap = 18089720
+1:0.04 2:1.73 3:1.69 4:0.02 heap = 18146992
+1:0.02 2:1.71 3:1.69 4:0.00 heap = 18204248
+1:0.01 2:1.67 3:1.66 4:0.00 heap = 18262152
+1:0.03 2:1.67 3:1.67 4:0.00 heap = 18319384
+1:0.08 2:1.74 3:1.71 4:0.07 heap = 18376632
+1:0.04 2:1.73 3:1.72 4:0.03 heap = 18433904
+1:0.01 2:1.71 3:1.70 4:0.00 heap = 18491392
+1:0.00 2:1.66 3:1.67 4:0.00 heap = 18548608
+1:0.01 2:1.68 3:1.67 4:0.00 heap = 18605824
+1:0.08 2:1.72 3:1.71 4:0.06 heap = 18663512
+1:0.06 2:1.74 3:1.73 4:0.03 heap = 18721016
+1:0.02 2:1.74 3:1.73 4:0.00 heap = 17945112
+1:0.01 2:1.70 3:1.68 4:0.00 heap = 18002344
+1:0.03 2:1.69 3:1.69 4:0.00 heap = 18059576
+1:0.08 2:1.72 3:1.67 4:0.07 heap = 18116824
+Data Local Minutly saved in DB successuful
+Data Local Minutly saved in DB successuful
+Data Local Minutly saved in DB successuful
+Data Local Minutly saved in DB successuful
+1:0.05 2:1.74 3:1.75 4:0.04 heap = 18197976
+Prichal connected
+Register SQL local success
+1:0.04 2:1.72 3:1.71 4:0.01 heap = 18852088
+curent name:OPC_Prichal
+data rcv RT:[ [32m'0.00'[39m, [32m'4.33'[39m, [32m'3.19'[39m, [32m'0.00'[39m ]
+1:0.00 2:1.67 3:1.66 4:0.00 heap = 19097768
+data rcv RT:[ [32m'0.00'[39m, [32m'4.32'[39m, [32m'3.14'[39m, [32m'0.00'[39m ]
+1:0.02 2:1.68 3:1.69 4:0.00 heap = 19190552
+data rcv RT:[ [32m'0.00'[39m, [32m'4.31'[39m, [32m'3.13'[39m, [32m'0.00'[39m ]
+1:0.07 2:1.69 3:1.68 4:0.06 heap = 19281712
+data rcv RT:[ [32m'0.00'[39m, [32m'4.26'[39m, [32m'3.11'[39m, [32m'0.00'[39m ]
+1:0.04 2:1.72 3:1.72 4:0.03 heap = 19373104
+data rcv RT:[ [32m'0.00'[39m, [32m'4.25'[39m, [32m'3.12'[39m, [32m'0.00'[39m ]
+1:0.03 2:1.73 3:1.71 4:0.01 heap = 18677704
+data rcv RT:[ [32m'0.00'[39m, [32m'4.23'[39m, [32m'3.16'[39m, [32m'0.00'[39m ]
+1:0.01 2:1.67 3:1.64 4:0.00 heap = 18768872
+data rcv RT:[ [32m'0.00'[39m, [32m'4.27'[39m, [32m'3.06'[39m, [32m'0.00'[39m ]
+1:0.02 2:1.68 3:1.67 4:0.00 heap = 18859784
+data rcv RT:[ [32m'0.00'[39m, [32m'4.26'[39m, [32m'3.09'[39m, [32m'0.00'[39m ]
+1:0.05 2:1.70 3:1.69 4:0.07 heap = 18950672
+data rcv RT:[ [32m'0.00'[39m, [32m'4.32'[39m, [32m'3.05'[39m, [32m'0.00'[39m ]
+1:0.05 2:1.75 3:1.72 4:0.04 heap = 19041352
+data rcv RT:[ [32m'0.00'[39m, [32m'4.34'[39m, [32m'3.10'[39m, [32m'0.03'[39m ]
+1:0.01 2:1.70 3:1.72 4:0.00 heap = 19132248
+data rcv RT:[ [32m'0.00'[39m, [32m'4.36'[39m, [32m'3.06'[39m, [32m'0.04'[39m ]
+1:0.00 2:1.69 3:1.65 4:0.00 heap = 19223312
+data rcv RT:[ [32m'0.00'[39m, [32m'4.36'[39m, [32m'3.08'[39m, [32m'0.00'[39m ]
+1:0.03 2:1.67 3:1.67 4:0.00 heap = 19313952
+data rcv RT:[ [32m'0.00'[39m, [32m'4.31'[39m, [32m'3.09'[39m, [32m'0.00'[39m ]
+1:0.08 2:1.73 3:1.70 4:0.07 heap = 19429088
+data rcv RT:[ [32m'0.00'[39m, [32m'4.29'[39m, [32m'3.09'[39m, [32m'0.00'[39m ]
+1:0.07 2:1.72 3:1.71 4:0.05 heap = 19529160
+data rcv RT:[ [32m'0.00'[39m, [32m'4.27'[39m, [32m'3.11'[39m, [32m'0.00'[39m ]
+1:0.04 2:1.73 3:1.71 4:0.02 heap = 19619688
+data rcv RT:[ [32m'0.00'[39m, [32m'4.27'[39m, [32m'3.12'[39m, [32m'0.00'[39m ]
+1:0.01 2:1.67 3:1.65 4:0.00 heap = 18886368
+data rcv RT:[ [32m'0.00'[39m, [32m'4.25'[39m, [32m'3.13'[39m, [32m'0.00'[39m ]
+1:0.01 2:1.68 3:1.68 4:0.01 heap = 18976640
+data rcv RT:[ [32m'0.00'[39m, [32m'4.25'[39m, [32m'3.05'[39m, [32m'0.00'[39m ]
+1:0.04 2:1.69 3:1.65 4:0.02 heap = 19067608
+data rcv RT:[ [32m'0.00'[39m, [32m'4.27'[39m, [32m'2.99'[39m, [32m'0.00'[39m ]
+1:0.07 2:1.74 3:1.70 4:0.07 heap = 19165560
+data rcv RT:[ [32m'0.00'[39m, [32m'4.29'[39m, [32m'3.07'[39m, [32m'0.00'[39m ]
+1:0.05 2:1.72 3:1.70 4:0.00 heap = 19256088
+data rcv RT:[ [32m'0.00'[39m, [32m'4.34'[39m, [32m'3.11'[39m, [32m'0.04'[39m ]
+1:0.03 2:1.72 3:1.70 4:0.00 heap = 19346344
+data rcv RT:[ [32m'0.00'[39m, [32m'4.33'[39m, [32m'3.05'[39m, [32m'0.03'[39m ]
+1:0.01 2:1.66 3:1.66 4:0.00 heap = 19442344
+data rcv RT:[ [32m'0.00'[39m, [32m'4.34'[39m, [32m'3.04'[39m, [32m'0.06'[39m ]
+1:0.05 2:1.66 3:1.67 4:0.04 heap = 19535064
+data rcv RT:[ [32m'0.00'[39m, [32m'4.35'[39m, [32m'3.16'[39m, [32m'0.03'[39m ]
+1:0.06 2:1.72 3:1.73 4:0.06 heap = 19625360
+data rcv RT:[ [32m'0.00'[39m, [32m'4.35'[39m, [32m'3.07'[39m, [32m'0.00'[39m ]
+1:0.04 2:1.73 3:1.72 4:0.04 heap = 19727104
+data rcv RT:[ [32m'0.00'[39m, [32m'4.32'[39m, [32m'3.12'[39m, [32m'0.00'[39m ]
+1:0.01 2:1.70 3:1.69 4:0.00 heap = 19817656
+data rcv RT:[ [32m'0.00'[39m, [32m'4.29'[39m, [32m'3.11'[39m, [32m'0.00'[39m ]
+1:0.00 2:1.68 3:1.70 4:0.00 heap = 19020728
+data rcv RT:[ [32m'0.00'[39m, [32m'4.30'[39m, [32m'3.14'[39m, [32m'0.00'[39m ]
+1:0.02 2:1.67 3:1.68 4:0.01 heap = 19111104
+data rcv RT:[ [32m'0.00'[39m, [32m'4.31'[39m, [32m'3.14'[39m, [32m'0.00'[39m ]
+1:0.06 2:1.69 3:1.71 4:0.05 heap = 19201752
+data rcv RT:[ [32m'0.00'[39m, [32m'4.30'[39m, [32m'3.13'[39m, [32m'0.00'[39m ]
+1:0.05 2:1.73 3:1.73 4:0.05 heap = 19292168
+data rcv RT:[ [32m'0.00'[39m, [32m'4.31'[39m, [32m'3.11'[39m, [32m'0.00'[39m ]
+1:0.05 2:1.73 3:1.68 4:0.01 heap = 19382584
+data rcv RT:[ [32m'0.00'[39m, [32m'4.28'[39m, [32m'3.11'[39m, [32m'0.00'[39m ]
+1:0.00 2:1.68 3:1.64 4:0.00 heap = 19473368
+data rcv RT:[ [32m'0.00'[39m, [32m'4.25'[39m, [32m'3.11'[39m, [32m'0.00'[39m ]
+1:0.04 2:1.69 3:1.69 4:0.01 heap = 19568672
+data rcv RT:[ [32m'0.00'[39m, [32m'4.26'[39m, [32m'3.15'[39m, [32m'0.00'[39m ]
+1:0.08 2:1.71 3:1.69 4:0.06 heap = 19659048
+data rcv RT:[ [32m'0.00'[39m, [32m'4.27'[39m, [32m'3.03'[39m, [32m'0.01'[39m ]
+1:0.06 2:1.74 3:1.73 4:0.06 heap = 19749192
+data rcv RT:[ [32m'0.00'[39m, [32m'4.24'[39m, [32m'3.02'[39m, [32m'0.00'[39m ]
+1:0.02 2:1.72 3:1.71 4:0.00 heap = 19852904
+data rcv RT:[ [32m'0.00'[39m, [32m'4.26'[39m, [32m'3.14'[39m, [32m'0.00'[39m ]
+1:0.01 2:1.69 3:1.67 4:0.00 heap = 19948632
+data rcv RT:[ [32m'0.00'[39m, [32m'4.30'[39m, [32m'3.09'[39m, [32m'0.01'[39m ]
+1:0.04 2:1.69 3:1.69 4:0.01 heap = 19175672
+data rcv RT:[ [32m'0.00'[39m, [32m'4.30'[39m, [32m'3.02'[39m, [32m'0.01'[39m ]
+1:0.06 2:1.69 3:1.70 4:0.05 heap = 19266488
+data rcv RT:[ [32m'0.00'[39m, [32m'4.32'[39m, [32m'2.99'[39m, [32m'0.05'[39m ]
+1:0.07 2:1.74 3:1.74 4:0.06 heap = 19356632
+data rcv RT:[ [32m'0.00'[39m, [32m'4.33'[39m, [32m'3.05'[39m, [32m'0.05'[39m ]
+1:0.03 2:1.72 3:1.72 4:0.03 heap = 19447008
+data rcv RT:[ [32m'0.00'[39m, [32m'4.33'[39m, [32m'3.09'[39m, [32m'0.00'[39m ]
+1:0.01 2:1.69 3:1.66 4:0.00 heap = 19537136
+data rcv RT:[ [32m'0.00'[39m, [32m'4.37'[39m, [32m'3.08'[39m, [32m'0.01'[39m ]
+1:0.02 2:1.68 3:1.64 4:0.00 heap = 19627240
+data rcv RT:[ [32m'0.00'[39m, [32m'4.36'[39m, [32m'3.07'[39m, [32m'0.00'[39m ]
+1:0.02 2:1.69 3:1.66 4:0.03 heap = 19717592
+data rcv RT:[ [32m'0.00'[39m, [32m'4.33'[39m, [32m'3.16'[39m, [32m'0.00'[39m ]
+1:0.06 2:1.72 3:1.71 4:0.06 heap = 19807736
+data rcv RT:[ [32m'0.00'[39m, [32m'4.32'[39m, [32m'3.11'[39m, [32m'0.00'[39m ]
+1:0.05 2:1.72 3:1.72 4:0.01 heap = 19898552
+data rcv RT:[ [32m'0.00'[39m, [32m'4.30'[39m, [32m'3.13'[39m, [32m'0.00'[39m ]
+1:0.00 2:1.69 3:1.70 4:0.00 heap = 19988664
+data rcv RT:[ [32m'0.00'[39m, [32m'4.26'[39m, [32m'3.21'[39m, [32m'0.00'[39m ]
+1:0.01 2:1.69 3:1.66 4:0.00 heap = 20078752
+data rcv RT:[ [32m'0.00'[39m, [32m'4.26'[39m, [32m'3.06'[39m, [32m'0.00'[39m ]
+1:0.03 2:1.69 3:1.67 4:0.00 heap = 19276680
+data rcv RT:[ [32m'0.00'[39m, [32m'4.23'[39m, [32m'3.13'[39m, [32m'0.00'[39m ]
+1:0.06 2:1.73 3:1.72 4:0.07 heap = 19373704
+data rcv RT:[ [32m'0.00'[39m, [32m'4.26'[39m, [32m'3.15'[39m, [32m'0.00'[39m ]
+1:0.07 2:1.72 3:1.72 4:0.05 heap = 19464352
+data rcv RT:[ [32m'0.00'[39m, [32m'4.24'[39m, [32m'3.14'[39m, [32m'0.00'[39m ]
+1:0.04 2:1.72 3:1.72 4:0.00 heap = 19554752
