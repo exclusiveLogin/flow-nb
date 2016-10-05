@@ -9,6 +9,9 @@ Global.tube2T = true;
 Global.tube3T = true;
 Global.tube4T = true;
 
+Global.statusNB = 0;
+Global.statusP = 0;
+
 $(document).ready(function(){
     $('#status_node_nb').html('<h2 class="label label-lg label-warning">Попытка установить связь</h2>');
     $('#status_node_p').html('<h2 class="label label-lg label-warning">Попытка установить связь</h2>');
@@ -17,54 +20,126 @@ $(document).ready(function(){
 
     //-----------------CON OK-------------------------------
     Global.socketToNB.on("connect", function(){
-        $('#status_node_nb').html('<h2 class="label label-lg label-success">Связь с узлом установлена</h2>');
+        var tmpstatus = 1;
+        if(Global.statusNB != tmpstatus){
+            $('#status_node_nb').html('<h2 class="label label-lg label-success">Связь с узлом установлена</h2>');
+            Global.statusNB = 1;
+        }
         Global.NB_Con = true;
     });
     Global.socketToP.on("connect", function(){
-        $('#status_node_p').html('<h2 class="label label-lg label-success">Связь с узлом установлена</h2>');
+        var tmpstatus = 1;
+        if(Global.statusP != tmpstatus){
+            $('#status_node_p').html('<h2 class="label label-lg label-success">Связь с узлом установлена</h2>');
+            Global.statusP = 1;
+        }
         Global.P_Con = true;
     });
     
     
     Global.socketToNB.on("connect_error", function(){
-        $('#status_node_nb').html('<h2 class="label label-lg label-danger">Ошибка связи с узлом</h2>');
+        var tmpstatus = -1;
+        if(Global.statusNB != tmpstatus){
+            $('#status_node_nb').html('<h2 class="label label-lg label-danger">Ошибка связи с узлом</h2>');
+            Global.statusNB = -1;
+        }
         Global.NB_Con = false;
-        //$('#tube1_val').text("---");
-        //$('#tube2_val').text("---");
-        //$('#tube3_val').text("---");
-        //$('#tube4_val').text("---");
-        //$('#tube1_pr_val').css("width","0%");
-        //$('#tube2_pr_val').css("width","0%");
-        //$('#tube3_pr_val').css("width","0%");
-        //$('#tube4_pr_val').css("width","0%");
+        
     });
     Global.socketToP.on("connect_error", function(){
-        $('#status_node_p').html('<h2 class="label label-lg label-danger">Ошибка связи с узлом</h2>');
+        var tmpstatus = -1;
+        if(Global.statusP != tmpstatus){
+            $('#status_node_p').html('<h2 class="label label-lg label-danger">Ошибка связи с узлом</h2>');
+            Global.statusP = -1;
+        }
         Global.P_Con = false;
     });
     
     
     Global.socketToNB.on("mb_error", function(){
-        $('#status_node_nb').html('<h2 class="label label-lg label-danger">Ошибка Modbus протокола</h2>');
+        var tmpstatus = -2;
+        if(Global.statusNB != tmpstatus){
+            $('#status_node_nb').html('<h2 class="label label-lg label-danger">Ошибка Modbus протокола</h2>');
+            Global.statusNB = -2;
+        }
     });
     Global.socketToP.on("mb_error", function(){
-        $('#status_node_p').html('<h2 class="label label-lg label-danger">Ошибка Modbus протокола</h2>');
+        var tmpstatus = -2;
+        if(Global.statusP != tmpstatus){
+            $('#status_node_p').html('<h2 class="label label-lg label-danger">Ошибка Modbus протокола</h2>');
+            Global.statusP = -2;
+        }
     });
     Global.socketToNB.on("mb_ok", function(){
-        $('#status_node_nb').html('<h2 class="label label-lg label-danger">Связь c PLC установлена</h2>');
+        var tmpstatus = 2;
+        if(Global.statusNB != tmpstatus){
+            $('#status_node_nb').html('<h2 class="label label-lg label-danger">Связь c PLC установлена</h2>');
+            Global.statusNB = 2;
+        }
     });
     Global.socketToP.on("mb_ok", function(){
-        $('#status_node_p').html('<h2 class="label label-lg label-danger">Связь c PLC установлена</h2>');
+        var tmpstatus = 2;
+        if(Global.statusP != tmpstatus){
+            $('#status_node_p').html('<h2 class="label label-lg label-danger">Связь c PLC установлена</h2>');
+            Global.statusP = 2;  
+        }
     });
     Global.socketToNB.on("mqsql_error", function(){
-        $('#status_node_nb').html('<h2 class="label label-lg label-danger">Ошибка Базы Данных</h2>');
+        var tmpstatus = -3;
+        if(Global.statusNB != tmpstatus){
+            $('#status_node_nb').html('<h2 class="label label-lg label-danger">Ошибка Базы Данных</h2>');
+            Global.statusNB = -3;
+        }
     });
     Global.socketToP.on("mqsql_error", function(){
-        $('#status_node_p').html('<h2 class="label label-lg label-danger">Ошибка Базы Данных</h2>');
+        var tmpstatus = -3;
+        if(Global.statusP != tmpstatus){
+            $('#status_node_p').html('<h2 class="label label-lg label-danger">Ошибка Базы Данных</h2>');
+            Global.statusP = -3;
+        }
+    });
+    Global.socketToNB.on("clients", function(clients){
+        console.log(clients);
+        //$('#clients_list').html('');
+        $('.client_item').each(function(index, elem){
+            $(this).removeClass("label-success").addClass("label-danger");
+            /*
+            $(elem).delay(index*500).addClass("transparent").delay(500).fadeOut(100,function(){
+               $(this).remove(); 
+            });*/
+            //$(elem).delay(Number(index)*500).addClass("transparent");
+            
+            
+            setTimeout(function(){
+                $(elem).addClass("transparent").delay(1000).fadeOut(100,function(){
+                   $(this).remove(); 
+                });
+            },Number(index)*100);
+        });
+
+        for(var ip in clients){
+            setTimeout(function(){
+                $('#clients_list').append('<h2 class="label label-lg label-success client_item">'+clients[ip]+'</h2>');
+            },ip*100);
+        }
+        Global.clients = clients;
+        if(Global.clients){
+            setTimeout(function(){
+                $('#clients_list').html('');
+                for(var ip in clients){
+                    $('#clients_list').append('<h2 class="label label-lg label-success client_item">'+clients[ip]+'</h2>');
+                }
+            },5000);
+        }
     });
     //----------------DATA-----------------------------
     Global.socketToNB.on("all_ok", function(data){
-        $('#status_node_nb').html('<h2 class="label label-lg label-success">Система работает</h2>');
+        var tmpstatus = 4;
+        if(Global.statusNB != tmpstatus){
+            $('#status_node_nb').html('<h2 class="label label-lg label-success">Система работает</h2>');
+            Global.statusNB = 4;
+        }
+        
         if(data && Global.RTToggle){
             /*if(Global.IntRTT){//Дельта-сигма RT
                 data.tube1[1] = Global.RTI1.Integrity(data.tube1[1]);
@@ -150,7 +225,12 @@ $(document).ready(function(){
         }
     });
     Global.socketToP.on("all_ok", function(data){
-        $('#status_node_p').html('<h2 class="label label-lg label-success">Система работает</h2>');
+        var tmpstatus = 4;
+        if(Global.statusP != tmpstatus){
+            $('#status_node_p').html('<h2 class="label label-lg label-success">Система работает</h2>');
+            Global.statusP = 4;
+        }
+        
         if(data && Global.RTToggle){   
             /*if(Global.IntRTT){//Дельта-сигма RT
                 data.tube1[1] = Global.RTI1p.Integrity(data.tube1[1]);

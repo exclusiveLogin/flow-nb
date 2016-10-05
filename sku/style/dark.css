@@ -228,6 +228,9 @@ h3.card_status_off{
 .label-disabled{
     opacity: 0.3;
 }
+.label{
+    transition:opacity 0.5s ease;
+}
 .btn_clsuc{
     margin-bottom: 15px;
 }
@@ -247,6 +250,14 @@ h3.card_status_off{
 .mydevider{
     margin: 5px 0;
     border-bottom: 1px grey solid;
+}
+.mydevider_b {
+    border-top: 2px red solid;
+    margin-top: 30px;
+    margin-bottom: 2px;
+}
+.client_item{
+    margin: 5px;
 }
 .row{
     margin-left: 0;

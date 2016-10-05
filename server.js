@@ -19,9 +19,13 @@ var socketServ = require('socket.io').listen(3000);
 
 socketServ.on("connection",function(socket){
     console.log("client Front End connected");
-    console.log(util.inspect(socket,{colors:true}));
+    //console.log(util.inspect(socket,{colors:true}));
     
-    Global.FEclients.push(socket);
+    Global.FEclients.push(socket.conn.remoteAddress.substr(7));
+    console.log(util.inspect(Global.FEclients,{colors:true}));
+    socketServ.emit("clients", Global.FEclients);
+    
+    
     
     socket.on("arjLoad",function(data){
         localP = false;
@@ -246,10 +250,12 @@ socketServ.on("connection",function(socket){
     });
     socket.on("disconnect",function(){
         console.log("client Front End DISCONNECTED");
-        var index = Global.FEclients.indexOf(socket);
+        var index = Global.FEclients.indexOf(socket.conn.remoteAddress.substr(7));
         if(index!=-1){
-            Global.clients.splice(index,1);
+            Global.FEclients.splice(index,1);
         }
+        socketServ.emit("clients", Global.FEclients);
+        console.log(util.inspect(Global.FEclients,{colors:true}));
     });
 });
 
