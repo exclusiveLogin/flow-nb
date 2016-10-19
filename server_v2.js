@@ -32,6 +32,7 @@ socketServ.on("connection",function(socket){
         localNB = false;
         trendP = [];
         trendNB = [];
+        dumpflag = false;
         console.log("ARJ LOAD started");
         if(data.min && data.max && data.tube){//проверка целостности 
             var tube = data.tube;
@@ -40,9 +41,11 @@ socketServ.on("connection",function(socket){
             if(interval>3600*12*1000){//если накопленные данные больше часа
                 var query_p = "SELECT * FROM `p_tube"+tube+"_m` WHERE `utc` BETWEEN "+data.min+" AND "+data.max+" ORDER BY `utc`";
                 var query_nb = "SELECT * FROM `tube"+tube+"_m` WHERE `utc` BETWEEN "+data.min+" AND "+data.max+" ORDER BY `utc`";
+                dumpflag = false;
             }else{
                 var query_p = "SELECT * FROM `p_tube"+tube+"_dump` WHERE `utc` BETWEEN "+data.min+" AND "+data.max+" ORDER BY `utc`";
                 var query_nb = "SELECT * FROM `tube"+tube+"_dump` WHERE `utc` BETWEEN "+data.min+" AND "+data.max+" ORDER BY `utc`";
+                dumpflag = true;
             }
             pool.getConnection(function(err,connection){
                 if(!err){
@@ -92,7 +95,7 @@ socketServ.on("connection",function(socket){
                     //connection.release();
                     //console.log("ArjLoad connection released");
                     checkPoolArj("arj");
-                    socketServ.sockets.emit("arj_load_res",{trendP:trendP, trendNB:trendNB,min:data.min,max:data.max});
+                    socketServ.sockets.emit("arj_load_res",{trendP:trendP, trendNB:trendNB,min:data.min,max:data.max,dumpflag:dumpflag});
                     localNB = false;
                     localP = false;
                     trendP = null;

@@ -15,6 +15,9 @@ Global = {
     loggedAs:"",		
     opened:false,
     users:[],
-    RTbuffer:300
+    RTbuffer:300,
+    currentArjIntervalDump:false,
+    currentArjMinPoint:null,
+    currentArjMaxPoint:null
 };
 
