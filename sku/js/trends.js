@@ -436,8 +436,20 @@ $(document).ready(function(){
             
             buttons:[{
                 type:"hour",
+                count:1,
+                text:"1ч"
+            },{
+                type:"hour",
+                count:3,
+                text:"3ч"
+            },{
+                type:"hour",
                 count:8,
                 text:"8ч"
+            },{
+                type:"hour",
+                count:12,
+                text:"12ч"
             },{
                 type:"day",
                 count:1,

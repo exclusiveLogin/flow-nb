@@ -37,7 +37,7 @@ socketServ.on("connection",function(socket){
             var tube = data.tube;
             var interval = data.max - data.min;
             console.log("interval:"+interval); 
-            if(interval>3600*24*1000){//если накопленные данные больше суток
+            if(interval>3600*12*1000){//если накопленные данные больше часа
                 var query_p = "SELECT * FROM `p_tube"+tube+"_m` WHERE `utc` BETWEEN "+data.min+" AND "+data.max+" ORDER BY `utc`";
                 var query_nb = "SELECT * FROM `tube"+tube+"_m` WHERE `utc` BETWEEN "+data.min+" AND "+data.max+" ORDER BY `utc`";
             }else{
@@ -425,7 +425,7 @@ var regConSQLLocal = function(){
                 socketServ.sockets.emit("all_ok",{});
                 console.log("Register SQL local success");
                 Global.connection = connection;
-                Global.schedullerTube = setInterval(rcvTubes,1000);
+                Global.schedullerTube = setInterval(rcvTubes,60);
                 Global.sqlConLocalQuery = false;
             }    
         });
@@ -554,7 +554,9 @@ io.on("connection",function(socket){
     });
 });
 function replQ(){
-    io.sockets.emit("replicateQ",{});
+    setTimeout(function(){
+        io.sockets.emit("replicateQ",{});
+    },2000);
 };
 function freener(lid,tube){
     console.log("prepare to del id:"+lid+" on tube "+tube);
@@ -624,6 +626,7 @@ function inserterDB(tube,stack){
         if(!err){
             var tmp = 0;
             for(var elem in stack){
+                var tmpFreeOnZeroSec = false;
                 console.log('row:'+elem+" value:"+stack[elem].value+" utc:"+stack[elem].utc);
 
                 tmpQ = 'INSERT IGNORE INTO `p_tube'+tube+'_dump` (`value`,`utc`) VALUES('+stack[elem].value+','+stack[elem].utc+')';
@@ -633,8 +636,15 @@ function inserterDB(tube,stack){
                     //console.log("tmp:"+tmp);
                     if(!err){
                         if(tmp == stack.length){
+                            if(stack[elem].sec == 0){//если последнаяя в стеке не 0 секунда
+                                tmpFreeOnZeroSec = true;
+                            }else{
+                                console.log("stack full writed tmp:"+tmp);
+                                io.sockets.emit("send_free",{});
+                                freener(stack[stack.length-1].utc,tube);
+                                connection.release();
+                            }
                             //console.log("yes elem:"+elem+" == "+stack.length);
-                            io.sockets.emit("send_free",{});
                         }
                     }else{
                         console.log(err);
@@ -655,6 +665,11 @@ function inserterDB(tube,stack){
                 if(stack[elem].sec == 0 && !Global.DBStacksecondLock){
                     tmpQ = 'INSERT IGNORE INTO `p_tube'+tube+'_m` (`value`,`utc`) VALUES('+stack[elem].value+','+stack[elem].utc+')';
                     connection.query(tmpQ,function(err){
+                        if(tmpFreeOnZeroSec){
+                            io.sockets.emit("send_free",{});
+                            freener(stack[stack.length-1].utc,tube);
+                            connection.release();
+                        }
                         if(!err){
                             //console.log("all ok data inserted");
                         }else{
@@ -670,8 +685,10 @@ function inserterDB(tube,stack){
             if(stack[elem].sec != 0 && Global.DBStacksecondLock){//снятие защиты на запись дублирующих секунд
                     Global.DBStacksecondLock = false;
                 }
-            freener(stack[stack.length-1].utc,tube);
-            connection.release();
+            if(tmp == stack.length){
+                
+            }
+            
         }else{
             console.log("pool SQL error");
             checkPool("error SQL InserterDB");

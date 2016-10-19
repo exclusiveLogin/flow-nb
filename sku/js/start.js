@@ -276,6 +276,25 @@ $(document).ready(function(){
     });
     $('#btn_calc').on('click',function(){
         resultToggle(1);
+        var resultCalc = false;
+        var calc = new Calculator();
+        var pointNB = Number($(".pointNButc").text());
+        var pointP = Number($(".pointPutc").text());
+        if(pointNB && pointP){
+            calc.setPoints(pointNB,pointP);
+            resultCalc = calc.calc();
+            if(resultCalc.error){
+                $(".res_msg").text(resultCalc.errTxt);
+            }else{
+                $(".res_msg").text("Рачет произведен успешно");
+                $(".res_nb_val").text(resultCalc.fromNB);
+                $(".res_pr_val").text(resultCalc.fromP);
+                $(".res_center_val").text(resultCalc.rel);
+            }
+        }else{
+            $(".res_msg").text("Не хватает данных для расчета");
+        }
+        
     });
 });
 function userEnter(user) {
