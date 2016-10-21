@@ -421,10 +421,15 @@ $(document).ready(function(){
     });
     
 });
-function trendDetail(e){
+function trendDetail(e,refresh){
     if(e.min && e.max && Global.NB_Con && e.trigger){
         if(e.trigger == "rangeSelectorButton" || e.trigger == "zoom"){
             Global.socketToNB.emit("arjLoad",{min:e.min,max:e.max, tube:Global.currentTube});
+        }
+    }
+    if(refresh){
+        if(Global.currentArjMinPoint && Global.currentArjMaxPoint && Global.NB_Con){
+            Global.socketToNB.emit("arjLoad",{min:Global.currentArjMinPoint,max:Global.currentArjMaxPoint, tube:Global.currentTube});
         }
     }
 }
@@ -433,7 +438,7 @@ function minMax(tube){
     if(Global.NB_Con){//если есть коннект с сервером формируем событие
            Global.socketToNB.emit("min_max",{tube:tube});
     }
-};
+}
 
 function press2perc(val){
     var min = 0.0;

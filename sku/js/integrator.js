@@ -1,6 +1,7 @@
 function Integrator(){
     this.lastPoint = 0;
     this.filtered = true;
+    this.integrityOnly = false;
     this.prefilterPoints = 1;
     this.postfilterPoints = 1;
     
@@ -37,7 +38,11 @@ function Integrator(){
         }else{
             this.Buffer.shift();
             this.Buffer.push(val);
-            var Interg = this.Filter();
+            if(this.integrityOnly){
+                var Interg = this.DFilter();
+            }else{
+                var Interg = this.Filter();
+            }
         }
         return Interg;
     };
@@ -58,6 +63,16 @@ function Integrator(){
             var avrPre = summPre/this.prefilterPoints;
             ret = avrPre - avrPost;
             return ret;
+        }
+    };
+    this.DFilter = function(){
+        if(this.Buffer.length){
+            var summ = 0.0;
+            for(var el = 0; el<this.Buffer.length; el++){
+                summ += this.Buffer[el];
+            }
+            var avr = summ/this.Buffer.length;
+            return avr;
         }
     };
 };

@@ -166,6 +166,43 @@ $(document).ready(function(){
             $(this).text("Отключить в Архиве");
             Global.IntARJT = true;
         }
+        trendDetail(false,true);
+    });
+    
+    $('#btn_intToggleOnly').on("click",function(){
+        if($(this).hasClass("active")){
+            $(this).removeClass("active");
+            $(this).removeClass("btn-danger");
+            
+            Global.RTI1.integrityOnly = false;
+            Global.RTI2.integrityOnly = false;
+            Global.RTI3.integrityOnly = false;
+            Global.RTI4.integrityOnly = false;
+            
+            Global.RTI1p.integrityOnly = false;
+            Global.RTI2p.integrityOnly = false;
+            Global.RTI3p.integrityOnly = false;
+            Global.RTI4p.integrityOnly = false;
+            
+            Global.ARJI.integrityOnly = false;
+            Global.ARJIp.integrityOnly = false;
+        }else{
+            $(this).addClass("active");
+            $(this).addClass("btn-danger");
+            
+            Global.RTI1.integrityOnly = true;
+            Global.RTI2.integrityOnly = true;
+            Global.RTI3.integrityOnly = true;
+            Global.RTI4.integrityOnly = true;
+            
+            Global.RTI1p.integrityOnly = true;
+            Global.RTI2p.integrityOnly = true;
+            Global.RTI3p.integrityOnly = true;
+            Global.RTI4p.integrityOnly = true;
+            
+            Global.ARJI.integrityOnly = true;
+            Global.ARJIp.integrityOnly = true;
+        }
     });
     
     //-----------------Integrator-----------------
