@@ -267,6 +267,9 @@ var mysql = require("mysql");
 
 var pool;
 function crPool(){
+    if(pool){
+        pool = null;
+    }
     pool = mysql.createPool({
         waitForConnections:false,
         connectionLimit : 20,
@@ -323,8 +326,7 @@ var resetPool = function(){
         Global.sqlResetQuery = true;
         if(pool){
             console.log("pool established, reset success");
-            pool.end(function(err){//delete pool
-                pool = null;
+            pool.end(function(err){
                 if(!err){
                     console.log("pool end without error");
                     crPool();
@@ -396,17 +398,23 @@ var regConSQLRemote = function(){
             Global.connectionRT.release();
             Global.connectionRT = null;
         }
-        pool.getConnection(function(err, connection) {
-            if(err){
-                console.log("pool RT register error");
-                resetPool();
-            }else{
-                socketServ.sockets.emit("all_ok",{});
-                console.log("Register SQL local success");
-                Global.connectionRT = connection;
-                Global.sqlConRemoteQuery = false;
-            }    
-        });
+        if(pool){
+            pool.getConnection(function(err, connection) {
+                if(err){
+                    console.log("pool RT register error");
+                    socketServ.sockets.emit("mysql_error",{});
+                    resetPool();
+                }else{
+                    //socketServ.sockets.emit("all_ok",{});
+                    console.log("Register SQL local success");
+                    Global.connectionRT = connection;
+                    Global.sqlConRemoteQuery = false;
+                }    
+            });
+        }else{
+            console.log("pool not established");
+            resetPool();
+        }
     }
 };
 var regConSQLLocal = function(){
@@ -420,18 +428,25 @@ var regConSQLLocal = function(){
                 clearInterval(Global.schedullerTube);
                 console.log("interval clear reset");
         }
-        pool.getConnection(function(err, connection) {
-            if(err){
-                console.log("pool LOCAL register error");
-                resetPool();
-            }else{
-                socketServ.sockets.emit("all_ok",{});
-                console.log("Register SQL local success");
-                Global.connection = connection;
-                Global.schedullerTube = setInterval(rcvTubes,60);
-                Global.sqlConLocalQuery = false;
-            }    
-        });
+        if(pool){
+            pool.getConnection(function(err, connection) {
+                if(err){
+                    console.log("pool LOCAL register error");
+                    socketServ.sockets.emit("mysql_error",{});
+                    resetPool();
+                }else{
+                    //socketServ.sockets.emit("all_ok",{});
+                    console.log("Register SQL local success");
+                    Global.connection = connection;
+                    Global.schedullerTube = setInterval(rcvTubes,60);
+                    Global.sqlConLocalQuery = false;
+                }    
+            });
+        }else{
+            console.log("pool not established");
+            resetPool();
+        }
+        
     }
 };
 var sqlCloseRemote = function(){
@@ -566,7 +581,7 @@ function freener(lid,tube){
     io.sockets.emit("free",{"lid":lid,"tube":tube});
 };
 function inserterRT(tubes,time){
-    console.log("data rcv RT:"+util.inspect(tubes,{colors:true}));
+    //console.log("data rcv RT:"+util.inspect(tubes,{colors:true}));
     var tmpDate = new Date(time[0]);
     var tmpSeconds = tmpDate.getSeconds();
     var tmpMinutes = tmpDate.getMinutes();
@@ -639,14 +654,17 @@ function inserterDB(tube,stack){
                     //console.log("tmp:"+tmp);
                     if(!err){
                         if(tmp == stack.length){
-                            if(stack[elem].sec == 0){//если последнаяя в стеке не 0 секунда
-                                tmpFreeOnZeroSec = true;
-                            }else{
+                            //if(stack[elem].sec == 0){//если последнаяя в стеке 0 секунда
+                              //  tmpFreeOnZeroSec = true;
+                            //}else{
+                              //  tmpFreeOnZeroSec = false;
                                 console.log("stack full writed tmp:"+tmp);
-                                io.sockets.emit("send_free",{});
-                                freener(stack[stack.length-1].utc,tube);
-                                connection.release();
-                            }
+                                setTimeout(function(){
+                                    io.sockets.emit("send_free",{});
+                                    freener(stack[stack.length-1].utc,tube);
+                                    connection.release();
+                                },2000);
+                           // }
                             //console.log("yes elem:"+elem+" == "+stack.length);
                         }
                     }else{
@@ -668,11 +686,6 @@ function inserterDB(tube,stack){
                 if(stack[elem].sec == 0 && !Global.DBStacksecondLock){
                     tmpQ = 'INSERT IGNORE INTO `p_tube'+tube+'_m` (`value`,`utc`) VALUES('+stack[elem].value+','+stack[elem].utc+')';
                     connection.query(tmpQ,function(err){
-                        if(tmpFreeOnZeroSec){
-                            io.sockets.emit("send_free",{});
-                            freener(stack[stack.length-1].utc,tube);
-                            connection.release();
-                        }
                         if(!err){
                             //console.log("all ok data inserted");
                         }else{
@@ -799,16 +812,18 @@ function rcvTubes(){
             
             
             //отправка
-            console.log("-----------------SEND max----------------------");
-            console.log(util.inspect("max val:"+Global.buffer_valmax,{colors:true}));
-            console.log(util.inspect("dt:"+Global.buffer_dtmax,{colors:true}));
+            //console.log("-----------------SEND max----------------------");
+            //console.log(util.inspect("max val:"+Global.buffer_valmax,{colors:true}));
+            //console.log(util.inspect("dt:"+Global.buffer_dtmax,{colors:true}));
             //prepare send packet
             
             //отправка
-            console.log("-----------------SEND min----------------------");
-            console.log(util.inspect("min val:"+Global.buffer_valmin,{colors:true}));
-            console.log(util.inspect("td:"+Global.buffer_dtmin,{colors:true}));
+            //console.log("-----------------SEND min----------------------");
+            //console.log(util.inspect("min val:"+Global.buffer_valmin,{colors:true}));
+            //console.log(util.inspect("td:"+Global.buffer_dtmin,{colors:true}));
                 
+            //console.log("SEND local");
+            
             Global.bufferStep = 0;
             //отдаем клиенту
             FESender(Global.buffer_valmax,Global.buffer_dtmax);
