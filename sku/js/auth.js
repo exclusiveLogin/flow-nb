@@ -93,6 +93,7 @@ function refreshLog() {//поведение авторизации
     if(Global.authkey){
         if(Global.jqready){
             $("#wrapper").removeClass("transparent");
+            $("#panel_additional").removeClass("transparent");
             $("#panel_sku").removeClass("transparent");
             $("#panel_rt").removeClass("transparent");
             setTimeout(function () {
@@ -112,6 +113,7 @@ function refreshLog() {//поведение авторизации
             },500);
             setTimeout(function () {
                 $("#wrapper").addClass("transparent");
+                $("#panel_additional").addClass("transparent");
             },1000);
             $('.btnlogout').hide();
             $('.btnlogin').show();

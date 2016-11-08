@@ -308,6 +308,18 @@ a:hover{
     color: orange;
     text-align: center;
 }
+#panel_additional{
+    font-weight: bold;
+    color: orange;
+    text-align: center;
+}
+
+#panel_additional .val{
+    font-weight: bold;
+    font-size: 140%;
+    color: white;
+    transition: all 0.2s ease;
+}
 
 /*-------------------------------trends---------------------------*/
 .rt-trend{
