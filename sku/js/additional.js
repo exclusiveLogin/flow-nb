@@ -52,6 +52,13 @@ function additionalLoader(){
             if(data.p22){
                 $("#add_p22_val").text(data.p22);
             }
+	    //update
+	    if(data.upd){
+		$("#add_upd_val").text(data.upd);
+		$("#add_upd_val").removeClass("label-danger").addClass("label-success");
+            }else{
+		$("#add_upd_val").addClass("label-danger").removeClass("label-success");
+	    }
         },
         error:function(){
             console.log("Error load AJAX data");

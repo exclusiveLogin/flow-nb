@@ -17,6 +17,7 @@ $p12 = 888;
 $p21 = 888;
 $p22 = 888;
 
+$upd = "888";
 
 if($f_exist){
     $ini_arr = parse_ini_file($ini_path);
@@ -81,6 +82,11 @@ if($f_exist){
         $p22 = round((float)str_replace(",",".",$ini_arr['P22']),1);
         $q = "UPDATE `rt_widget` SET  `p22` =".$p22.";";
         $mysql->query($q);
+    }
+    if(isset($ini_arr['upd'])){
+	$upd = $ini_arr['upd'];
+	$q = "UPDATE `rt_widget` SET `upd` = \"".$upd."\";";
+	$mysql->query($q);
     }
     
 }

@@ -15,8 +15,8 @@ Global.statusP = 0;
 $(document).ready(function(){
     $('#status_node_nb').html('<h2 class="label label-lg label-warning">Попытка установить связь</h2>');
     $('#status_node_p').html('<h2 class="label label-lg label-warning">Попытка установить связь</h2>');
-    Global.socketToNB = io('http://10.210.30.211:3000');
-    Global.socketToP = io('http://10.210.30.210:3000');
+    Global.socketToNB = io('http://10.210.30.44:3000');
+    Global.socketToP = io('http://10.210.30.43:3000');
 
     //-----------------CON OK-------------------------------
     Global.socketToNB.on("connect", function(){
@@ -353,6 +353,8 @@ $(document).ready(function(){
         
         function arjLoader(){
             if(data.trendNB && data.trendP){
+				Global.MainTrend_DataP = [];
+				Global.MainTrend_DataNB = [];
                 for(var index in data.trendP){
                     if(Global.IntARJT){
                         var tmpVal = Global.ARJI.Integrity(data.trendP[index].value);
@@ -411,13 +413,14 @@ $(document).ready(function(){
                 Global.MainTrend.series[1].addPoint([Global.maxArjTrend+1,tmpMaxPval]);
 
                 Global.MainTrend.xAxis[0].setExtremes(tmpMinUTC,tmpMaxUTC);
-
+	
             }
         }
         
         Global.currentArjIntervalDump = data.dumpflag;
         Global.currentArjMaxPoint = data.max;
         Global.currentArjMinPoint = data.min;
+		Global.MainTrend.hideLoading();
     });
     
 });
@@ -432,6 +435,7 @@ function trendDetail(e,refresh){
             Global.socketToNB.emit("arjLoad",{min:Global.currentArjMinPoint,max:Global.currentArjMaxPoint, tube:Global.currentTube});
         }
     }
+	Global.MainTrend.showLoading("Подождите, идет загрузка данных");
 }
 
 function minMax(tube){
