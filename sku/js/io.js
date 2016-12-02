@@ -15,8 +15,8 @@ Global.statusP = 0;
 $(document).ready(function(){
     $('#status_node_nb').html('<h2 class="label label-lg label-warning">Попытка установить связь</h2>');
     $('#status_node_p').html('<h2 class="label label-lg label-warning">Попытка установить связь</h2>');
-    Global.socketToNB = io('http://10.210.30.44:3000');
-    Global.socketToP = io('http://10.210.30.43:3000');
+    Global.socketToNB = io('http://10.210.30.211:3000');
+    Global.socketToP = io('http://10.210.30.210:3000');
 
     //-----------------CON OK-------------------------------
     Global.socketToNB.on("connect", function(){

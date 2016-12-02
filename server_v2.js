@@ -470,7 +470,7 @@ var sqlCloseLocal = function(){
 var modbus = require("jsmodbus");
 
 var client = modbus.client.tcp.complete({ 
-        'host'              : "10.210.30.117", 
+        'host'              : "10.210.30.213", 
         'port'              : "502",
         'autoReconnect'     : true,
         'reconnectTimeout'  : 1000,
