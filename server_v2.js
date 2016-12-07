@@ -20,8 +20,9 @@ var socketServ = require('socket.io').listen(3000);
 socketServ.on("connection",function(socket){
     console.log("client Front End connected");
     //console.log(util.inspect(socket,{colors:true}));
-    
-    Global.FEclients.push(socket.conn.remoteAddress.substr(7));
+    //console.log(util.inspect(socket.handshake.headers['x-forwarded-for'],{colors:true}));
+    //Global.FEclients.push(socket.conn.remoteAddress.substr(7));
+    Global.FEclients.push(socket.handshake.headers['x-forwarded-for']);
     console.log(util.inspect(Global.FEclients,{colors:true}));
     socketServ.emit("clients", Global.FEclients);
     
@@ -37,15 +38,19 @@ socketServ.on("connection",function(socket){
         if(data.min && data.max && data.tube){//проверка целостности 
             var tube = data.tube;
             var interval = data.max - data.min;
-            console.log("interval:"+interval); 
-            if(interval>3600*12*1000){//если накопленные данные больше часа
+            console.log("interval:"+interval);
+            if(interval>3600*96*1000){//если накопленные данные больше 12 часов но меньше 48
+                var query_p = "SELECT * FROM `p_tube"+tube+"_h` WHERE `utc` BETWEEN "+data.min+" AND "+data.max+" ORDER BY `utc`";
+                var query_nb = "SELECT * FROM `tube"+tube+"_h` WHERE `utc` BETWEEN "+data.min+" AND "+data.max+" ORDER BY `utc`";
+                dumpflag = 0;
+            }else if(interval>3600*12*1000 && interval<3600*96*1000){
                 var query_p = "SELECT * FROM `p_tube"+tube+"_m` WHERE `utc` BETWEEN "+data.min+" AND "+data.max+" ORDER BY `utc`";
                 var query_nb = "SELECT * FROM `tube"+tube+"_m` WHERE `utc` BETWEEN "+data.min+" AND "+data.max+" ORDER BY `utc`";
-                dumpflag = false;
+                dumpflag = 1;
             }else{
                 var query_p = "SELECT * FROM `p_tube"+tube+"_dump` WHERE `utc` BETWEEN "+data.min+" AND "+data.max+" ORDER BY `utc`";
                 var query_nb = "SELECT * FROM `tube"+tube+"_dump` WHERE `utc` BETWEEN "+data.min+" AND "+data.max+" ORDER BY `utc`";
-                dumpflag = true;
+                dumpflag = 2;
             }
             pool.getConnection(function(err,connection){
                 if(!err){
@@ -253,7 +258,7 @@ socketServ.on("connection",function(socket){
     });
     socket.on("disconnect",function(){
         console.log("client Front End DISCONNECTED");
-        var index = Global.FEclients.indexOf(socket.conn.remoteAddress.substr(7));
+        var index = Global.FEclients.indexOf(socket.handshake.headers['x-forwarded-for']);
         if(index!=-1){
             Global.FEclients.splice(index,1);
         }
@@ -271,7 +276,7 @@ function crPool(){
         pool = null;
     }
     pool = mysql.createPool({
-        waitForConnections:false,
+        //waitForConnections:false,
         connectionLimit : 20,
         host     : 'localhost',
         user     : 'root',
@@ -473,8 +478,8 @@ var client = modbus.client.tcp.complete({
         'host'              : "10.210.30.213", 
         'port'              : "502",
         'autoReconnect'     : true,
-        'reconnectTimeout'  : 1000,
-        'timeout'           : 500,
+        'reconnectTimeout'  : 60000,
+        'timeout'           : 5000,
         'unitId'            : 0
     });
 
