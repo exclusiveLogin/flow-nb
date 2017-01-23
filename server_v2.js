@@ -478,7 +478,7 @@ var client = modbus.client.tcp.complete({
         'host'              : "10.210.30.213", 
         'port'              : "502",
         'autoReconnect'     : true,
-        'reconnectTimeout'  : 60000,
+        'reconnectTimeout'  : 10000,
         'timeout'           : 5000,
         'unitId'            : 0
     });
@@ -546,41 +546,20 @@ io.on("connection",function(socket){
         
     });
     socket.on("replica",function(cont){
-        
-        Global.LID = {
-            tube1:0,
-            tube2:0,
-            tube3:0,
-            tube4:0,
-        };
-        var replNeed = false;
         if(cont.tube1){
-            replNeed = true;
             inserterDB(1,cont.tube1);
         }
         if(cont.tube2){
-            replNeed = true;
             inserterDB(2,cont.tube2);
         }
-        if(cont.tube3){
-            replNeed = true;            
+        if(cont.tube3){          
             inserterDB(3,cont.tube3);
         }
-        if(cont.tube4){
-            replNeed = true;            
+        if(cont.tube4){           
             inserterDB(4,cont.tube4);
-        }
-        if(replNeed){
-            replQ();
-            replNeed = false;
         }
     });
 });
-function replQ(){
-    setTimeout(function(){
-        io.sockets.emit("replicateQ",{});
-    },2000);
-};
 function freener(lid,tube){
     console.log("prepare to del id:"+lid+" on tube "+tube);
     io.sockets.emit("free",{"lid":lid,"tube":tube});
@@ -664,17 +643,15 @@ function inserterDB(tube,stack){
                             //}else{
                               //  tmpFreeOnZeroSec = false;
                                 console.log("stack full writed tmp:"+tmp);
-                                setTimeout(function(){
-                                    io.sockets.emit("send_free",{});
-                                    freener(stack[stack.length-1].utc,tube);
-                                    connection.release();
-                                },2000);
+               
+                                freener(stack[stack.length-1].utc,tube);
+                                connection.release();
+                                
                            // }
                             //console.log("yes elem:"+elem+" == "+stack.length);
                         }
                     }else{
                         console.log(err);
-                        io.sockets.emit("send_free",{});
                     }
                 });
                 if(stack[elem].min == 0 && stack[elem].sec == 0 && !Global.DBStacksecondLock){
