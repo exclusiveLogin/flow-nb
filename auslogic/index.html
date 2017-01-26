@@ -15,7 +15,9 @@
     <link rel="stylesheet" href="style.css">
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous" type="application/javascript"></script>
+    <!--script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous" type="application/javascript"></script-->
+
+    <script src="logic.js"></script>
 
 </head>
     <body>
@@ -26,7 +28,7 @@
                     <div class="addform col-md-5 myform">
                         <div class="formtitle">Add your phone number</div>
                         <div class="opt">Option 1.Add your phone number</div>
-                        <form class="form-horizontal">
+                        <div class="form-horizontal">
                             <div class="form-group">
                                 <label for="phone" class="col-sm-2 control-label">Phone</label>
                                 <div class="col-sm-10">
@@ -36,23 +38,23 @@
                             <div class="form-group">
                                 <label for="emailreg" class="col-sm-2 control-label">Email</label>
                                 <div class="col-sm-10">
-                                    <input type="email" class="form-control" id="emailreg" placeholder="Email">
+                                    <input type="email" class="" id="emailreg" placeholder="Email">
                                 </div>
                             </div>
                             <div class="form-group">
                                 <div class="col-sm-offset-2 col-sm-3">
-                                    <button type="submit" class="btn btn-default">Submit</button>
+                                    <button id="btnaddphone" class="btn btn-default">Submit</button>
                                 </div>
                                 <div class="col-sm-7">
                                     <span>You will be able to retrieve your phone number later on using your email</span>
                                 </div>
                             </div>
-                        </form>
+                        </div>
                     </div>
                     <div class="forgotform col-md-offset-1 col-md-5 myform">
                         <div class="formtitle">Retrieve you phone number</div>
                         <div class="opt">Option 2.Retrieve you phone number</div>
-                        <form class="form-horizontal">
+                        <div class="form-horizontal">
                             <div class="form-group">
                                 <label for="emailforgot" class="col-sm-2 control-label">Email</label>
                                 <div class="col-sm-10">
@@ -61,13 +63,13 @@
                             </div>
                             <div class="form-group">
                                 <div class="col-sm-offset-2 col-sm-3">
-                                    <button type="submit" class="btn btn-default">Submit</button>
+                                    <button id="btnretrievephone" class="btn btn-default">Submit</button>
                                 </div>
                                 <div class="col-sm-7">
                                     <span>The phone number will be e-mailed to you</span>
                                 </div>
                             </div>
-                        </form>
+                        </div>
                     </div>
                 </div>
             </div>

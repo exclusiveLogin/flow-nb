@@ -45,10 +45,3 @@ function hexToStr($hex){
     return $string;
 }
 
-$str = "hello world";
-echo "str:".$str."<br>";
-$cript = __encode($str,"aaa");
-echo "cripto:".$cript;
-
-echo "<br>Decoding...<br>";
-echo "decript:".__decode($cript,"aaa");
