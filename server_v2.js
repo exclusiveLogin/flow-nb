@@ -284,8 +284,6 @@ function crPool(){
         database : 'flow_nb'
     }); 
 }
-crPool();//Первичная инициация pool
-
 var poolArj;
 function crPoolArj(){
     poolArj = mysql.createPool({
@@ -628,30 +626,20 @@ function inserterDB(tube,stack){
         if(!err){
             var tmp = 0;
             for(var elem in stack){
-                var tmpFreeOnZeroSec = false;
-                console.log('row:'+elem+" value:"+stack[elem].value+" utc:"+stack[elem].utc);
-
                 tmpQ = 'INSERT IGNORE INTO `p_tube'+tube+'_dump` (`value`,`utc`) VALUES('+stack[elem].value+','+stack[elem].utc+')';
-                //console.log(tmpQ);
                 connection.query(tmpQ,function(err){
-                    tmp++; 
-                    //console.log("tmp:"+tmp);
+                    tmp++;
                     if(!err){
-                        if(tmp == stack.length){
-                            //if(stack[elem].sec == 0){//если последнаяя в стеке 0 секунда
-                              //  tmpFreeOnZeroSec = true;
-                            //}else{
-                              //  tmpFreeOnZeroSec = false;
-                                console.log("stack full writed tmp:"+tmp);
-               
+                        if(tmp >= stack.length){
+                            console.log("stack full writed tmp:"+tmp);
+                            setTimeout(function () {
                                 freener(stack[stack.length-1].utc,tube);
-                                connection.release();
-                                
-                           // }
-                            //console.log("yes elem:"+elem+" == "+stack.length);
+                            },1000);
+                            connection.release();
                         }
                     }else{
                         console.log(err);
+                        connection.release();
                     }
                 });
                 if(stack[elem].min == 0 && stack[elem].sec == 0 && !Global.DBStacksecondLock){
@@ -677,16 +665,12 @@ function inserterDB(tube,stack){
                     });
                 }
             }
-            if(stack[elem].sec == 0 && !Global.DBStacksecondLock){//снятие защиты на запись дублирующих секунд
+            if(stack[elem].sec == 0 && !Global.DBStacksecondLock){//установка защиты на запись дублирующих секунд
                     Global.DBStacksecondLock = true;
                 }
             if(stack[elem].sec != 0 && Global.DBStacksecondLock){//снятие защиты на запись дублирующих секунд
                     Global.DBStacksecondLock = false;
                 }
-            if(tmp == stack.length){
-                
-            }
-            
         }else{
             console.log("pool SQL error");
             checkPool("error SQL InserterDB");
@@ -716,10 +700,7 @@ function rcvTubes(){
     client.readInputRegisters(15, 8).then(function (resp) {
         Global.bufferStep++;
         var nowdt = Date.now();
-
         var res = [];
-        var val = [];
-        var timestamp = [];
         
         res[0] = WordToFloat(resp.register[1],resp.register[0]).toFixed(2); //tube1
         res[1] = WordToFloat(resp.register[3],resp.register[2]).toFixed(2); //tube2
@@ -790,22 +771,6 @@ function rcvTubes(){
         //console.log(util.inspect("min tubes:"+Global.buffer_valmin,{colors:true}));
         
         if(Global.bufferStep >= Global.bufferLen){
-            //console.log("Step ping..."+Global.bufferStep);
-            
-            
-            //отправка
-            //console.log("-----------------SEND max----------------------");
-            //console.log(util.inspect("max val:"+Global.buffer_valmax,{colors:true}));
-            //console.log(util.inspect("dt:"+Global.buffer_dtmax,{colors:true}));
-            //prepare send packet
-            
-            //отправка
-            //console.log("-----------------SEND min----------------------");
-            //console.log(util.inspect("min val:"+Global.buffer_valmin,{colors:true}));
-            //console.log(util.inspect("td:"+Global.buffer_dtmin,{colors:true}));
-                
-            //console.log("SEND local");
-            
             Global.bufferStep = 0;
             //отдаем клиенту
             FESender(Global.buffer_valmax,Global.buffer_dtmax);
