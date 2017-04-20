@@ -1,0 +1,27 @@
+{
+  "name": "flow-nb-sku",
+  "description": "This is Scada SKU ",
+  "version": "0.9.1",
+  "dependencies": {
+    "babel-core": "^6.23.1",
+    "babel-loader": "^6.3.2",
+    "babel-preset-es2015": "^6.22.0",
+    "bootstrap": "^3.3.7",
+    "bundle-loader": "^0.5.4",
+    "css-loader": "",
+    "expose-loader": "",
+    "file-loader": "",
+    "font-awesome": "^4.7.0",
+    "google-maps": "^3.2.1",
+    "highcharts": "^5.0.7",
+    "jquery2": "",
+    "style-loader": "",
+    "uglify-loader": "^1.4.0",
+    "webpack": "^2.2.1"
+  },
+  "scripts": {},
+  "main": "index.html",
+  "author": "Savin SV",
+  "license": "ISC",
+  "devDependencies": {}
+}

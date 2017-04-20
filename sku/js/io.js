@@ -322,7 +322,7 @@ $(document).ready(function(){
         //$('#status_node_nb').html('<h2 class="label label-lg label-warning">Нет записей в БД</h2>');
         if(data.min){Global.minArjTrend = data.min;}
         if(data.max){Global.maxArjTrend = data.max;}
-        console.log("max & min setted min:"+Global.minArjTrend+" max:"+Global.maxArjTrend);
+        //console.log("max & min setted min:"+Global.minArjTrend+" max:"+Global.maxArjTrend);
         Global.MainTrend.series[0].setData([[data.min,0],[data.max,0]]);
         Global.socketToNB.emit("arjLoad",{min:Global.minArjTrend,max:Global.maxArjTrend, tube:data.tube});
         //console.log("arjLoad: sended");
@@ -337,17 +337,18 @@ $(document).ready(function(){
         Global.MainTrend_DataNB = [];
         if(data.dumpflag != undefined){
             if(Global.currentArjIntervalDump != data.dumpflag){
+                //console.log("dumpflag отличается");
                 arjLoader();
             }else{//если запрос того же шага, проверяем вхождение в диапазон 
                 if(Global.currentArjMinPoint < data.min && Global.currentArjMaxPoint > data.max){
-                    console.log("Есть вхождение в интервал, загрузка данных не требуется");
+                    //console.log("Есть вхождение в интервал, загрузка данных не требуется");
                 }else{
-                    console.log("Запрощенный сегмент выходит за интервал, требуется подгрузка данных");
+                    //console.log("Запрощенный сегмент выходит за интервал, требуется подгрузка данных");
                     arjLoader();
                 }   
             }
         }else{
-            console.log("arj load error DUMPFLAG not defined");
+            //console.log("arj load error DUMPFLAG not defined");
             arjLoader();
         }
         
@@ -393,6 +394,7 @@ $(document).ready(function(){
                 }
 
 
+
                 if(Global.MainTrend_DataNB.length){
                     tmpMaxNBval = Global.MainTrend_DataNB[Global.MainTrend_DataNB.length-1][1];
 
@@ -425,11 +427,52 @@ $(document).ready(function(){
     
 });
 function trendDetail(e,refresh){
-    if(e.min && e.max && Global.NB_Con && e.trigger){
-        if(e.trigger == "rangeSelectorButton" || e.trigger == "zoom"){
+    if(Global.NB_Con && e.trigger){
+        /*if(e.trigger == "rangeSelectorButton" || e.trigger == "zoom"){
             Global.socketToNB.emit("arjLoad",{min:e.min,max:e.max, tube:Global.currentTube});
+        }*/
+        var data = {tube:Global.currentTube};
+        if(e.min && e.max){
+            if(e.trigger == "navigator" || e.trigger == "zoom"){
+                data.min = e.min;
+                data.max = e.max;
+                Global.socketToNB.emit("arjLoad",data);
+            }
+        }
+        if(e.rangeSelectorButton){
+            if(!e.rangeSelectorButton._range){
+                data.trendall = true;
+                data.min = 1;
+                data.max = 999999999999999;
+                Global.socketToNB.emit("arjLoad",data);
+            }
+        }
+        if(e.trigger == "keydown"){
+            let tmpExtr = Global.MainTrend.get("timeline").getExtremes();//тут надо узнать ID
+            var tmpInterval = tmpExtr.userMax - tmpExtr.userMin;
+            var step = tmpInterval/2;
+
+            if(e.front){
+                if(!e.ctrl){//simple key
+                    data.min = tmpExtr.userMin+step;
+                    data.max = tmpExtr.userMax+step;
+                }else {//with ctrl
+                    data.min = tmpExtr.userMin;
+                    data.max = tmpExtr.userMax+step;
+                }
+            }else {
+                if(!e.ctrl){//simple key
+                    data.min = tmpExtr.userMin-step;
+                    data.max = tmpExtr.userMax-step;
+                }else {//with ctrl
+                    data.min = tmpExtr.userMin-step;
+                    data.max = tmpExtr.userMax;
+                }
+            }
+            Global.socketToNB.emit("arjLoad",data);
         }
     }
+
     if(refresh){
         if(Global.currentArjMinPoint && Global.currentArjMaxPoint && Global.NB_Con){
             Global.socketToNB.emit("arjLoad",{min:Global.currentArjMinPoint,max:Global.currentArjMaxPoint, tube:Global.currentTube});

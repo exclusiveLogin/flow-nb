@@ -469,12 +469,13 @@ $(document).ready(function(){
             enabled: true
         },
         xAxis: {
+            id:"timeline",
             type: 'datetime',
             ordinal:false,
             events:{
                 afterSetExtremes:function(e){
                     trendDetail(e);
-                    console.log(e);
+                    // console.log(e);
                 }
             }
         },
@@ -556,5 +557,23 @@ $(document).ready(function(){
     Global.Trend3 = new Highcharts.Chart(Trend_rt_setting3);
     Global.Trend4 = new Highcharts.Chart(Trend_rt_setting4);
     Global.MainTrend = new Highcharts.StockChart(Trend_arj_setting);
-    //console.log("test");
+    $(document).on("keydown",function (e) {
+        // console.log("key down:",e);
+        if(e.keyCode == 37 && !e.ctrlKey){//Left No ctrl
+            var request = {trigger:"keydown",front:false,ctrl:false};
+            trendDetail(request);
+        }
+        if(e.keyCode == 37 && e.ctrlKey){//Left with ctrl
+            var request = {trigger:"keydown",front:false,ctrl:true};
+            trendDetail(request);
+        }
+        if(e.keyCode == 39 && !e.ctrlKey){//Right No ctrl
+            var request = {trigger:"keydown",front:true,ctrl:false};
+            trendDetail(request);
+        }
+        if(e.keyCode == 39 && e.ctrlKey){//Right with ctrl
+            var request = {trigger:"keydown",front:true,ctrl:true};
+            trendDetail(request);
+        }
+    });
 });

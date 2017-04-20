@@ -10,7 +10,7 @@
     "socket.io-client": ""
   },
   "scripts": {
-    "start": "node server.js"
+    "start": "node server_v2.js"
   },
   "main": "server.js",
   "author": "",

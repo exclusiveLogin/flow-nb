@@ -34,24 +34,33 @@ socketServ.on("connection",function(socket){
         trendP = [];
         trendNB = [];
         dumpflag = false;
-        console.log("ARJ LOAD started");
+        console.log("ARJ LOAD started",data);
         if(data.min && data.max && data.tube){//проверка целостности 
             var tube = data.tube;
             var interval = data.max - data.min;
+            var query_p = "SELECT * FROM `p_tube"+tube+"_h` ORDER BY `utc`";
+            var query_nb = "SELECT * FROM `tube"+tube+"_h` ORDER BY `utc`";
+            console.log("ARJ LOAD interval:",interval);
             console.log("interval:"+interval);
-            if(interval>3600*96*1000){//если накопленные данные больше 12 часов но меньше 48
-                var query_p = "SELECT * FROM `p_tube"+tube+"_h` WHERE `utc` BETWEEN "+data.min+" AND "+data.max+" ORDER BY `utc`";
-                var query_nb = "SELECT * FROM `tube"+tube+"_h` WHERE `utc` BETWEEN "+data.min+" AND "+data.max+" ORDER BY `utc`";
+            if(interval>4*3600*24*1000){//если накопленные данные больше 12 часов но меньше 48
+                query_p = "SELECT * FROM `p_tube"+tube+"_h` WHERE `utc` BETWEEN "+data.min+" AND "+data.max+" ORDER BY `utc`";
+                query_nb = "SELECT * FROM `tube"+tube+"_h` WHERE `utc` BETWEEN "+data.min+" AND "+data.max+" ORDER BY `utc`";
                 dumpflag = 0;
-            }else if(interval>3600*12*1000 && interval<3600*96*1000){
-                var query_p = "SELECT * FROM `p_tube"+tube+"_m` WHERE `utc` BETWEEN "+data.min+" AND "+data.max+" ORDER BY `utc`";
-                var query_nb = "SELECT * FROM `tube"+tube+"_m` WHERE `utc` BETWEEN "+data.min+" AND "+data.max+" ORDER BY `utc`";
+            }else if(interval>3600*6*1000 && interval<4*3600*24*1000){
+                query_p = "SELECT * FROM `p_tube"+tube+"_m` WHERE `utc` BETWEEN "+data.min+" AND "+data.max+" ORDER BY `utc`";
+                query_nb = "SELECT * FROM `tube"+tube+"_m` WHERE `utc` BETWEEN "+data.min+" AND "+data.max+" ORDER BY `utc`";
                 dumpflag = 1;
             }else{
-                var query_p = "SELECT * FROM `p_tube"+tube+"_dump` WHERE `utc` BETWEEN "+data.min+" AND "+data.max+" ORDER BY `utc`";
-                var query_nb = "SELECT * FROM `tube"+tube+"_dump` WHERE `utc` BETWEEN "+data.min+" AND "+data.max+" ORDER BY `utc`";
+                query_p = "SELECT * FROM `p_tube"+tube+"_dump` WHERE `utc` BETWEEN "+data.min+" AND "+data.max+" ORDER BY `utc`";
+                query_nb = "SELECT * FROM `tube"+tube+"_dump` WHERE `utc` BETWEEN "+data.min+" AND "+data.max+" ORDER BY `utc`";
                 dumpflag = 2;
             }
+            if(data.trendall){
+                query_p = "SELECT * FROM `p_tube"+tube+"_h` ORDER BY `utc`";
+                query_nb = "SELECT * FROM `tube"+tube+"_h` ORDER BY `utc`";
+                dumpflag = 0;
+            }
+            //Поправить нахер этот бред
             pool.getConnection(function(err,connection){
                 if(!err){
                     console.log("ArjLoad Pool Prichal OK");
@@ -97,17 +106,35 @@ socketServ.on("connection",function(socket){
                 
             function ret(){
                 if(localNB && localP){
-                    //connection.release();
-                    //console.log("ArjLoad connection released");
                     checkPoolArj("arj");
+                    if(data.trendall){
+                        var minP = trendP[0].utc;
+                        var minNB = trendNB[0].utc;
+                        var maxP = trendP[trendP.length-1].utc;
+                        var maxNB = trendNB[trendNB.length-1].utc;
+                        if(minP > minNB){
+                            data.min = minNB;
+                        }else {
+                            data.min = minP;
+                        }
+                        if(maxP > maxNB){
+                            data.max = maxP;
+                        }else {
+                            data.max = maxNB;
+                        }
+                        console.log("minmax  min:",data.min,"max:",data.max);
+                    }
                     socketServ.sockets.emit("arj_load_res",{trendP:trendP, trendNB:trendNB,min:data.min,max:data.max,dumpflag:dumpflag});
                     localNB = false;
                     localP = false;
+                    console.log("Arj send trendP:",trendP.length," series trendNB:",trendNB.length," series");
                     trendP = null;
                     trendNB = null;
+
                 }
             }
         }
+
     });
     socket.on("min_max",function(data){
         var RcvMin = null;
@@ -590,7 +617,7 @@ function inserterRT(tubes,time){
                         console.log("error SQL insert RT:"+util.inspect(err,{colors:true}));
                         socketServ.sockets.emit("mysql_error",{});
                     }else{
-                        console.log("Data RT Hourly saved in DB successuful");
+                        //console.log("Data RT Hourly saved in DB successuful");
                     }
                 });
             }
@@ -603,7 +630,7 @@ function inserterRT(tubes,time){
                         console.log("error SQL insert RT:"+util.inspect(err,{colors:true}));
                         socketServ.sockets.emit("mysql_error",{});
                     }else{
-                        console.log("Data RT Minutly saved in DB successuful on tube"+tmpTube);
+                        //console.log("Data RT Minutly saved in DB successuful on tube"+tmpTube);
                     }
                 });
             }
@@ -826,7 +853,7 @@ function DBWriter(data,nowdt){
                             console.log("error SQL insert Local:"+util.inspect(err,{colors:true}));
                             socketServ.sockets.emit("mysql_error",{});
                         }else{
-                            console.log("Data Local Hourly saved in DB successuful");
+                            //console.log("Data Local Hourly saved in DB successuful");
                         }
                     });
                 }
@@ -838,7 +865,7 @@ function DBWriter(data,nowdt){
                             console.log("error SQL insert Local:"+util.inspect(err,{colors:true}));
                             socketServ.sockets.emit("mysql_error",{});
                         }else{
-                            console.log("Data Local Minutly saved in DB successuful");
+                            //console.log("Data Local Minutly saved in DB successuful");
                         }
                     });
                 }
