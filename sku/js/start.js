@@ -59,6 +59,7 @@ $(document).ready(function(){
     refreshLog();
     
     //JQUI - init
+    <!--*****PreBuffer*****-->
     $('#int_pre_slider').slider({
         range:false,
         min:1,
@@ -73,6 +74,7 @@ $(document).ready(function(){
             $('#int_prebuffer').val("1");
         }
     });
+    <!--*****PostBuffer*****-->
     $('#int_post_slider').slider({
         range:false,
         min:1,
@@ -85,6 +87,21 @@ $(document).ready(function(){
         },
         create:function(){
             $('#int_postbuffer').val("1");
+        }
+    });
+    <!--*****Ampliffer*****-->
+    $('#int_amp_slider').slider({
+        range:false,
+        min:1,
+        max:10,
+        value:1,
+        //orientation:"vertical",
+        slide:function(event,ui){
+            $('#int_ampliffer').val(ui.value);
+            $('#btn_intSetting').removeClass("disabled");
+        },
+        create:function(){
+            $('#int_ampliffer').val("1");
         }
     });
     
@@ -124,7 +141,8 @@ $(document).ready(function(){
         $('#btn_intSetting').addClass("disabled");
         Global.INTSettings = {
             post:Number($('#int_postbuffer').val()),
-            pre:Number($('#int_prebuffer').val())
+            pre:Number($('#int_prebuffer').val()),
+            amp:Number($('#int_ampliffer').val())
         };
         console.log(Global.INTSettings);
         Global.RTI1.setFilter(Global.INTSettings.pre,Global.INTSettings.post);
@@ -136,6 +154,16 @@ $(document).ready(function(){
         Global.RTI2p.setFilter(Global.INTSettings.pre,Global.INTSettings.post);
         Global.RTI3p.setFilter(Global.INTSettings.pre,Global.INTSettings.post);
         Global.RTI4p.setFilter(Global.INTSettings.pre,Global.INTSettings.post);
+
+        Global.RTI1.setAmp(Global.INTSettings.amp);
+        Global.RTI2.setAmp(Global.INTSettings.amp);
+        Global.RTI3.setAmp(Global.INTSettings.amp);
+        Global.RTI4.setAmp(Global.INTSettings.amp);
+
+        Global.RTI1p.setAmp(Global.INTSettings.amp);
+        Global.RTI2p.setAmp(Global.INTSettings.amp);
+        Global.RTI3p.setAmp(Global.INTSettings.amp);
+        Global.RTI4p.setAmp(Global.INTSettings.amp);
         
         Global.ARJI.setFilter(Global.INTSettings.pre,Global.INTSettings.post);
         Global.ARJIp.setFilter(Global.INTSettings.pre,Global.INTSettings.post);

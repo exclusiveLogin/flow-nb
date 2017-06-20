@@ -150,6 +150,7 @@ $(document).ready(function(){
             if(data.tube1 && Global.tube1T){
                 if(Global.IntRTT){//Дельта-сигма RT
                     data.tube1[1] = Global.RTI1.Integrity(data.tube1[1]);
+                    console.log("Tube 1 Integrity result:",data.tube1[1]);
                 }
                 if(Global.Trend1.series[0].xData.length<Global.RTbuffer){
                     Global.Trend1.series[0].addPoint(data.tube1,true,false,false);
@@ -440,10 +441,14 @@ function trendDetail(e,refresh){
             }
         }
         if(e.rangeSelectorButton){
-            if(!e.rangeSelectorButton._range){
+            if(!e.rangeSelectorButton._range){//All btn
                 data.trendall = true;
                 data.min = 1;
                 data.max = 999999999999999;
+                Global.socketToNB.emit("arjLoad",data);
+            }else {
+                data.min = e.min;
+                data.max = e.max;
                 Global.socketToNB.emit("arjLoad",data);
             }
         }

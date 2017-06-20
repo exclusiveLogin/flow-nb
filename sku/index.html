@@ -30,15 +30,15 @@
     <script src="public/loader.js"></script>
 
     <script src="jquery-ui-1.11.4/jquery-ui.js"></script>
-    <script src="js/global.js"></script>
-    <script src="js/auth.js"></script>
-    <script src="js/start.js"></script>
-    <script src="js/trends.js?v=beta"></script>
-    <script src="js/calculator.js?v=beta"></script>
-    <script src="js/additional.js?v=beta"></script>
+    <script src="js/global.js?v=1"></script>
+    <script src="js/auth.js?v=1"></script>
+    <script src="js/start.js?v=3"></script>
+    <script src="js/trends.js?v=1"></script>
+    <script src="js/calculator.js?v=1"></script>
+    <script src="js/additional.js?v=1"></script>
     <script src="js/socket.io.js"></script>
-    <script src="js/io.js?v=beta"></script>
-    <script src="js/integrator.js?v=beta"></script>
+    <script src="js/io.js?v=beta?v=4"></script>
+    <script src="js/integrator.js?v=4"></script>
 
     <!--<script src="js/lightbox.js"></script>-->
     <!--<script src="js/detect.js"></script>-->
@@ -101,16 +101,25 @@
         <!--***********************Настройки DeltaSigma******************************************-->
         <div id="integratorSetting" class="col-xs-12 text-center form-inline">
             <header>Настройки Delta-sigma</header>
+            <!--*****PreBuffer*****-->
             <div class="form-group">
                 <label>PreBuffer</label>
                 <input id="int_prebuffer" type="text" class="form-control" readonly>
                 <div id="int_pre_slider" class="slider"></div>
             </div>
+            <!--*****PostBuffer*****-->
             <div class="form-group">
                 <label>PostBuffer</label>
                 <input id="int_postbuffer" type="text" class="form-control" readonly>
                 <div id="int_post_slider" class="slider"></div>
             </div>
+            <!--*****Ampliffer*****-->
+            <div class="form-group">
+                <label>Ampliffer</label>
+                <input id="int_ampliffer" type="text" class="form-control" readonly>
+                <div id="int_amp_slider" class="slider"></div>
+            </div>
+            <!--*****Buttons*****-->
             <div class="col-xs-12 text-center">
                 <button id="btn_intToggleOnly" class="btn btn-success btn-group-sm">Только фильтр</button>
                 <button id="btn_intToggleRT" class="btn btn-success btn-group-sm">Включить в RT</button>
