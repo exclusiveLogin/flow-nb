@@ -5,6 +5,7 @@ function Integrator(){
     this.prefilterPoints = 1;
     this.postfilterPoints = 1;
     this.ampliffer = 1;
+    this.ampFilter = 0;
     
     this.Buffer = [0,0];
 
@@ -68,10 +69,19 @@ function Integrator(){
             var avrPost = summPost/this.postfilterPoints;
             var avrPre = summPre/this.prefilterPoints;
             var ret = avrPre - avrPost;
-            if(ret>0){
-                ret = Math.pow(ret,this.ampliffer+ret);
+            var result = 0.0;
+            if(Math.abs(ret)>this.ampFilter){
+                if(ret>0){
+                    result = Math.pow(this.ampliffer*ret,this.ampliffer*ret+1);
+                }
+                if(ret<0){
+                    var ampAbs = this.ampliffer*Math.abs(ret);
+                    result = 0 - (Math.pow(ampAbs,ampAbs+1));
+                }
             }
-            return ret;
+            if(result > 1000)result=1000;
+            if(result < -1000)result=-1000;
+            return result;
         }
     };
     this.DFilter = function(){

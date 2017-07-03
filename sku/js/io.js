@@ -150,7 +150,7 @@ $(document).ready(function(){
             if(data.tube1 && Global.tube1T){
                 if(Global.IntRTT){//Дельта-сигма RT
                     data.tube1[1] = Global.RTI1.Integrity(data.tube1[1]);
-                    console.log("Tube 1 Integrity result:",data.tube1[1]);
+                    //console.log("Tube 1 Integrity result:",data.tube1[1]);
                 }
                 if(Global.Trend1.series[0].xData.length<Global.RTbuffer){
                     Global.Trend1.series[0].addPoint(data.tube1,true,false,false);
@@ -170,6 +170,7 @@ $(document).ready(function(){
             if(data.tube2 && Global.tube2T){
                 if(Global.IntRTT){//Дельта-сигма RT
                     data.tube2[1] = Global.RTI2.Integrity(data.tube2[1]);
+                    //console.log("Tube 2 Integrity result:",data.tube2[1]);
                 }
                 if(Global.Trend2.series[0].xData.length<Global.RTbuffer){
                     Global.Trend2.series[0].addPoint(data.tube2,true,false,false);
@@ -189,6 +190,7 @@ $(document).ready(function(){
             if(data.tube3 && Global.tube3T){
                 if(Global.IntRTT){//Дельта-сигма RT
                     data.tube3[1] = Global.RTI3.Integrity(data.tube3[1]);
+                    //console.log("Tube 3 Integrity result:",data.tube3[1]);
                 }
                 if(Global.Trend3.series[0].xData.length<Global.RTbuffer){
                     Global.Trend3.series[0].addPoint(data.tube3,true,false,false);
@@ -208,6 +210,7 @@ $(document).ready(function(){
             if(data.tube4 && Global.tube4T){
                 if(Global.IntRTT){//Дельта-сигма RT
                     data.tube4[1] = Global.RTI4.Integrity(data.tube4[1]);
+                    //console.log("Tube 4 Integrity result:",data.tube4[1]);
                 }
                 if(Global.Trend4.series[0].xData.length<Global.RTbuffer){
                     Global.Trend4.series[0].addPoint(data.tube4,true,false,false);
@@ -359,7 +362,7 @@ $(document).ready(function(){
 				Global.MainTrend_DataNB = [];
                 for(var index in data.trendP){
                     if(Global.IntARJT){
-                        var tmpVal = Global.ARJI.Integrity(data.trendP[index].value);
+                        var tmpVal = Global.ARJIp.Integrity(data.trendP[index].value);
                         Global.MainTrend_DataP.push([data.trendP[index].utc,tmpVal]);
                     }else{
                         Global.MainTrend_DataP.push([data.trendP[index].utc,data.trendP[index].value]);
@@ -367,7 +370,7 @@ $(document).ready(function(){
                 }
                 for(var index in data.trendNB){
                     if(Global.IntARJT){
-                        var tmpVal = Global.ARJIp.Integrity(data.trendNB[index].value);
+                        var tmpVal = Global.ARJI.Integrity(data.trendNB[index].value);
                         Global.MainTrend_DataNB.push([data.trendNB[index].utc,tmpVal]);
                     }else{
                         Global.MainTrend_DataNB.push([data.trendNB[index].utc,data.trendNB[index].value]);

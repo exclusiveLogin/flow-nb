@@ -32,13 +32,13 @@
     <script src="jquery-ui-1.11.4/jquery-ui.js"></script>
     <script src="js/global.js?v=1"></script>
     <script src="js/auth.js?v=1"></script>
-    <script src="js/start.js?v=3"></script>
+    <script src="js/start.js?v=1"></script>
     <script src="js/trends.js?v=1"></script>
     <script src="js/calculator.js?v=1"></script>
     <script src="js/additional.js?v=1"></script>
     <script src="js/socket.io.js"></script>
-    <script src="js/io.js?v=beta?v=4"></script>
-    <script src="js/integrator.js?v=4"></script>
+    <script src="js/io.js?v=beta?v=1"></script>
+    <script src="js/integrator.js?v=1"></script>
 
     <!--<script src="js/lightbox.js"></script>-->
     <!--<script src="js/detect.js"></script>-->
@@ -113,11 +113,29 @@
                 <input id="int_postbuffer" type="text" class="form-control" readonly>
                 <div id="int_post_slider" class="slider"></div>
             </div>
-            <!--*****Ampliffer*****-->
+            <!--*****Ampliffer NB*****-->
             <div class="form-group">
-                <label>Ampliffer</label>
-                <input id="int_ampliffer" type="text" class="form-control" readonly>
-                <div id="int_amp_slider" class="slider"></div>
+                <label>AmplifferNB</label>
+                <input id="int_ampliffer_nb" type="text" class="form-control" readonly>
+                <div id="int_amp_slider_nb" class="slider"></div>
+            </div>
+            <!--*****Ampliffer P*****-->
+            <div class="form-group">
+                <label>AmplifferP</label>
+                <input id="int_ampliffer_p" type="text" class="form-control" readonly>
+                <div id="int_amp_slider_p" class="slider"></div>
+            </div>
+            <!--*****AmpFilterNB*****-->
+            <div class="form-group">
+                <label>FilterNB</label>
+                <input id="int_ampfilter_nb" type="text" class="form-control" readonly>
+                <div id="int_ampfilter_slider_nb" class="slider"></div>
+            </div>
+            <!--*****AmpFilterP*****-->
+            <div class="form-group">
+                <label>FilterP</label>
+                <input id="int_ampfilter_p" type="text" class="form-control" readonly>
+                <div id="int_ampfilter_slider_p" class="slider"></div>
             </div>
             <!--*****Buttons*****-->
             <div class="col-xs-12 text-center">

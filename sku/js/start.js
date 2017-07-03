@@ -89,19 +89,66 @@ $(document).ready(function(){
             $('#int_postbuffer').val("1");
         }
     });
-    <!--*****Ampliffer*****-->
-    $('#int_amp_slider').slider({
+    <!--*****AmplifferNB*****-->
+    $('#int_amp_slider_nb').slider({
         range:false,
         min:1,
-        max:10,
+        max:200,
         value:1,
         //orientation:"vertical",
         slide:function(event,ui){
-            $('#int_ampliffer').val(ui.value);
+            $('#int_ampliffer_nb').val(ui.value);
             $('#btn_intSetting').removeClass("disabled");
         },
         create:function(){
-            $('#int_ampliffer').val("1");
+            $('#int_ampliffer_nb').val("1");
+        }
+    });
+    <!--*****AmplifferP*****-->
+    $('#int_amp_slider_p').slider({
+        range:false,
+        min:1,
+        max:200,
+        value:1,
+        //orientation:"vertical",
+        slide:function(event,ui){
+            $('#int_ampliffer_p').val(ui.value);
+            $('#btn_intSetting').removeClass("disabled");
+        },
+        create:function(){
+            $('#int_ampliffer_p').val("1");
+        }
+    });
+    <!--*****AmpFilterNB*****-->
+    $('#int_ampfilter_slider_nb').slider({
+        range:false,
+        min:0,
+        max:2,
+        step:0.01,
+        value:0,
+        //orientation:"vertical",
+        slide:function(event,ui){
+            $('#int_ampfilter_nb').val(ui.value);
+            $('#btn_intSetting').removeClass("disabled");
+        },
+        create:function(){
+            $('#int_ampfilter_nb').val("0");
+        }
+    });
+    <!--*****AmpFilterP*****-->
+    $('#int_ampfilter_slider_p').slider({
+        range:false,
+        min:0,
+        max:2,
+        step:0.01,
+        value:0,
+        //orientation:"vertical",
+        slide:function(event,ui){
+            $('#int_ampfilter_p').val(ui.value);
+            $('#btn_intSetting').removeClass("disabled");
+        },
+        create:function(){
+            $('#int_ampfilter_p').val("0");
         }
     });
     
@@ -142,9 +189,12 @@ $(document).ready(function(){
         Global.INTSettings = {
             post:Number($('#int_postbuffer').val()),
             pre:Number($('#int_prebuffer').val()),
-            amp:Number($('#int_ampliffer').val())
+            ampNB:Number($('#int_ampliffer_nb').val()),
+            ampP:Number($('#int_ampliffer_p').val()),
+            ampFilterNB:Number($('#int_ampfilter_nb').val()),
+            ampFilterP:Number($('#int_ampfilter_p').val())
         };
-        console.log(Global.INTSettings);
+        //console.log(Global.INTSettings);
         Global.RTI1.setFilter(Global.INTSettings.pre,Global.INTSettings.post);
         Global.RTI2.setFilter(Global.INTSettings.pre,Global.INTSettings.post);
         Global.RTI3.setFilter(Global.INTSettings.pre,Global.INTSettings.post);
@@ -155,18 +205,34 @@ $(document).ready(function(){
         Global.RTI3p.setFilter(Global.INTSettings.pre,Global.INTSettings.post);
         Global.RTI4p.setFilter(Global.INTSettings.pre,Global.INTSettings.post);
 
-        Global.RTI1.setAmp(Global.INTSettings.amp);
-        Global.RTI2.setAmp(Global.INTSettings.amp);
-        Global.RTI3.setAmp(Global.INTSettings.amp);
-        Global.RTI4.setAmp(Global.INTSettings.amp);
+        Global.RTI1.setAmp(Global.INTSettings.ampNB);
+        Global.RTI2.setAmp(Global.INTSettings.ampNB);
+        Global.RTI3.setAmp(Global.INTSettings.ampNB);
+        Global.RTI4.setAmp(Global.INTSettings.ampNB);
 
-        Global.RTI1p.setAmp(Global.INTSettings.amp);
-        Global.RTI2p.setAmp(Global.INTSettings.amp);
-        Global.RTI3p.setAmp(Global.INTSettings.amp);
-        Global.RTI4p.setAmp(Global.INTSettings.amp);
+        Global.RTI1p.setAmp(Global.INTSettings.ampP);
+        Global.RTI2p.setAmp(Global.INTSettings.ampP);
+        Global.RTI3p.setAmp(Global.INTSettings.ampP);
+        Global.RTI4p.setAmp(Global.INTSettings.ampP);
+
+        Global.RTI1.ampFilter = Global.INTSettings.ampFilterNB;
+        Global.RTI2.ampFilter = Global.INTSettings.ampFilterNB;
+        Global.RTI3.ampFilter = Global.INTSettings.ampFilterNB;
+        Global.RTI4.ampFilter = Global.INTSettings.ampFilterNB;
+
+        Global.RTI1p.ampFilter = Global.INTSettings.ampFilterP;
+        Global.RTI2p.ampFilter = Global.INTSettings.ampFilterP;
+        Global.RTI3p.ampFilter = Global.INTSettings.ampFilterP;
+        Global.RTI4p.ampFilter = Global.INTSettings.ampFilterP;
         
         Global.ARJI.setFilter(Global.INTSettings.pre,Global.INTSettings.post);
         Global.ARJIp.setFilter(Global.INTSettings.pre,Global.INTSettings.post);
+
+        Global.ARJI.setAmp(Global.INTSettings.ampNB);
+        Global.ARJIp.setAmp(Global.INTSettings.ampP);
+
+        Global.ARJI.ampFilter = Global.INTSettings.ampFilterNB;
+        Global.ARJIp.ampFilter = Global.INTSettings.ampFilterP;
     });
     
     $('#btn_intToggleRT').on("click",function(){
