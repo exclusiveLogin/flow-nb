@@ -52,40 +52,56 @@ function rt1T(){
     if($(".btn_rt1_t").hasClass("active")){
         $(".btn_rt1_t").removeClass("active");
         Global.tube1T = false;
+        $("#rt_trend1").hide(500);
     }
     else{
         $(".btn_rt1_t").addClass("active");
         Global.tube1T = true;
+        $("#rt_trend1").show(500,function () {
+            Global.Trend1.reflow();
+        });
     }
 }
 function rt2T(){
     if($(".btn_rt2_t").hasClass("active")){
         $(".btn_rt2_t").removeClass("active");
         Global.tube2T = false;
+        $("#rt_trend2").hide(500);
     }
     else{
         $(".btn_rt2_t").addClass("active");
-        Global.tube2T = true;
+        $("#rt_trend2").show(500,function () {
+            Global.Trend2.reflow();
+            Global.tube2T = true;
+        });
     }
 }
 function rt3T(){
     if($(".btn_rt3_t").hasClass("active")){
         $(".btn_rt3_t").removeClass("active");
         Global.tube3T = false;
+        $("#rt_trend3").hide(500);
     }
     else{
         $(".btn_rt3_t").addClass("active");
-        Global.tube3T = true;
+        $("#rt_trend3").show(500,function () {
+            Global.Trend3.reflow();
+            Global.tube3T = true;
+        });
     }
 }
 function rt4T(){
     if($(".btn_rt4_t").hasClass("active")){
         $(".btn_rt4_t").removeClass("active");
         Global.tube4T = false;
+        $("#rt_trend4").hide(500);
     }
     else{
         $(".btn_rt4_t").addClass("active");
-        Global.tube4T = true;
+        $("#rt_trend4").show(500,function () {
+            Global.Trend4.reflow();
+            Global.tube4T = true;
+        });
     }
 }
 //------------------------------------------------
@@ -117,6 +133,20 @@ function refreshLog() {//поведение авторизации
             },1000);
             $('.btnlogout').hide();
             $('.btnlogin').show();
+        }
+    }
+}
+function saveRTSettings() {//update RT trends
+    if(Global.RTSettings.buffer && Global.RTSettings.vertRange){
+        Global.RTbuffer = Global.RTSettings.buffer;
+        var tmpOptions = {
+            minRange:Global.RTSettings.vertRange
+        };
+        if(Global.Trend1 && Global.Trend2 && Global.Trend3 && Global.Trend4){
+            Global.Trend1.yAxis[0].update(tmpOptions);
+            Global.Trend2.yAxis[0].update(tmpOptions);
+            Global.Trend3.yAxis[0].update(tmpOptions);
+            Global.Trend4.yAxis[0].update(tmpOptions);
         }
     }
 }

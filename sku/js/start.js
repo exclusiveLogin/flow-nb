@@ -320,16 +320,7 @@ $(document).ready(function(){
             buffer:Number($('#rt_buffer').val()),
             vertRange:Number($('#rt_vertRange').val())
         };
-        console.log(Global.RTSettings);
-        //update RT trends
-        Global.RTbuffer = Global.RTSettings.buffer;
-        var tmpOptions = {
-            minRange:Global.RTSettings.vertRange
-        };
-        Global.Trend1.yAxis[0].update(tmpOptions);
-        Global.Trend2.yAxis[0].update(tmpOptions);
-        Global.Trend3.yAxis[0].update(tmpOptions);
-        Global.Trend4.yAxis[0].update(tmpOptions);
+        saveRTSettings();
     });
     //------------
     

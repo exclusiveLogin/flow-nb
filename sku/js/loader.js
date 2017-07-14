@@ -1,3 +1,3 @@
-/**
- * Created by KotovVM on 19.04.2017.
- */
+import ls from "./storage.js";
+
+window.ls = new ls();
