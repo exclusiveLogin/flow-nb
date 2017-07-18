@@ -71,9 +71,9 @@ function rt2T(){
     }
     else{
         $(".btn_rt2_t").addClass("active");
+        Global.tube2T = true;
         $("#rt_trend2").show(500,function () {
             Global.Trend2.reflow();
-            Global.tube2T = true;
         });
     }
     saveTubeT();
@@ -86,9 +86,9 @@ function rt3T(){
     }
     else{
         $(".btn_rt3_t").addClass("active");
+        Global.tube3T = true;
         $("#rt_trend3").show(500,function () {
             Global.Trend3.reflow();
-            Global.tube3T = true;
         });
     }
     saveTubeT();
@@ -101,9 +101,9 @@ function rt4T(){
     }
     else{
         $(".btn_rt4_t").addClass("active");
+        Global.tube4T = true;
         $("#rt_trend4").show(500,function () {
             Global.Trend4.reflow();
-            Global.tube4T = true;
         });
     }
     saveTubeT();
