@@ -29,24 +29,26 @@ function tooltipHandler() {
 };
 
 document.addEventListener("DOMContentLoaded", function(){
-        console.log("DOMContentLoaded");
-        if(Global.IntegratorCon){
-            console.log("Integrator connected success");
-            Global.RTI1 = new Integrator();
-            Global.RTI2 = new Integrator();
-            Global.RTI3 = new Integrator();
-            Global.RTI4 = new Integrator();
-            
-            Global.RTI1p = new Integrator();
-            Global.RTI2p = new Integrator();
-            Global.RTI3p = new Integrator();
-            Global.RTI4p = new Integrator();
-            
-            Global.ARJI = new Integrator();
-            Global.ARJIp = new Integrator();
-        }else{
-            console.log("Integrator connected ERROR");
-        }
+    console.log("DOMContentLoaded");
+    if(Global.IntegratorCon){
+        console.log("Integrator connected success");
+        Global.RTI1 = new Integrator();
+        Global.RTI2 = new Integrator();
+        Global.RTI3 = new Integrator();
+        Global.RTI4 = new Integrator();
+
+        Global.RTI1p = new Integrator();
+        Global.RTI2p = new Integrator();
+        Global.RTI3p = new Integrator();
+        Global.RTI4p = new Integrator();
+
+        Global.ARJI = new Integrator();
+        Global.ARJIp = new Integrator();
+    }else{
+        console.log("Integrator connected ERROR");
+    }
+    //load settings from LS
+    ls.loadSettings();
 });
 
 
@@ -181,7 +183,6 @@ $(document).ready(function(){
             $('#rt_vertRange').val(0.5);
         }
     });
-    
     //-------------------------------------------
     
     $('#btn_intSetting').on("click",function(){
@@ -194,109 +195,46 @@ $(document).ready(function(){
             ampFilterNB:Number($('#int_ampfilter_nb').val()),
             ampFilterP:Number($('#int_ampfilter_p').val())
         };
-        //console.log(Global.INTSettings);
-        Global.RTI1.setFilter(Global.INTSettings.pre,Global.INTSettings.post);
-        Global.RTI2.setFilter(Global.INTSettings.pre,Global.INTSettings.post);
-        Global.RTI3.setFilter(Global.INTSettings.pre,Global.INTSettings.post);
-        Global.RTI4.setFilter(Global.INTSettings.pre,Global.INTSettings.post);
-        
-        Global.RTI1p.setFilter(Global.INTSettings.pre,Global.INTSettings.post);
-        Global.RTI2p.setFilter(Global.INTSettings.pre,Global.INTSettings.post);
-        Global.RTI3p.setFilter(Global.INTSettings.pre,Global.INTSettings.post);
-        Global.RTI4p.setFilter(Global.INTSettings.pre,Global.INTSettings.post);
-
-        Global.RTI1.setAmp(Global.INTSettings.ampNB);
-        Global.RTI2.setAmp(Global.INTSettings.ampNB);
-        Global.RTI3.setAmp(Global.INTSettings.ampNB);
-        Global.RTI4.setAmp(Global.INTSettings.ampNB);
-
-        Global.RTI1p.setAmp(Global.INTSettings.ampP);
-        Global.RTI2p.setAmp(Global.INTSettings.ampP);
-        Global.RTI3p.setAmp(Global.INTSettings.ampP);
-        Global.RTI4p.setAmp(Global.INTSettings.ampP);
-
-        Global.RTI1.ampFilter = Global.INTSettings.ampFilterNB;
-        Global.RTI2.ampFilter = Global.INTSettings.ampFilterNB;
-        Global.RTI3.ampFilter = Global.INTSettings.ampFilterNB;
-        Global.RTI4.ampFilter = Global.INTSettings.ampFilterNB;
-
-        Global.RTI1p.ampFilter = Global.INTSettings.ampFilterP;
-        Global.RTI2p.ampFilter = Global.INTSettings.ampFilterP;
-        Global.RTI3p.ampFilter = Global.INTSettings.ampFilterP;
-        Global.RTI4p.ampFilter = Global.INTSettings.ampFilterP;
-        
-        Global.ARJI.setFilter(Global.INTSettings.pre,Global.INTSettings.post);
-        Global.ARJIp.setFilter(Global.INTSettings.pre,Global.INTSettings.post);
-
-        Global.ARJI.setAmp(Global.INTSettings.ampNB);
-        Global.ARJIp.setAmp(Global.INTSettings.ampP);
-
-        Global.ARJI.ampFilter = Global.INTSettings.ampFilterNB;
-        Global.ARJIp.ampFilter = Global.INTSettings.ampFilterP;
+        saveIntSettings();
+        ls.saveSettings(Global.INTSettings);
     });
     
     $('#btn_intToggleRT').on("click",function(){
         if($(this).hasClass("active")){
-            $(this).removeClass("active");
-            $(this).removeClass("btn-danger");
-            $(this).text("Включить в RT");
             Global.IntRTT = false;
         }else{
-            $(this).addClass("active");
-            $(this).addClass("btn-danger");
-            $(this).text("Отключить в RT");
             Global.IntRTT = true;
         }
+        var tmp = {
+            INTRTTBtn:Global.IntRTT
+        };
+        ls.saveSettings(tmp);
+        intRTTToggle();
     });
     $('#btn_intToggleArj').on("click",function(){
         if($(this).hasClass("active")){
-            $(this).removeClass("active");
-            $(this).removeClass("btn-danger");
-            $(this).text("Включить в Архиве");
             Global.IntARJT = false;
         }else{
-            $(this).addClass("active");
-            $(this).addClass("btn-danger");
-            $(this).text("Отключить в Архиве");
             Global.IntARJT = true;
         }
-        trendDetail(false,true);
+        var tmp = {
+            INTARJBtn:Global.IntARJT
+        };
+        ls.saveSettings(tmp);
+        intArjToggle();
     });
     
     $('#btn_intToggleOnly').on("click",function(){
         if($(this).hasClass("active")){
-            $(this).removeClass("active");
-            $(this).removeClass("btn-danger");
-            
-            Global.RTI1.integrityOnly = false;
-            Global.RTI2.integrityOnly = false;
-            Global.RTI3.integrityOnly = false;
-            Global.RTI4.integrityOnly = false;
-            
-            Global.RTI1p.integrityOnly = false;
-            Global.RTI2p.integrityOnly = false;
-            Global.RTI3p.integrityOnly = false;
-            Global.RTI4p.integrityOnly = false;
-            
-            Global.ARJI.integrityOnly = false;
-            Global.ARJIp.integrityOnly = false;
+            Global.IntToggleOnly = false;
         }else{
-            $(this).addClass("active");
-            $(this).addClass("btn-danger");
-            
-            Global.RTI1.integrityOnly = true;
-            Global.RTI2.integrityOnly = true;
-            Global.RTI3.integrityOnly = true;
-            Global.RTI4.integrityOnly = true;
-            
-            Global.RTI1p.integrityOnly = true;
-            Global.RTI2p.integrityOnly = true;
-            Global.RTI3p.integrityOnly = true;
-            Global.RTI4p.integrityOnly = true;
-            
-            Global.ARJI.integrityOnly = true;
-            Global.ARJIp.integrityOnly = true;
+            Global.IntToggleOnly = true;
         }
+        var tmp = {
+            INTTONLYBtn:Global.IntToggleOnly
+        };
+        ls.saveSettings(tmp);
+        intToggleOnly();
     });
     
     //-----------------Integrator-----------------
