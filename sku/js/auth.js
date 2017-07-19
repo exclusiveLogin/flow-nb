@@ -51,11 +51,13 @@ function rtToggle(){
 function rt1T(){
     if($(".btn_rt1_t").hasClass("active")){
         $(".btn_rt1_t").removeClass("active");
+        $(".btn_rt1_t").removeClass("btn-danger");
         Global.tube1T = false;
         $("#rt_trend1").hide(500);
     }
     else{
         $(".btn_rt1_t").addClass("active");
+        $(".btn_rt1_t").addClass("btn-danger");
         Global.tube1T = true;
         $("#rt_trend1").show(500,function () {
             Global.Trend1.reflow();
@@ -66,11 +68,13 @@ function rt1T(){
 function rt2T(){
     if($(".btn_rt2_t").hasClass("active")){
         $(".btn_rt2_t").removeClass("active");
+        $(".btn_rt2_t").removeClass("btn-danger");
         Global.tube2T = false;
         $("#rt_trend2").hide(500);
     }
     else{
         $(".btn_rt2_t").addClass("active");
+        $(".btn_rt2_t").addClass("btn-danger");
         Global.tube2T = true;
         $("#rt_trend2").show(500,function () {
             Global.Trend2.reflow();
@@ -81,11 +85,13 @@ function rt2T(){
 function rt3T(){
     if($(".btn_rt3_t").hasClass("active")){
         $(".btn_rt3_t").removeClass("active");
+        $(".btn_rt3_t").removeClass("btn-danger");
         Global.tube3T = false;
         $("#rt_trend3").hide(500);
     }
     else{
         $(".btn_rt3_t").addClass("active");
+        $(".btn_rt3_t").addClass("btn-danger");
         Global.tube3T = true;
         $("#rt_trend3").show(500,function () {
             Global.Trend3.reflow();
@@ -96,11 +102,13 @@ function rt3T(){
 function rt4T(){
     if($(".btn_rt4_t").hasClass("active")){
         $(".btn_rt4_t").removeClass("active");
+        $(".btn_rt4_t").removeClass("btn-danger");
         Global.tube4T = false;
         $("#rt_trend4").hide(500);
     }
     else{
         $(".btn_rt4_t").addClass("active");
+        $(".btn_rt4_t").addClass("btn-danger");
         Global.tube4T = true;
         $("#rt_trend4").show(500,function () {
             Global.Trend4.reflow();
@@ -260,12 +268,12 @@ function intArjToggle() {
 }
 function intRTTToggle() {
     if(!Global.IntRTT){
-        $("#btn_intToggleRTT").removeClass("active");
-        $("#btn_intToggleRTT").removeClass("btn-danger");
-        $("#btn_intToggleRTT").text("Включить в RT");
+        $("#btn_intToggleRT").removeClass("active");
+        $("#btn_intToggleRT").removeClass("btn-danger");
+        $("#btn_intToggleRT").text("Включить в RT");
     }else{
-        $("#btn_intToggleRTT").addClass("active");
-        $("#btn_intToggleRTT").addClass("btn-danger");
-        $("#btn_intToggleRTT").text("Отключить в RT");
+        $("#btn_intToggleRT").addClass("active");
+        $("#btn_intToggleRT").addClass("btn-danger");
+        $("#btn_intToggleRT").text("Отключить в RT");
     }
 }

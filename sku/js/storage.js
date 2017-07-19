@@ -65,11 +65,13 @@ export default class LStore{
             var tmp = JSON.parse(localStorage.getItem("tube1t"));
             if(tmp){
                 $(".btn_rt1_t").addClass("active");
+                $(".btn_rt1_t").addClass("btn-danger");
                 $("#rt_trend1").show(500,function () {
                     Global.Trend1.reflow();
                 });
             }else {
                 $(".btn_rt1_t").removeClass("active");
+                $(".btn_rt1_t").removeClass("btn-danger");
                 $("#rt_trend1").hide(0);
             }
             Global.tube1T = tmp;
@@ -78,11 +80,13 @@ export default class LStore{
             var tmp = JSON.parse(localStorage.getItem("tube2t"));
             if(tmp){
                 $(".btn_rt2_t").addClass("active");
+                $(".btn_rt2_t").addClass("btn-danger");
                 $("#rt_trend2").show(500,function () {
                     Global.Trend2.reflow();
                 });
             }else {
                 $(".btn_rt2_t").removeClass("active");
+                $(".btn_rt2_t").removeClass("btn-danger");
                 $("#rt_trend2").hide(0);
             }
             Global.tube2T = tmp;
@@ -91,11 +95,13 @@ export default class LStore{
             var tmp = JSON.parse(localStorage.getItem("tube3t"));
             if(tmp){
                 $(".btn_rt3_t").addClass("active");
+                $(".btn_rt3_t").addClass("btn-danger");
                 $("#rt_trend3").show(500,function () {
                     Global.Trend3.reflow();
                 });
             }else {
                 $(".btn_rt3_t").removeClass("active");
+                $(".btn_rt3_t").removeClass("btn-danger");
                 $("#rt_trend3").hide(0);
             }
             Global.tube3T = tmp;
@@ -104,11 +110,13 @@ export default class LStore{
             var tmp = JSON.parse(localStorage.getItem("tube4t"));
             if(tmp){
                 $(".btn_rt4_t").addClass("active");
+                $(".btn_rt4_t").addClass("btn-danger");
                 $("#rt_trend4").show(500,function () {
                     Global.Trend4.reflow();
                 });
             }else {
                 $(".btn_rt4_t").removeClass("active");
+                $(".btn_rt4_t").removeClass("btn-danger");
                 $("#rt_trend4").hide(0);
             }
             Global.tube4T = tmp;
