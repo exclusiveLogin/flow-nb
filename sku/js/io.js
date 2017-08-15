@@ -35,8 +35,8 @@ $(document).ready(function(){
         }
         Global.P_Con = true;
     });
-    
-    
+
+    //-----------------CON ERROR-------------------------------
     Global.socketToNB.on("connect_error", function(){
         var tmpstatus = -1;
         if(Global.statusNB != tmpstatus){
@@ -54,8 +54,8 @@ $(document).ready(function(){
         }
         Global.P_Con = false;
     });
-    
-    
+
+    //-----------------CON SERVER STATE-------------------------------
     Global.socketToNB.on("mb_error", function(){
         var tmpstatus = -2;
         if(Global.statusNB != tmpstatus){
@@ -84,14 +84,14 @@ $(document).ready(function(){
             Global.statusP = 2;  
         }
     });
-    Global.socketToNB.on("mqsql_error", function(){
+    Global.socketToNB.on("mysql_error", function(){
         var tmpstatus = -3;
         if(Global.statusNB != tmpstatus){
             $('#status_node_nb').html('<h2 class="label label-lg label-danger">Ошибка Базы Данных</h2>');
             Global.statusNB = -3;
         }
     });
-    Global.socketToP.on("mqsql_error", function(){
+    Global.socketToP.on("mysql_error", function(){
         var tmpstatus = -3;
         if(Global.statusP != tmpstatus){
             $('#status_node_p').html('<h2 class="label label-lg label-danger">Ошибка Базы Данных</h2>');
@@ -140,14 +140,8 @@ $(document).ready(function(){
             Global.statusNB = 4;
         }
         
-        if(data && Global.RTToggle){
-            /*if(Global.IntRTT){//Дельта-сигма RT
-                data.tube1[1] = Global.RTI1.Integrity(data.tube1[1]);
-                data.tube2[1] = Global.RTI2.Integrity(data.tube2[1]);
-                data.tube3[1] = Global.RTI3.Integrity(data.tube3[1]);
-                data.tube4[1] = Global.RTI4.Integrity(data.tube4[1]);
-            }*/
-            if(data.tube1 && Global.tube1T){
+        if(data && Global.RTToggle){//Если включен RT графики
+            if(data.tube1 && Global.tube1T){//Если есть данные по трубе и включен показ трубы
                 if(Global.IntRTT){//Дельта-сигма RT
                     data.tube1[1] = Global.RTI1.Integrity(data.tube1[1]);
                     //console.log("Tube 1 Integrity result:",data.tube1[1]);
@@ -357,13 +351,13 @@ $(document).ready(function(){
         }
         
         function arjLoader(){
-            if(data.trendNB && data.trendP){
-				Global.MainTrend_DataP = [];
+            if(data.trendNB && data.trendP){//оба массива загружены
+				Global.MainTrend_DataP = [];//заготовки для трендов
 				Global.MainTrend_DataNB = [];
                 for(var index in data.trendP){
                     if(Global.IntARJT){
                         var tmpVal = Global.ARJIp.Integrity(data.trendP[index].value);
-                        Global.MainTrend_DataP.push([data.trendP[index].utc,tmpVal]);
+                        if(index > Global.ARJI.Buffer.length)Global.MainTrend_DataP.push([data.trendP[index].utc,tmpVal]);
                     }else{
                         Global.MainTrend_DataP.push([data.trendP[index].utc,data.trendP[index].value]);
                     }
@@ -371,7 +365,7 @@ $(document).ready(function(){
                 for(var index in data.trendNB){
                     if(Global.IntARJT){
                         var tmpVal = Global.ARJI.Integrity(data.trendNB[index].value);
-                        Global.MainTrend_DataNB.push([data.trendNB[index].utc,tmpVal]);
+                        if(index > Global.ARJIp.Buffer.length)Global.MainTrend_DataNB.push([data.trendNB[index].utc,tmpVal]);
                     }else{
                         Global.MainTrend_DataNB.push([data.trendNB[index].utc,data.trendNB[index].value]);
                     }
@@ -440,6 +434,8 @@ function trendDetail(e,refresh){
             if(e.trigger == "navigator" || e.trigger == "zoom"){
                 data.min = e.min;
                 data.max = e.max;
+                Global.zoomSteps.push(data);
+                if(Global.zoomSteps > 10)Global.zoomSteps.shift();
                 Global.socketToNB.emit("arjLoad",data);
             }
         }
@@ -468,13 +464,17 @@ function trendDetail(e,refresh){
                     data.min = tmpExtr.userMin;
                     data.max = tmpExtr.userMax+step;
                 }
-            }else {
+            }else if(e.back){
                 if(!e.ctrl){//simple key
                     data.min = tmpExtr.userMin-step;
                     data.max = tmpExtr.userMax-step;
                 }else {//with ctrl
                     data.min = tmpExtr.userMin-step;
                     data.max = tmpExtr.userMax;
+                }
+            }else if(e.down){
+                if(Global.zoomSteps.length){
+                    data = Global.zoomSteps.pop();
                 }
             }
             Global.socketToNB.emit("arjLoad",data);

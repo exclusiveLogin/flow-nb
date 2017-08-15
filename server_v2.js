@@ -124,7 +124,8 @@ socketServ.on("connection",function(socket){
                         }
                         console.log("minmax  min:",data.min,"max:",data.max);
                     }
-                    socketServ.sockets.emit("arj_load_res",{trendP:trendP, trendNB:trendNB,min:data.min,max:data.max,dumpflag:dumpflag});
+                    //socketServ.sockets.emit("arj_load_res",{trendP:trendP, trendNB:trendNB,min:data.min,max:data.max,dumpflag:dumpflag});
+                    socket.emit("arj_load_res",{trendP:trendP, trendNB:trendNB,min:data.min,max:data.max,dumpflag:dumpflag});
                     localNB = false;
                     localP = false;
                     console.log("Arj send trendP:",trendP.length," series trendNB:",trendNB.length," series");
@@ -273,7 +274,8 @@ socketServ.on("connection",function(socket){
                 result.tube = data.tube;
                 console.log(util.inspect(result,{colors:true}));
                 //сюда пишем вывод значений для тренда
-                socketServ.sockets.emit("min_max_res",result);
+                //socketServ.sockets.emit("min_max_res",result);
+                socket.emit("min_max_res",result);
                 localMax = false;
                 localMax2 = false;
                 localMin = false;

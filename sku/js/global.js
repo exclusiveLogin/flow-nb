@@ -18,6 +18,7 @@ Global = {
     RTbuffer:300,
     currentArjIntervalDump:false,
     currentArjMinPoint:null,
-    currentArjMaxPoint:null
+    currentArjMaxPoint:null,
+    zoomSteps:[]
 };
 

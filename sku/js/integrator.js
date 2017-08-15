@@ -16,14 +16,21 @@ function Integrator(){
     };
     
     this.setFilter = function(pre, post){
+        var spacer = 0;
+
+        if(this.Buffer.length){//если массив есть то берем среднее и заполняем
+            spacer = this.Buffer.reduce((prev,cur)=>{return prev+cur})/this.Buffer.length;
+            //spacer = this.Buffer[this.Buffer.length-1];
+        }
+
         this.Buffer = [];
         //----------Post points------------
         for(var el=0; el<post; el++){
-            this.Buffer.push(0);
+            this.Buffer.push(spacer);
         }
         //-----------Pre points------------
         for(var el=0; el<pre; el++){
-            this.Buffer.push(0);
+            this.Buffer.push(spacer);
         }
         
         this.prefilterPoints = pre;

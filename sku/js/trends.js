@@ -482,10 +482,14 @@ $(document).ready(function(){
         yAxis: {
             //min:0,
             //max:16,
-            minRange:.5,
+            //maxRange:.2,
             title: {
                 text: 'Давление'
             },
+            //minPadding: 0.1,
+            //maxPadding: 0.2
+            softMin:0.005,
+            softMax:0.01
         },
         plotOptions: {
             series: {
@@ -560,11 +564,11 @@ $(document).ready(function(){
     $(document).on("keydown",function (e) {
         // console.log("key down:",e);
         if(e.keyCode == 37 && !e.ctrlKey){//Left No ctrl
-            var request = {trigger:"keydown",front:false,ctrl:false};
+            var request = {trigger:"keydown",back:true,ctrl:false};
             trendDetail(request);
         }
         if(e.keyCode == 37 && e.ctrlKey){//Left with ctrl
-            var request = {trigger:"keydown",front:false,ctrl:true};
+            var request = {trigger:"keydown",back:true,ctrl:true};
             trendDetail(request);
         }
         if(e.keyCode == 39 && !e.ctrlKey){//Right No ctrl
@@ -575,5 +579,14 @@ $(document).ready(function(){
             var request = {trigger:"keydown",front:true,ctrl:true};
             trendDetail(request);
         }
+        if(e.keyCode == 40){//Down key for out zoom
+            var request = {trigger:"keydown",down:true,ctrl:false};
+            trendDetail(request);
+        }
+    });
+    $("#arj_trend").on("contextmenu",function (e) {
+        e.preventDefault();
+        var request = {trigger:"keydown",down:true,ctrl:false};
+        trendDetail(request);
     });
 });
