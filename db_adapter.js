@@ -1,15 +1,16 @@
-var Global = {};
-Global.sqlConLocalQuery = false;
-Global.sqlConRemoteQuery = false;
-Global.sqlResetQuery = false;
-Global.sqlResetArjQuery = false;
+
+var sqlConLocalQuery = false;
+var sqlConRemoteQuery = false;
+var sqlResetQuery = false;
+
+var lockLoop = false;
 
 const util = require("util");
 
 
 //this is RT connection
-Global.connection = false;
-Global.connectionRT = false;
+var SQLconnection = false;
+var SQLconnectionRT = false;
 
 var mysql = require("mysql");
 
@@ -43,73 +44,45 @@ function checkPoolArj(str){
         console.log("pool not defined");
     }
 }
-
+var reject
 //--------------main function--------------------
-function getCON(arj,rt) {
+function getCON(arj,rt,force) {
+    //нужно вернуть промис с connection для операций с БД
     var getConnectionDB = new Promise(function (resolve, reject) {
         function resetPool(){
-            if(!Global.sqlResetQuery){
-                Global.sqlResetQuery = true;
-                if(pool){
-                    console.log("pool established, reset success");
-                    pool.end(function(err){
-                        if(!err){
-                            console.log("pool end without error");
+            if(!lockLoop){
+                lockLoop = true;
+                if(!sqlResetQuery){
+                    sqlResetQuery = true;
+                    if(pool){
+                        console.log("pool established, reset success");
+                        pool.end(function(err){
+                            if(err){
+                                console.log("ERROR:"+util.inspect(err,{colors:true}));
+                            }
                             crPool();
                             regConSQLLocal();
                             regConSQLRemote();
-                        }else{
-                            console.log("pool end with ERROR");
-                            console.log("ERROR:"+util.inspect(err,{colors:true}));
-                            pool = null;
-                            crPool();
-                            regConSQLLocal();
-                            regConSQLRemote();
-                        }
-                        Global.sqlResetQuery = false;
-                    });
-                }else{
-                    console.log("pool not established, create new pool");
-                    crPool();
-                    regConSQLLocal();
-                    regConSQLRemote();
-                    Global.sqlResetQuery = false;
+                            sqlResetQuery = false;
+                        });
+                    }else{
+                        console.log("pool not established, create new pool");
+                        crPool();
+                        regConSQLLocal();
+                        regConSQLRemote();
+                        sqlResetQuery = false;
+                    }
                 }
-            }
-        }
-        function resetArjPool(){
-            if(!Global.sqlResetArjQuery){
-                Global.sqlResetArjQuery = true;
-                if(poolArj){
-                    console.log("pool Arj established, reset success");
-                    poolArj.end(function(err){//delete pool
-                        poolArj = null;
-                        if(!err){
-                            console.log("pool ARJ end without error");
-                        }else{
-                            console.log("pool ARJ end with ERROR");
-                            console.log("ERROR:"+util.inspect(err,{colors:true}));
-                        }
-                        crPoolArj();
-                        Global.sqlResetArjQuery = false;
-                    });
-                }else{
-                    console.log("pool Arj not established, create new pool");
-                    crPoolArj();
-                    Global.sqlResetArjQuery = false;
-                }
+            }else {
+                reject();
             }
         }
         function regConSQLLocal(){
-            if(!Global.sqlConLocalQuery){
-                Global.sqlConLocalQuery = true;
-                if(Global.connection){
-                    Global.connection.release();
-                    Global.connection = null;
-                }
-                if(Global.schedullerTube){
-                    clearInterval(Global.schedullerTube);
-                    console.log("interval clear reset");
+            if(!sqlConLocalQuery){
+                sqlConLocalQuery = true;
+                if(SQLconnection){
+                    SQLconnection.release();
+                    SQLconnection = null;
                 }
                 if(pool){
                     pool.getConnection(function(err, connection) {
@@ -118,8 +91,9 @@ function getCON(arj,rt) {
                             resetPool();
                         }else{
                             console.log("Register SQL local success");
-                            Global.connection = connection;
-                            Global.sqlConLocalQuery = false;
+                            SQLconnection = connection;
+                            sqlConLocalQuery = false;
+                            resolve(connection);
                         }
                     });
                 }else{
@@ -130,11 +104,11 @@ function getCON(arj,rt) {
             }
         }
         function regConSQLRemote(){
-            if(!Global.sqlConRemoteQuery){
-                Global.sqlConRemoteQuery = true;
-                if(Global.connectionRT){
-                    Global.connectionRT.release();
-                    Global.connectionRT = null;
+            if(!sqlConRemoteQuery){
+                sqlConRemoteQuery = true;
+                if(SQLconnectionRT){
+                    SQLconnectionRT.release();
+                    SQLconnectionRT = null;
                 }
                 if(pool){
                     pool.getConnection(function(err, connection) {
@@ -142,10 +116,10 @@ function getCON(arj,rt) {
                             console.log("pool RT register error");
                             resetPool();
                         }else{
-                            //socketServ.sockets.emit("all_ok",{});
                             console.log("Register SQL local success");
-                            Global.connectionRT = connection;
-                            Global.sqlConRemoteQuery = false;
+                            SQLconnectionRT = connection;
+                            sqlConRemoteQuery = false;
+                            resolve(connection);
                         }
                     });
                 }else{
@@ -154,16 +128,40 @@ function getCON(arj,rt) {
                 }
             }
         }
+        function regConSQLArj(){
+            if(pool){
+                pool.getConnection(function(err, connection) {
+                    if(err){
+                        console.log("pool Arj register error");
+                        resetPool();
+                    }else{
+                        console.log("Register SQL Arj success");
+                        resolve(connection);
+                    }
+                });
+            }else{
+                console.log("pool not established");
+                resetPool();
+            }
+        }
 
         if(!pool)crPool();//Первичная инициация pool
 
         if(arj){
-
+            regConSQLArj();
         }else {
             if(rt){
-                regConSQLRemote();
+                if(SQLconnectionRT && !force){
+                    resolve(SQLconnectionRT);
+                }else {
+                    regConSQLRemote();
+                }
             }else {
-                regConSQLLocal();
+                if(SQLconnection && !force){
+                    resolve(SQLconnection);
+                }else {
+                    regConSQLLocal();
+                }
             }
         }
     });
