@@ -151,20 +151,17 @@ process.on("disconnect",function () {
 //-------
 */
 function DBWriter(data,nowdt){
+    let tmpDate = new Date(nowdt[0]);
+    let tmpSeconds = tmpDate.getSeconds();
+    let tmpMinutes = tmpDate.getMinutes();
     var tmpQ = "";
     if(data){
-
-        var tmpDate = new Date(nowdt[0]);
-        var tmpSeconds = tmpDate.getSeconds();
-        var tmpMinutes = tmpDate.getMinutes();
-
-
         data.map(function (element,elem) {//перебор 4 труб
             let tmpTube = elem+1;
 
             db_adapter.getCON().then(function (connection) {
                 tmpQ = 'INSERT IGNORE INTO `tube'+tmpTube+'_dump` (`value`,`utc`) VALUES('+data[elem]+','+nowdt[elem]+')';
-                //console.log("TMPQ before query callback:",tmpQ);
+                console.log("min:",tmpMinutes," sec:",tmpSeconds);
                 connection.query(tmpQ,function(err){
                     if(err){
                         console.log("error SQL insert RT:"+util.inspect(err,{colors:true}));
@@ -173,7 +170,7 @@ function DBWriter(data,nowdt){
                             console.log("SQL local con force replaced");
                         });
                     }
-                    //else console.log("data added in DB in Q:",tmpQ);
+                    else console.log("data added in DB");
                 });
 
                 if(tmpSeconds==0 && tmpMinutes == 0 && !Global.DBsecondLock){//Пишем в часовой (одну запись!!!!)
@@ -185,6 +182,8 @@ function DBWriter(data,nowdt){
                             db_adapter.getCON(null,null,true).then(function () {
                                 console.log("SQL local con force replaced");
                             });
+                        }else {
+                            console.log("Hourly data added in DB");
                         }
                     });
                 }
@@ -198,6 +197,8 @@ function DBWriter(data,nowdt){
                             db_adapter.getCON(null,null,true).then(function () {
                                 console.log("SQL local con force replaced");
                             });
+                        }else {
+                            console.log("Minutely data added in DB");
                         }
                     });
                 }

@@ -19,135 +19,181 @@ function crPool(){
         database : 'flow_nb'
     });
 }
-var tmpPromise = false;
+var tmpPromiseRT = false;
+var tmpPromiseLocal = false;
+
 
 //--------------main functions export--------------------
 module.exports = {
     "getCON":function getCON(arj,rt,force) {
-        var lockLoop = false;
-        //нужно вернуть промис с connection для операций с БД
-        var getConnectionDB = new Promise(function (resolve, reject) {
-            function resetPool(){
-                if(!lockLoop){
-                    //если сюда попали значит уже не смогли получить от пула коннект
-                    //нечего делать ...сбрасываем пул и все остальное , пересобираем. на все одна попытка
+        function getPromise(){
+            var getConnectionDB = new Promise(function (resolve, reject) {
+                var lockLoop = false;
+                function resetPool(){
+                    if(!lockLoop){
+                        //если сюда попали значит уже не смогли получить от пула коннект
+                        //нечего делать ...сбрасываем пул и все остальное , пересобираем. на все одна попытка
 
-                    lockLoop = true;
-                    SQLconnection = null;
-                    SQLconnectionRT = null;
-                    if(pool){
-                        console.log("pool established, reset success");
-                        pool.end(function(err){
-                            if(err){
-                                console.log("ERROR:"+util.inspect(err,{colors:true}));
-                            }
+                        lockLoop = true;
+                        SQLconnection = null;
+                        SQLconnectionRT = null;
+                        if(pool){
+                            console.log("pool established, reset success");
+                            pool.end(function(err){
+                                if(err){
+                                    console.log("ERROR:"+util.inspect(err,{colors:true}));
+                                }
+                                reconnectSQL();
+                            });
+                        }else{
+                            console.log("pool not established, create new pool");
                             reconnectSQL();
+                        }
+                        function reconnectSQL() {
+                            crPool();
+                            if(arj){
+                                regConSQLArj();
+                            }else {
+                                if(rt){
+                                    regConSQLRemote();
+                                }else {
+                                    regConSQLLocal();
+                                }
+                            }
+                        }
+                    }else {
+                        reject("Фатальная ошибка SQL pool");
+                    }
+                }
+                function regConSQLLocal(){
+                    if(SQLconnection){
+                        SQLconnection.release();
+                        SQLconnection = null;
+                    }
+                    if(pool){
+                        pool.getConnection(function(err, connection) {
+                            if(err){
+                                console.log("pool LOCAL register error");
+                                resetPool();
+                            }else{
+                                console.log("Register SQL local success");
+                                SQLconnection = connection;
+                                resolve(connection);
+                            }
                         });
                     }else{
-                        console.log("pool not established, create new pool");
-                        reconnectSQL();
+                        console.log("pool not established");
+                        resetPool();
                     }
-                    function reconnectSQL() {
-                        crPool();
-                        if(arj){
-                            regConSQLArj();
-                        }else {
-                            if(rt){
-                                regConSQLRemote();
-                            }else {
-                                regConSQLLocal();
+                }
+                function regConSQLRemote(){
+                    if(SQLconnectionRT){
+                        SQLconnectionRT.release();
+                        SQLconnectionRT = null;
+                    }
+                    if(pool){
+                        pool.getConnection(function(err, connection) {
+                            if(err){
+                                console.log("pool RT register error");
+                                resetPool();
+                            }else{
+                                console.log("Register SQL local success");
+                                SQLconnectionRT = connection;
+                                resolve(connection);
                             }
-                        }
+                        });
+                    }else{
+                        console.log("pool not established");
+                        resetPool();
                     }
+                }
+                function regConSQLArj(){
+                    if(pool){
+                        pool.getConnection(function(err, connection) {
+                            if(err){
+                                console.log("pool Arj register error");
+                                resetPool();
+                            }else{
+                                console.log("Register SQL Arj success");
+                                resolve(connection);
+                            }
+                        });
+                    }else{
+                        console.log("pool not established");
+                        resetPool();
+                    }
+                }
+
+                if(!pool)crPool();//Первичная инициация pool
+
+                if(arj){
+                    regConSQLArj();
                 }else {
-                    reject("Фатальная ошибка SQL pool");
-                }
-            }
-            function regConSQLLocal(){
-                if(SQLconnection){
-                    SQLconnection.release();
-                    SQLconnection = null;
-                }
-                if(pool){
-                    pool.getConnection(function(err, connection) {
-                        if(err){
-                            console.log("pool LOCAL register error");
-                            resetPool();
-                        }else{
-                            console.log("Register SQL local success");
-                            SQLconnection = connection;
-                            resolve(connection);
+                    if(rt){
+                        if(SQLconnectionRT && !force){
+                            console.log("отдаем сразу RT");
+                            console.log("all con:"+util.inspect(pool._allConnections.length,{colors:true})+
+                                "free con:"+util.inspect(pool._freeConnections.length,{colors:true}));
+                            resolve(SQLconnectionRT);
+                        }else {
+                            regConSQLRemote();
                         }
-                    });
-                }else{
-                    console.log("pool not established");
-                    resetPool();
-                }
-            }
-            function regConSQLRemote(){
-                if(SQLconnectionRT){
-                    SQLconnectionRT.release();
-                    SQLconnectionRT = null;
-                }
-                if(pool){
-                    pool.getConnection(function(err, connection) {
-                        if(err){
-                            console.log("pool RT register error");
-                            resetPool();
-                        }else{
-                            console.log("Register SQL local success");
-                            SQLconnectionRT = connection;
-                            resolve(connection);
-                        }
-                    });
-                }else{
-                    console.log("pool not established");
-                    resetPool();
-                }
-            }
-            function regConSQLArj(){
-                if(pool){
-                    pool.getConnection(function(err, connection) {
-                        if(err){
-                            console.log("pool Arj register error");
-                            resetPool();
-                        }else{
-                            console.log("Register SQL Arj success");
-                            resolve(connection);
-                        }
-                    });
-                }else{
-                    console.log("pool not established");
-                    resetPool();
-                }
-            }
-
-            if(!pool)crPool();//Первичная инициация pool
-
-            if(arj){
-                regConSQLArj();
-            }else {
-                if(rt){
-                    if(SQLconnectionRT && !force){
-                        resolve(SQLconnectionRT);
                     }else {
-                        regConSQLRemote();
+                        if(SQLconnection && !force){
+                            console.log("отдаем сразу LOCAL");
+                            console.log("all con:"+util.inspect(pool._allConnections.length,{colors:true})+
+                                "free con:"+util.inspect(pool._freeConnections.length,{colors:true}));
+                            resolve(SQLconnection);
+                        }else {
+                            regConSQLLocal();
+                        }
                     }
+                }
+            });
+            return getConnectionDB;
+        }
+        //нужно вернуть промис с connection для операций с БД
+        if(!arj){//если не архивный
+            if(rt){//если нужен для записи данных причала
+                if(tmpPromiseRT){
+                    console.log("return exist Promise RT");
+                    return tmpPromiseRT;
                 }else {
-                    if(SQLconnection && !force){
-                        console.log("отдаем сразу");
-                        console.log("all con:"+util.inspect(pool._allConnections.length,{colors:true}));
-                        console.log("free con:"+util.inspect(pool._freeConnections.length,{colors:true}));
-                        resolve(SQLconnection);
-                    }else {
-                        regConSQLLocal();
-                    }
+                    console.log("get Promise RT");
+                    let connection = getPromise();
+                    connection.then(function () {
+                        console.log("tmpPromiseRT завершен");
+                        tmpPromiseRT = null;
+                    },function () {
+                        console.log("tmpPromiseRT завершен");
+                        tmpPromiseRT = null;
+                    });
+                    tmpPromiseRT = connection;
+                    return connection;
+                }
+            }else {//если нужен для записи данных НБ
+                if(tmpPromiseLocal){
+                    console.log("return exist Promise LOCAL");
+                    return tmpPromiseLocal;
+                }else {
+                    console.log("get Promise Local");
+                    let connection = getPromise();
+                    connection.then(function () {
+                        console.log("tmpPromiseLocal завершен");
+                        tmpPromiseLocal = null;
+                    },function () {
+                        console.log("tmpPromiseLocal завершен");
+                        tmpPromiseLocal = null;
+                    });
+                    tmpPromiseLocal = connection;
+
+                    return connection;
                 }
             }
-        });
-        console.log(getConnectionDB);
-        return getConnectionDB;
-
+        }else {
+            console.log("get Promise ARJ");
+            return getPromise();
+        }
     },
     "sqlCloseLocal":function sqlCloseLocal(){
         if(SQLconnection){
