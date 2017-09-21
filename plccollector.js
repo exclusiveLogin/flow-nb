@@ -1,29 +1,8 @@
 var Global = {};
-
-Global.poolReset = false;
-Global.conReQueryLocal = false;
 Global.DBsecondLock = false;
-
 const util = require("util");
+const db_adapter = require("./db_adapter.js");
 
-//-------------MYSQL---------------------
-var mysql = require("mysql");
-
-var pool;
-function crPool(){
-    if(pool){
-        pool = null;
-    }
-    pool = mysql.createPool({
-        //waitForConnections:false,
-        connectionLimit : 20,
-        host     : 'localhost',
-        user     : 'root',
-        password : '123',
-        database : 'flow_nb'
-    });
-}
-crPool();//Первичная инициация pool
 //--------------MODBUS-------------------
 
 var modbus = require("jsmodbus");
@@ -41,67 +20,33 @@ client.connect();
 
 client.on('connect', function () {
     console.log("PLC connected");
-    regConSQLLocal();
+    //запуск опроса PLC
+    Global.schedullerTube = setInterval(function(){
+        rcvTubes();
+    },1000);
 });
 
 client.on('error', function (err) {
     process.send({"mb_error":true});
     console.log("ERROR MODBUS");
-    sqlCloseLocal();
-});
-
-function WordToFloat( $Word1, $Word2 ) {
-    /* Conversion selon presentation Standard IEEE 754
-     /    seeeeeeeemmmmmmmmmmmmmmmmmmmmmmm
-     /    31                             0
-     /    s = sign bit, e = exponent, m = mantissa
-     */
-    var DBL_MAX = 99999999999999999;
-
-    $src = ( ($Word1 & 0x0000FFFF) << 16) + (($Word2 & 0x0000FFFF) );
-
-    $s = Boolean($src >> 31);
-    $e = ($src & 0x7F800000) >> 23;
-    $f = ($src & 0x007FFFFF);
-
-    //var_dump($s);
-    //echo "<br>";
-    //var_dump($e);
-    //echo "<br>";
-    //var_dump($f);
-    //echo "<br>";
-
-    if ($e == 255 && $f != 0) {
-        /* NaN - Not a number */
-        $value = DBL_MAX;
-    } else if ($e == 255 && $f == 0 && $s) {
-        /* Negative infinity */
-        $value = -DBL_MAX;
-    } else if ($e == 255 && $f == 0 && !$s) {
-        /* Positive infinity */
-        $value = DBL_MAX;
-    } else if ($e > 0 && $e < 255) {
-        /* Normal number */
-        $f += 0x00800000;
-        if ($s) $f = -$f;
-        $value = $f * Math.pow(2, $e - 127 - 23);
-    } else if ($e == 0 && $f != 0) {
-        /* Denormal number */
-        if ($s) $f = -$f;
-        $value = $f * Math.pow(2, $e - 126 - 23);
-    } else if ($e == 0 && $f == 0 && $s) {
-        /* Negative zero */
-        $value = 0;
-    } else if ($e == 0 && $f == 0 && !$s) {
-        /* Positive zero */
-        $value = 0;
-    } else {
-        /* Never happens */
+    if(Global.schedullerTube){
+        clearInterval(Global.schedullerTube);
+        console.log("interval clear reset");
     }
+});
+//Prebuffer rcvTubes
+Global.buffer_tube1 = [];
+Global.buffer_tube2 = [];
+Global.buffer_tube3 = [];
+Global.buffer_tube4 = [];
 
-    return $value;
-}
+Global.buffer_valmin = [];
+Global.buffer_valmax = [];
+Global.buffer_dtmin = [];
+Global.buffer_dtmax = [];
 
+Global.bufferLen = 10;
+Global.bufferStep = 0;
 function rcvTubes(){
     client.readInputRegisters(15, 8).then(function (resp) {
         Global.bufferStep++;
@@ -177,10 +122,12 @@ function rcvTubes(){
 
             //отдаем клиенту
             process.send({"plc_fe":true, "val":Global.buffer_valmin, "dt":Global.buffer_dtmin});
-            process.send({"plc_fe":true, "val":Global.buffer_valmax,"dt":Global.buffer_dtmax});
+            process.send({"plc_fe":true, "val":Global.buffer_valmax, "dt":Global.buffer_dtmax});
             //пишем в БД
             DBWriter(Global.buffer_valmin,Global.buffer_dtmin);
             DBWriter(Global.buffer_valmax,Global.buffer_dtmax);
+            //console.log(util.inspect("max tubes:"+Global.buffer_valmax,{colors:true}));
+            //console.log(util.inspect("min tubes:"+Global.buffer_valmin,{colors:true}));
         }
 
     }).fail(function(e){
@@ -193,49 +140,16 @@ function rcvTubes(){
     });
 }
 
-
-function resetPool(){
-    if(!Global.sqlResetQuery){
-        Global.sqlResetQuery = true;
-        if(pool){
-            console.log("pool established, reset success");
-            pool.end(function(err){
-                if(!err){
-                    console.log("pool end without error");
-                    crPool();
-                    regConSQLLocal();
-                }else{
-                    console.log("pool end with ERROR");
-                    console.log("ERROR:"+util.inspect(err,{colors:true}));
-                }
-                Global.sqlResetQuery = false;
-            });
-        }else{
-            console.log("pool not established, create new pool");
-            crPool();
-            regConSQLLocal();
-            Global.sqlResetQuery = false;
-        }
-    }
-}
-function sqlCloseLocal(){
-    if(Global.connection){
-        Global.connection.release();
-        Global.connection = null;
-    }
-    if(Global.schedullerTube){
-        clearInterval(Global.schedullerTube);
-        console.log("interval clear reset");
-    }
-}
-
-setTimeout(function () {
+//------XP
+/*setTimeout(function () {
     process.disconnect();
-},5000);
-
+},5000);*/
+/*
 process.on("disconnect",function () {
    process.exit(0);
 });
+//-------
+*/
 function DBWriter(data,nowdt){
     var tmpQ = "";
     if(data){
@@ -244,52 +158,60 @@ function DBWriter(data,nowdt){
         var tmpSeconds = tmpDate.getSeconds();
         var tmpMinutes = tmpDate.getMinutes();
 
-        for(var elem in data){//перебор 4 труб
-            var tmpTube = Number(elem)+1;
 
-            if(Global.connection){
+        data.map(function (element,elem) {//перебор 4 труб
+            let tmpTube = elem+1;
+
+            db_adapter.getCON().then(function (connection) {
                 tmpQ = 'INSERT IGNORE INTO `tube'+tmpTube+'_dump` (`value`,`utc`) VALUES('+data[elem]+','+nowdt[elem]+')';
-
-                Global.connection.query(tmpQ,function(err){
+                //console.log("TMPQ before query callback:",tmpQ);
+                connection.query(tmpQ,function(err){
                     if(err){
                         console.log("error SQL insert RT:"+util.inspect(err,{colors:true}));
-                        process.send({"mysql_error":true});
-                        regConSQLLocal();
-                    }else{
-                        //console.log("Data RT saved in DB successuful");
+                        process.send({"mysql_error":true,"err":"error SQL insert RT"});
+                        db_adapter.getCON(null,null,true).then(function () {
+                            console.log("SQL local con force replaced");
+                        });
                     }
+                    //else console.log("data added in DB in Q:",tmpQ);
                 });
 
                 if(tmpSeconds==0 && tmpMinutes == 0 && !Global.DBsecondLock){//Пишем в часовой (одну запись!!!!)
                     tmpQ = 'INSERT IGNORE INTO `tube'+tmpTube+'_h` (`value`,`utc`) VALUES('+data[elem]+','+nowdt[elem]+')';
-                    Global.connection.query(tmpQ,function(err){
+                    connection.query(tmpQ,function(err){
                         if(err){
                             console.log("error SQL insert Local:"+util.inspect(err,{colors:true}));
-                            process.send({"mysql_error":true});
-                        }else{
-                            //console.log("Data Local Hourly saved in DB successuful");
+                            process.send({"mysql_error":true,"err":"error SQL insert Local"});
+                            db_adapter.getCON(null,null,true).then(function () {
+                                console.log("SQL local con force replaced");
+                            });
                         }
                     });
                 }
                 if(tmpSeconds==0 && !Global.DBsecondLock){//Пишем в минутный (одну запись!!!!)
                     tmpQ = 'INSERT IGNORE INTO `tube'+tmpTube+'_m` (`value`,`utc`) VALUES('+data[elem]+','+nowdt[elem]+')';
                     //console.log("Data RT Minutly saved in DB successuful on tube PLANNED"+tmpTube);
-                    Global.connection.query(tmpQ,function(err){
+                    connection.query(tmpQ,function(err){
                         if(err){
                             console.log("error SQL insert Local:"+util.inspect(err,{colors:true}));
-                            process.send({"mysql_error":true});
-                        }else{
-                            //console.log("Data Local Minutly saved in DB successuful");
+                            process.send({"mysql_error":true,"err":"error SQL insert minutes"});
+                            db_adapter.getCON(null,null,true).then(function () {
+                                console.log("SQL local con force replaced");
+                            });
                         }
                     });
                 }
+            },function () {//ошибка SQL
+                process.send({"mysql_error":true,"err":"fatal error SQL pool"});
+                console.log("fatal error SQL pool");
+                db_adapter.getCON(null,null,true).then(function () {
+                    console.log("SQL local con force replaced");
+                });
+            });
+        },this);
 
-            }else{
-                console.log("error SQL connection LOCAL not found");
-                //создаем новый коннект
-                regConSQLLocal();
-            }
-        }
+
+
         if(tmpSeconds == 0 && !Global.DBsecondLock){//установка защиты на запись дублирующих секунд
             Global.DBsecondLock = true;
         }
@@ -299,4 +221,55 @@ function DBWriter(data,nowdt){
     }else{
         console.log("No data");
     }
+}
+function WordToFloat( $Word1, $Word2 ) {
+    /* Conversion selon presentation Standard IEEE 754
+     /    seeeeeeeemmmmmmmmmmmmmmmmmmmmmmm
+     /    31                             0
+     /    s = sign bit, e = exponent, m = mantissa
+     */
+    var DBL_MAX = 99999999999999999;
+
+    $src = ( ($Word1 & 0x0000FFFF) << 16) + (($Word2 & 0x0000FFFF) );
+
+    $s = Boolean($src >> 31);
+    $e = ($src & 0x7F800000) >> 23;
+    $f = ($src & 0x007FFFFF);
+
+    //var_dump($s);
+    //echo "<br>";
+    //var_dump($e);
+    //echo "<br>";
+    //var_dump($f);
+    //echo "<br>";
+
+    if ($e == 255 && $f != 0) {
+        /* NaN - Not a number */
+        $value = DBL_MAX;
+    } else if ($e == 255 && $f == 0 && $s) {
+        /* Negative infinity */
+        $value = -DBL_MAX;
+    } else if ($e == 255 && $f == 0 && !$s) {
+        /* Positive infinity */
+        $value = DBL_MAX;
+    } else if ($e > 0 && $e < 255) {
+        /* Normal number */
+        $f += 0x00800000;
+        if ($s) $f = -$f;
+        $value = $f * Math.pow(2, $e - 127 - 23);
+    } else if ($e == 0 && $f != 0) {
+        /* Denormal number */
+        if ($s) $f = -$f;
+        $value = $f * Math.pow(2, $e - 126 - 23);
+    } else if ($e == 0 && $f == 0 && $s) {
+        /* Negative zero */
+        $value = 0;
+    } else if ($e == 0 && $f == 0 && !$s) {
+        /* Positive zero */
+        $value = 0;
+    } else {
+        /* Never happens */
+    }
+
+    return $value;
 }

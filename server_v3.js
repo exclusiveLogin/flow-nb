@@ -23,7 +23,8 @@ plc_worker.on("message",function (msg) {
        console.log("plc_collector msg:",msg.msg);
    }
    if(msg.plc_fe){
-       FESender(msg.val,msg.dt);
+       //FESender(msg.val,msg.dt);
+       console.log("plc_FE val:"+msg.val+"dt:"+msg.dt);
    }
 
 });
@@ -40,7 +41,7 @@ const util = require("util");
 
 //----------------SERVER------------------
 var socketServ = require('socket.io').listen(3000);
-
+/*
 socketServ.on("connection",function(socket){
     console.log("client Front End connected");
     //console.log(util.inspect(socket,{colors:true}));
@@ -319,12 +320,12 @@ socketServ.on("connection",function(socket){
         console.log(util.inspect(Global.FEclients,{colors:true}));
     });
 });
+*/
 
 
 
 
-
-
+/*
 
 //-----------------SERVER TO PRICHAL----------------------
 Global.disconQ = false;
@@ -561,4 +562,4 @@ function FESender(data,nowdt){
 
 
 
-
+*/
