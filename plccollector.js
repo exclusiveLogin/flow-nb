@@ -119,10 +119,11 @@ function rcvTubes(){
         }
         if(Global.bufferStep >= Global.bufferLen){
             Global.bufferStep = 0;
+            let pool = db_adapter.getStatusConnection();
 
             //отдаем клиенту
-            process.send({"plc_fe":true, "val":Global.buffer_valmin, "dt":Global.buffer_dtmin});
-            process.send({"plc_fe":true, "val":Global.buffer_valmax, "dt":Global.buffer_dtmax});
+            process.send({"plc_fe":true, "val":Global.buffer_valmin, "dt":Global.buffer_dtmin,pool});
+            process.send({"plc_fe":true, "val":Global.buffer_valmax, "dt":Global.buffer_dtmax,pool});
             //пишем в БД
             DBWriter(Global.buffer_valmin,Global.buffer_dtmin);
             DBWriter(Global.buffer_valmax,Global.buffer_dtmax);
@@ -144,12 +145,11 @@ function rcvTubes(){
 /*setTimeout(function () {
     process.disconnect();
 },5000);*/
-/*
 process.on("disconnect",function () {
    process.exit(0);
 });
+
 //-------
-*/
 function DBWriter(data,nowdt){
     let tmpDate = new Date(nowdt[0]);
     let tmpSeconds = tmpDate.getSeconds();

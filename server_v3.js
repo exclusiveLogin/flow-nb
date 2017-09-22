@@ -23,8 +23,8 @@ plc_worker.on("message",function (msg) {
        console.log("plc_collector msg:",msg.msg);
    }
    if(msg.plc_fe){
-       //FESender(msg.val,msg.dt);
-       console.log("plc_FE val:"+msg.val+"dt:"+msg.dt);
+       FESender(msg.val,msg.dt,msg.pool);
+       console.log("plc_FE val:"+util.inspect(msg.val,{"colors":true})+"dt:"+util.inspect(msg.dt,{"colors":true}));
    }
 
 });
@@ -40,8 +40,9 @@ plc_worker.on("exit",function () {
 const util = require("util");
 
 //----------------SERVER------------------
+
 var socketServ = require('socket.io').listen(3000);
-/*
+
 socketServ.on("connection",function(socket){
     console.log("client Front End connected");
     //console.log(util.inspect(socket,{colors:true}));
@@ -320,7 +321,6 @@ socketServ.on("connection",function(socket){
         console.log(util.inspect(Global.FEclients,{colors:true}));
     });
 });
-*/
 
 
 
@@ -520,27 +520,9 @@ function inserterDB(tube,stack){
     });  
     
 }
+*/
 
-//!**************************MODBUS CLIENT *******************************************
-
-//Prebuffer rcvTubes
-Global.buffer_tube1 = [];
-Global.buffer_tube2 = [];
-Global.buffer_tube3 = [];
-Global.buffer_tube4 = [];
-
-Global.buffer_valmin = [];
-Global.buffer_valmax = [];
-Global.buffer_dtmin = [];
-Global.buffer_dtmax = [];
-
-Global.bufferLen = 10;
-Global.bufferStep = 0;
-
-
-//----------------------------------
-
-function FESender(data,nowdt){
+function FESender(data,nowdt,pool){
     //nowdt = Number(nowdt);
     socketServ.emit("all_ok",{
         "tube1":[nowdt[0],Number(data[0])],
@@ -550,8 +532,8 @@ function FESender(data,nowdt){
     });
     var heap = process.memoryUsage();
     if(pool){
-        heap.sqlcon = pool._allConnections.length;
-        heap.sqlfree = pool._freeConnections.length;
+        heap.sqlcon = pool.allCon;
+        heap.sqlfree = pool.freeCon;
     }else{
         heap.sqlcon = 0;
         heap.sqlfree = 0;
@@ -562,4 +544,3 @@ function FESender(data,nowdt){
 
 
 
-*/

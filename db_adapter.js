@@ -215,5 +215,16 @@ module.exports = {
         }else{
             console.log("pool not defined");
         }
+    },
+    "getStatusConnection":function () {
+        if(pool){
+            let freeCon,allCon;
+            allCon = pool._allConnections.length;
+            freeCon = pool._freeConnections.length;
+            return {allCon,freeCon};
+        }else{
+            console.log("pool not defined");
+        }
+
     }
 };
