@@ -34,6 +34,7 @@ client.on('error', function (err) {
         console.log("interval clear reset");
     }
 });
+
 //Prebuffer rcvTubes
 Global.buffer_tube1 = [];
 Global.buffer_tube2 = [];
@@ -141,20 +142,15 @@ function rcvTubes(){
     });
 }
 
-//------XP
-/*setTimeout(function () {
-    process.disconnect();
-},5000);*/
 process.on("disconnect",function () {
    process.exit(0);
 });
 
-//-------
 function DBWriter(data,nowdt){
     let tmpDate = new Date(nowdt[0]);
     let tmpSeconds = tmpDate.getSeconds();
     let tmpMinutes = tmpDate.getMinutes();
-    var tmpQ = "";
+    let tmpQ = "";
     if(data){
         data.map(function (element,elem) {//перебор 4 труб
             let tmpTube = elem+1;
@@ -211,8 +207,6 @@ function DBWriter(data,nowdt){
             });
         },this);
 
-
-
         if(tmpSeconds == 0 && !Global.DBsecondLock){//установка защиты на запись дублирующих секунд
             Global.DBsecondLock = true;
         }
@@ -223,6 +217,7 @@ function DBWriter(data,nowdt){
         console.log("No data");
     }
 }
+
 function WordToFloat( $Word1, $Word2 ) {
     /* Conversion selon presentation Standard IEEE 754
      /    seeeeeeeemmmmmmmmmmmmmmmmmmmmmmm

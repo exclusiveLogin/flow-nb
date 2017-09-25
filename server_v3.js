@@ -39,9 +39,9 @@ plc_worker.on("exit",function () {
 //----------------UTILS-------------------
 const util = require("util");
 
-//----------------SERVER------------------
+//----------------SERVER TO FRONTEND------------------
 
-var socketServ = require('socket.io').listen(3000);
+const socketServ = require('socket.io').listen(3000);
 
 socketServ.on("connection",function(socket){
     console.log("client Front End connected");
@@ -323,10 +323,6 @@ socketServ.on("connection",function(socket){
 });
 
 
-
-
-/*
-
 //-----------------SERVER TO PRICHAL----------------------
 Global.disconQ = false;
 
@@ -342,7 +338,7 @@ function forceDisconCl(socket){
 }
 
 //слушаем порт от причального терминала
-var io = require('socket.io').listen(3001);
+const io = require('socket.io').listen(3001);
 
 io.on("connection",function(socket){
     Global.disconQ = false;
@@ -520,7 +516,6 @@ function inserterDB(tube,stack){
     });  
     
 }
-*/
 
 function FESender(data,nowdt,pool){
     //nowdt = Number(nowdt);
