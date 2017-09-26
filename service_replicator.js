@@ -15,13 +15,8 @@ process.on("message",function (msg) {
 
         db_adapter.getCON(true).then(function (connection) {//получаем коннект к БД
             let queryPromises = [];
-            //---------------------------
-            /*setTimeout(function () {
-                if(tube == 1)console.log(queryPromises);
-            },2000);*/
-            //----------------------------
-            stack.slice(0,500).map(function (el, elem) {//пробегаемся по массиву стека для репликации
-
+        
+            stack.map(function (el, elem) {//пробегаемся по массиву стека для репликации
                 //добавляем к стеку промисов новое задание
                 queryPromises.push(new Promise(function (queryDone, reject) {
                     let tmpQ = 'INSERT IGNORE INTO `p_tube'+tube+'_dump` (`value`,`utc`) VALUES('+stack[elem].value+','+stack[elem].utc+')';
@@ -69,24 +64,38 @@ process.on("message",function (msg) {
                     }
                 }));
             },this);
+            
+            promiseSpliter(100);            
+            
+            //declarating splitter function
+            function promiseSpliter(partian){
+                let part = partian || 50;
+                
+                if(queryPromises.length){
+                    //if(tube == 1)console.log(util.inspect(queryPromises,{"colors":true}));
+                    Promise.all(queryPromises.splice(0,part)).then(function () {
+                        console.log("завершены промисы для трубы:",msg.tube);
 
-            //if(tube == 1)console.log(util.inspect(queryPromises,{"colors":true}));
-            Promise.all(queryPromises.splice(0,100)).then(function () {
-                console.log("завершены промисы для трубы:",msg.tube);
-
-                // завершена очередь для нашей трубы
-                // чистим с задержкой коннектор и отправляем фринеру команду
-                /*setTimeout(function () {
-                    connection.release();
-                    process.send({"freener":true,"lid":stack[stack.length-1].utc,"tube":tube});
-                    Global.busy = false;
-                },1000);*/
-
-            },function (err) {
-                console.log("Replication stack ERROR:",err);
-                Global.busy = false;
-            });
-
+                        //start self recursively after success
+                        if(queryPromises.length){
+                            promiseSpliter();
+                        }else{
+                            console.log("all promises is completely");
+                            
+                            // завершена очередь для нашей трубы
+                            // чистим с задержкой коннектор и отправляем фринеру команду
+                            /*setTimeout(function () {
+                                connection.release();
+                                process.send({"freener":true,"lid":stack[stack.length-1].utc,"tube":tube});
+                                Global.busy = false;
+                            },1000);*/
+                        }
+                    },function (err) {
+                        console.log("Replication stack ERROR:",err);
+                        Global.busy = false;
+                    });
+                }
+            } 
         },function (err) {
             console.log("Replicator pool error:",err," on tube ",msg.tube);
         });
