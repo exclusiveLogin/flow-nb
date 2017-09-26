@@ -17,14 +17,12 @@ const fork = require("child_process").fork;
 let plc_worker = fork("plccollector.js");
 
 plc_worker.on("message",function (msg) {
-   //
-
    if(msg.msg){
        console.log("plc_collector msg:",msg.msg);
    }
    if(msg.plc_fe){
        FESender(msg.val,msg.dt,msg.pool);
-       console.log("plc_FE val:"+util.inspect(msg.val,{"colors":true})+"dt:"+util.inspect(msg.dt,{"colors":true}));
+       //console.log("plc_FE val:"+util.inspect(msg.val,{"colors":true})+"dt:"+util.inspect(msg.dt,{"colors":true}));
    }
 
 });
@@ -40,7 +38,7 @@ plc_worker.on("exit",function () {
 const util = require("util");
 
 //----------------SERVER TO FRONTEND------------------
-
+/*
 const socketServ = require('socket.io').listen(3000);
 
 socketServ.on("connection",function(socket){
@@ -51,9 +49,7 @@ socketServ.on("connection",function(socket){
     Global.FEclients.push(socket.handshake.headers['x-forwarded-for']);
     console.log(util.inspect(Global.FEclients,{colors:true}));
     socketServ.emit("clients", Global.FEclients);
-    
-    
-    
+      
     socket.on("arjLoad",function(data){
         localP = false;
         localNB = false;
@@ -321,7 +317,7 @@ socketServ.on("connection",function(socket){
         console.log(util.inspect(Global.FEclients,{colors:true}));
     });
 });
-
+*/
 
 //-----------------SERVER TO PRICHAL----------------------
 Global.disconQ = false;
@@ -342,9 +338,7 @@ const io = require('socket.io').listen(3001);
 
 io.on("connection",function(socket){
     Global.disconQ = false;
-    regConSQLRemote();
 
-    //дичье подключилось ...
     console.log("Prichal connected");
     //socket.emit("msg",{data:"connection to server established"});
 
@@ -356,12 +350,16 @@ io.on("connection",function(socket){
               //console.log(Global.clients);
           }
     });
-    //шлем сокетом на front чтоб суки не мучали базу своими запросами
+    
+    //получение данных с причала в режиме РТ
     socket.on("RTSend",function(data){
-        inserterRT(data.tubes,data.time);
+        //передаем данные РТ в коллектор 
+        plc_worker.send({
+            "rtsend":true,
+            "data":data
+        });
     });
 
-    //скатертью дорожка блять
     socket.on('disconnect',function(){
         //---------------pool free------------
         forceDisconCl(socket);
@@ -377,6 +375,7 @@ io.on("connection",function(socket){
         //console.log("ad:"+Global.clients);
         
     });
+    //запрос репликации 
     socket.on("replica",function(cont){
         if(cont.tube1){
             inserterDB(1,cont.tube1);
@@ -392,74 +391,17 @@ io.on("connection",function(socket){
         }
     });
 });
+
+
 //чистим после репликации
 function freener(lid,tube){
     console.log("prepare to del id:"+lid+" on tube "+tube);
     io.sockets.emit("free",{"lid":lid,"tube":tube});
 }
 
-//ебашим в БД прямо из сокета
-function inserterRT(tubes,time){
-    //console.log("data rcv RT:"+util.inspect(tubes,{colors:true}));
-    var tmpDate = new Date(time[0]);
-    var tmpSeconds = tmpDate.getSeconds();
-    var tmpMinutes = tmpDate.getMinutes();
-    for(var elem in tubes){//перебор 4 труб
-        var tmpTube = Number(elem)+1;
-        //console.log("second:"+tmpSeconds+" locker:"+util.inspect(Global.RTsecondLock,{colors:true}));
-        //console.log("id:"+elem+" tube:"+tmpTube+" value:"+tubes[elem]+" utc:"+time);
-        if(Global.connectionRT){            
-            tmpQ = 'INSERT IGNORE INTO `p_tube'+tmpTube+'_dump` (`value`,`utc`) VALUES('+tubes[elem]+','+time[elem]+')';
-            Global.connectionRT.query(tmpQ,function(err){
-                if(err){
-                    console.log("error SQL insert RT:"+util.inspect(err,{colors:true}));
-                    socketServ.sockets.emit("mysql_error",{});
-                }else{
-                    //console.log("Data RT saved in DB successuful");
-                }
-            });
-         
-            
-            if(tmpSeconds==0 && tmpMinutes == 0 && !Global.RTsecondLock){//Пишем в часовой (одну запись!!!!)
-                tmpQ = 'INSERT IGNORE INTO `p_tube'+tmpTube+'_h` (`value`,`utc`) VALUES('+tubes[elem]+','+time[elem]+')';
-                Global.connectionRT.query(tmpQ,function(err){
-                    if(err){
-                        console.log("error SQL insert RT:"+util.inspect(err,{colors:true}));
-                        socketServ.sockets.emit("mysql_error",{});
-                    }else{
-                        //console.log("Data RT Hourly saved in DB successuful");
-                    }
-                });
-            }
-            
-            if(tmpSeconds==0 && !Global.RTsecondLock){//Пишем в минутный (одну запись!!!!)
-                tmpQ = 'INSERT IGNORE INTO `p_tube'+tmpTube+'_m` (`value`,`utc`) VALUES('+tubes[elem]+','+time[elem]+')';
-                //console.log("Data RT Minutly saved in DB successuful on tube PLANNED"+tmpTube);
-                Global.connectionRT.query(tmpQ,function(err){
-                    if(err){
-                        console.log("error SQL insert RT:"+util.inspect(err,{colors:true}));
-                        socketServ.sockets.emit("mysql_error",{});
-                    }else{
-                        //console.log("Data RT Minutly saved in DB successuful on tube"+tmpTube);
-                    }
-                });
-            }
-        }else{
-            console.log("error SQL connection RT not found");
-            checkPool("error SQL inserter RT");
-            regConSQLRemote();
-        }
-    }
-    if(tmpSeconds == 0 && !Global.RTsecondLock){//снятие защиты на запись дублирующих секунд
-        Global.RTsecondLock = true;
-    }
-    if(tmpSeconds!=0 && Global.RTsecondLock){//снятие защиты на запись дублирующих секунд
-        Global.RTsecondLock = false;
-    }
-}
-
-//ебашим из репликации в БД
+//replica to DB
 function inserterDB(tube,stack){
+    //получаем коннект для записи репликации в БД
     pool.getConnection(function(err,connection){
         if(!err){
             var tmp = 0;
@@ -517,6 +459,7 @@ function inserterDB(tube,stack){
     
 }
 
+//RT to FE
 function FESender(data,nowdt,pool){
     //nowdt = Number(nowdt);
     socketServ.emit("all_ok",{

@@ -59,9 +59,6 @@ function rcvTubes(){
         res[2] = WordToFloat(resp.register[5],resp.register[4]).toFixed(2); //tube3
         res[3] = WordToFloat(resp.register[7],resp.register[6]).toFixed(2); //tube4
 
-        //console.log("1:"+res[0]+" 2:"+res[1]+" 3:"+res[2]+" 4:"+res[3]+" dt:"+nowdt+" heap = "+process.memoryUsage().heapUsed);
-
-
         if(Global.bufferStep == 1){
             //------------------------
             Global.buffer_valmax[0] = res[0];
@@ -141,11 +138,17 @@ function rcvTubes(){
         process.send({"mb_error":true});
     });
 }
-
+//tunel from parent
+process.on("message",function(msg){
+    if(msg.rtsend && msg.data.tubes && msg.data.time){
+        inserterRT(msg.data.tubes,msg.data.time);
+    }
+});
 process.on("disconnect",function () {
    process.exit(0);
 });
 
+//PLC to DB
 function DBWriter(data,nowdt){
     let tmpDate = new Date(nowdt[0]);
     let tmpSeconds = tmpDate.getSeconds();
@@ -218,6 +221,79 @@ function DBWriter(data,nowdt){
     }
 }
 
+//RT Prichal to DB
+function inserterRT(tubes,time){
+    var tmpDate = new Date(time[0]);
+    var tmpSeconds = tmpDate.getSeconds();
+    var tmpMinutes = tmpDate.getMinutes();
+    for(var elem in tubes){//перебор 4 труб
+        var tmpTube = Number(elem)+1;
+        //получаем коннект к БД и пишем туда данные с причала в режиме РТ
+        db_adapter.getCON(false,true).then(
+            function(connection){
+                tmpQ = 'INSERT IGNORE INTO `p_tube'+tmpTube+'_dump` (`value`,`utc`) VALUES('+tubes[elem]+','+time[elem]+')';
+                connection.query(tmpQ,function(err){
+                    if(err){
+                        process.send({"mysql_error":true,"err":"fatal error SQL pool"});
+                        console.log("fatal error RT SQL query");
+                        db_adapter.getCON(null,true,true).then(function () {
+                            console.log("SQL RT connection force replaced");
+                        });
+                    }else{
+                        //console.log("Data RT saved in DB successuful");
+                    }
+                });
+
+
+                if(tmpSeconds==0 && tmpMinutes == 0 && !Global.RTsecondLock){//Пишем в часовой (одну запись!!!!)
+                    tmpQ = 'INSERT IGNORE INTO `p_tube'+tmpTube+'_h` (`value`,`utc`) VALUES('+tubes[elem]+','+time[elem]+')';
+                    connection.query(tmpQ,function(err){
+                        if(err){
+                            process.send({"mysql_error":true,"err":"fatal error SQL pool"});
+                            console.log("fatal error RT SQL query Hourly");
+                            db_adapter.getCON(null,true,true).then(function () {
+                                console.log("SQL RT connection force replaced");
+                            });
+                        }else{
+                            //console.log("Data RT Hourly saved in DB successuful");
+                        }
+                    });
+                }
+
+                if(tmpSeconds==0 && !Global.RTsecondLock){//Пишем в минутный (одну запись!!!!)
+                    tmpQ = 'INSERT IGNORE INTO `p_tube'+tmpTube+'_m` (`value`,`utc`) VALUES('+tubes[elem]+','+time[elem]+')';
+                    
+                    connection.query(tmpQ,function(err){
+                        if(err){
+                            process.send({"mysql_error":true,"err":"fatal error SQL pool"});
+                            console.log("fatal error RT SQL query Minutely");
+                            db_adapter.getCON(null,true,true).then(function () {
+                                console.log("SQL RT connection force replaced");
+                            });
+                        }else{
+                            //console.log("Data RT Minutly saved in DB successuful on tube"+tmpTube);
+                        }
+                    });
+                }
+            },
+            function(error){
+                process.send({"mysql_error":true,"err":"fatal error SQL pool"});
+                console.log("fatal error SQL pool");
+                db_adapter.getCON(null,true,true).then(function () {
+                    console.log("SQL local con force replaced");
+                });
+            }
+        );        
+            
+    }
+    if(tmpSeconds == 0 && !Global.RTsecondLock){//снятие защиты на запись дублирующих секунд
+        Global.RTsecondLock = true;
+    }
+    if(tmpSeconds!=0 && Global.RTsecondLock){//снятие защиты на запись дублирующих секунд
+        Global.RTsecondLock = false;
+    }
+}
+//W2F
 function WordToFloat( $Word1, $Word2 ) {
     /* Conversion selon presentation Standard IEEE 754
      /    seeeeeeeemmmmmmmmmmmmmmmmmmmmmmm
