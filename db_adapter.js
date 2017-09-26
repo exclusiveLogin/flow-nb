@@ -131,18 +131,18 @@ module.exports = {
                 }else {
                     if(rt){
                         if(SQLconnectionRT && !force){
-                            console.log("отдаем сразу RT");
-                            console.log("all con:"+util.inspect(pool._allConnections.length,{colors:true})+
-                                "free con:"+util.inspect(pool._freeConnections.length,{colors:true}));
+                            //console.log("отдаем сразу RT");
+                            //console.log("all con:"+util.inspect(pool._allConnections.length,{colors:true})+
+                            //    "free con:"+util.inspect(pool._freeConnections.length,{colors:true}));
                             resolve(SQLconnectionRT);
                         }else {
                             regConSQLRemote();
                         }
                     }else {
                         if(SQLconnection && !force){
-                            console.log("отдаем сразу LOCAL");
-                            console.log("all con:"+util.inspect(pool._allConnections.length,{colors:true})+
-                                "free con:"+util.inspect(pool._freeConnections.length,{colors:true}));
+                            //console.log("отдаем сразу LOCAL");
+                            //console.log("all con:"+util.inspect(pool._allConnections.length,{colors:true})+
+                            //    "free con:"+util.inspect(pool._freeConnections.length,{colors:true}));
                             resolve(SQLconnection);
                         }else {
                             regConSQLLocal();
@@ -156,16 +156,16 @@ module.exports = {
         if(!arj){//если не архивный
             if(rt){//если нужен для записи данных причала
                 if(tmpPromiseRT){
-                    console.log("return exist Promise RT");
+                    //console.log("return exist Promise RT");
                     return tmpPromiseRT;
                 }else {
-                    console.log("get Promise RT");
+                    //console.log("get Promise RT");
                     let connection = getPromise();
                     connection.then(function () {
-                        console.log("tmpPromiseRT завершен");
+                        //console.log("tmpPromiseRT завершен");
                         tmpPromiseRT = null;
                     },function () {
-                        console.log("tmpPromiseRT завершен");
+                        //console.log("tmpPromiseRT завершен");
                         tmpPromiseRT = null;
                     });
                     tmpPromiseRT = connection;
@@ -173,16 +173,16 @@ module.exports = {
                 }
             }else {//если нужен для записи данных НБ
                 if(tmpPromiseLocal){
-                    console.log("return exist Promise LOCAL");
+                    //console.log("return exist Promise LOCAL");
                     return tmpPromiseLocal;
                 }else {
-                    console.log("get Promise Local");
+                    //console.log("get Promise Local");
                     let connection = getPromise();
                     connection.then(function () {
-                        console.log("tmpPromiseLocal завершен");
+                        //console.log("tmpPromiseLocal завершен");
                         tmpPromiseLocal = null;
                     },function () {
-                        console.log("tmpPromiseLocal завершен");
+                        //console.log("tmpPromiseLocal завершен");
                         tmpPromiseLocal = null;
                     });
                     tmpPromiseLocal = connection;

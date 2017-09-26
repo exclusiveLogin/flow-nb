@@ -1,6 +1,5 @@
 var Global = {};
 Global.RTsecondLock = false;
-Global.DBStacksecondLock = false;
 Global.freeLock = false;
 
 Global.poolReset = false;
@@ -10,29 +9,40 @@ Global.conReQueryReplica = false;
 
 Global.clients = [];
 Global.FEclients = [];
+Global.ReplicationWorkers = [];
 
 //RETRANSLATE ----------------------------
 const fork = require("child_process").fork;
 
-let plc_worker = fork("plccollector.js");
+let plc_worker;
 
-plc_worker.on("message",function (msg) {
-   if(msg.msg){
-       console.log("plc_collector msg:",msg.msg);
-   }
-   if(msg.plc_fe){
-       FESender(msg.val,msg.dt,msg.pool);
-       //console.log("plc_FE val:"+util.inspect(msg.val,{"colors":true})+"dt:"+util.inspect(msg.dt,{"colors":true}));
-   }
+plcWorkerCreator();
 
-});
-plc_worker.on("disconnect",function () {
-    console.log("plc_collector disconnected");
 
-});
-plc_worker.on("exit",function () {
-    console.log("plc_collector exit");
-});
+function plcWorkerCreator() {
+    plc_worker = fork("plccollector.js");
+    plc_worker.on("message",function (msg) {
+        if(msg.msg){
+            console.log("plc_collector msg:",msg.msg);
+        }
+        if(msg.plc_fe){
+            //FESender(msg.val,msg.dt,msg.pool);
+            console.log("plc_FE val:"+util.inspect(msg.val,{"colors":true})+"dt:"+util.inspect(msg.dt,{"colors":true}));
+        }
+
+    });
+    plc_worker.on("disconnect",function () {
+        console.log("plc_collector disconnected");
+
+    });
+    plc_worker.on("exit",function (code,signal) {
+        console.log("plc_collector exit code:",code," signal:",signal);
+    });
+    plc_worker.on("error",function (err) {
+        console.log("что то пошло не так ...перезапуск сервиса");
+        plcWorkerCreator();
+    });
+}
 
 //----------------UTILS-------------------
 const util = require("util");
@@ -333,6 +343,7 @@ function forceDisconCl(socket){
     }
 }
 
+
 //слушаем порт от причального терминала
 const io = require('socket.io').listen(3001);
 
@@ -345,15 +356,15 @@ io.on("connection",function(socket){
     socket.on('id',function(data){
           if(data.name){
               socket.opc = data.name;
-              Global.clients.push(socket); 
+              Global.clients.push(socket);
               console.log("curent name:"+data.name);
               //console.log(Global.clients);
           }
     });
-    
+
     //получение данных с причала в режиме РТ
     socket.on("RTSend",function(data){
-        //передаем данные РТ в коллектор 
+        //передаем данные РТ в коллектор
         plc_worker.send({
             "rtsend":true,
             "data":data
@@ -373,9 +384,9 @@ io.on("connection",function(socket){
             Global.clients.splice(index,1);
         }
         //console.log("ad:"+Global.clients);
-        
+
     });
-    //запрос репликации 
+    //запрос репликации
     socket.on("replica",function(cont){
         if(cont.tube1){
             inserterDB(1,cont.tube1);
@@ -383,11 +394,18 @@ io.on("connection",function(socket){
         if(cont.tube2){
             inserterDB(2,cont.tube2);
         }
-        if(cont.tube3){          
+        if(cont.tube3){
             inserterDB(3,cont.tube3);
         }
-        if(cont.tube4){           
+        if(cont.tube4){
             inserterDB(4,cont.tube4);
+        }
+    });
+    socket.on("empty_tube",function (data) {
+        //data.tube - пустая труба
+        if(data.tube){
+            //deferred query for worker kill self after complete data replication
+            Global.ReplicationWorkers[data.tube].send({"umayexit":true});
         }
     });
 });
@@ -401,62 +419,23 @@ function freener(lid,tube){
 
 //replica to DB
 function inserterDB(tube,stack){
-    //получаем коннект для записи репликации в БД
-    pool.getConnection(function(err,connection){
-        if(!err){
-            var tmp = 0;
-            for(var elem in stack){
-                tmpQ = 'INSERT IGNORE INTO `p_tube'+tube+'_dump` (`value`,`utc`) VALUES('+stack[elem].value+','+stack[elem].utc+')';
-                connection.query(tmpQ,function(err){
-                    tmp++;
-                    if(!err){
-                        if(tmp >= stack.length){
-                            console.log("stack full writed tmp:"+tmp);
-                            setTimeout(function () {
-                                freener(stack[stack.length-1].utc,tube);
-                            },1000);
-                            connection.release();
-                        }
-                    }else{
-                        console.log(err);
-                        connection.release();
-                    }
-                });
-                if(stack[elem].min == 0 && stack[elem].sec == 0 && !Global.DBStacksecondLock){
-                    tmpQ = 'INSERT IGNORE INTO `p_tube'+tube+'_h` (`value`,`utc`) VALUES('+stack[elem].value+','+stack[elem].utc+')';
-                    connection.query(tmpQ,function(err){
-                        if(!err){
-                            //console.log("all ok data inserted");
-                        }else{
-                            console.log(err);
-                            io.sockets.emit("send_free",{});
-                        }
-                    });
-                }
-                if(stack[elem].sec == 0 && !Global.DBStacksecondLock){
-                    tmpQ = 'INSERT IGNORE INTO `p_tube'+tube+'_m` (`value`,`utc`) VALUES('+stack[elem].value+','+stack[elem].utc+')';
-                    connection.query(tmpQ,function(err){
-                        if(!err){
-                            //console.log("all ok data inserted");
-                        }else{
-                            console.log(err);
-                            io.sockets.emit("send_free",{});
-                        }
-                    });
-                }
+    if(!Global.ReplicationWorkers[tube]){
+        //если нет workera то создаем и передаем туда стек репликации
+        Global.ReplicationWorkers[tube] = fork("service_replicator.js");
+        Global.ReplicationWorkers[tube].on("message",function (msg) {
+            //freener
+            if(msg.freener && msg.lid && msg.tube){
+                freener(msg.lid,msg.tube);
             }
-            if(stack[elem].sec == 0 && !Global.DBStacksecondLock){//установка защиты на запись дублирующих секунд
-                    Global.DBStacksecondLock = true;
-                }
-            if(stack[elem].sec != 0 && Global.DBStacksecondLock){//снятие защиты на запись дублирующих секунд
-                    Global.DBStacksecondLock = false;
-                }
-        }else{
-            console.log("pool SQL error");
-            checkPool("error SQL InserterDB");
-        }
-    });  
-    
+
+        });
+        //exit
+        Global.ReplicationWorkers[tube].on("exit",function (arg) {
+            console.log("service_repclicator exited this:",this," arg:",arg);
+            delete Global.ReplicationWorkers[Global.ReplicationWorkers.indexOf(this)];
+        });
+    }
+    Global.ReplicationWorkers[tube].send({"stack_replica":true,"tube":tube,"stack":stack});
 }
 
 //RT to FE
@@ -476,9 +455,10 @@ function FESender(data,nowdt,pool){
         heap.sqlcon = 0;
         heap.sqlfree = 0;
     }
-    
+
     socketServ.emit("heap",heap);
 }
+
 
 
 

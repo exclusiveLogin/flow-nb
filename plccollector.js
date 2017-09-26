@@ -160,7 +160,7 @@ function DBWriter(data,nowdt){
 
             db_adapter.getCON().then(function (connection) {
                 tmpQ = 'INSERT IGNORE INTO `tube'+tmpTube+'_dump` (`value`,`utc`) VALUES('+data[elem]+','+nowdt[elem]+')';
-                console.log("min:",tmpMinutes," sec:",tmpSeconds);
+                //console.log("min:",tmpMinutes," sec:",tmpSeconds);
                 connection.query(tmpQ,function(err){
                     if(err){
                         console.log("error SQL insert RT:"+util.inspect(err,{colors:true}));
@@ -169,7 +169,7 @@ function DBWriter(data,nowdt){
                             console.log("SQL local con force replaced");
                         });
                     }
-                    else console.log("data added in DB");
+                    //else console.log("data added in DB");
                 });
 
                 if(tmpSeconds==0 && tmpMinutes == 0 && !Global.DBsecondLock){//Пишем в часовой (одну запись!!!!)
@@ -182,7 +182,7 @@ function DBWriter(data,nowdt){
                                 console.log("SQL local con force replaced");
                             });
                         }else {
-                            console.log("Hourly data added in DB");
+                            //console.log("Hourly data added in DB");
                         }
                     });
                 }
@@ -197,7 +197,7 @@ function DBWriter(data,nowdt){
                                 console.log("SQL local con force replaced");
                             });
                         }else {
-                            console.log("Minutely data added in DB");
+                            //console.log("Minutely data added in DB");
                         }
                     });
                 }
@@ -345,3 +345,9 @@ function WordToFloat( $Word1, $Word2 ) {
 
     return $value;
 }
+
+//----------
+/*
+setTimeout(function () {
+    process.exit(0);
+},3000);*/
