@@ -5,6 +5,7 @@ Global.busy = true;
 const db_adapter = require("./db_adapter.js");
 const util = require("util");
 
+console.log("replicator started id:",process.pid);
 
 //events form master process
 process.on("message",function (msg) {
@@ -25,14 +26,10 @@ process.on("message",function (msg) {
                             console.log(err);
                             reject(err);
                         }else{
-                            if(!Global.DBStacksecondLock && (stack[elem].min == 0 || stack[elem].sec == 0)){
-
-                            }else {
-                                if(elem==0){
-                                    console.log("отработал первый промис трубы:",msg.tube);
-                                }
-                                queryDone();
-                            }
+                            /*if(tube==1){
+                                console.log("отработал:",elem," promise");
+                            }*/
+                            queryDone();
                         }
                     });
                     if(stack[elem].min == 0 && stack[elem].sec == 0 && !Global.DBStacksecondLock){
@@ -40,8 +37,6 @@ process.on("message",function (msg) {
                         connection.query(tmpQ,function(err){
                             if(err){
                                 console.log(err);
-                            }else {
-                                queryDone();
                             }
                         });
                     }
@@ -50,8 +45,6 @@ process.on("message",function (msg) {
                         connection.query(tmpQ,function(err){
                             if(err){
                                 console.log(err);
-                            }else {
-                                queryDone();
                             }
                         });
                     }
@@ -64,46 +57,35 @@ process.on("message",function (msg) {
                     }
                 }));
             },this);
-            
-            promiseSpliter(100);            
-            
-            //declarating splitter function
-            function promiseSpliter(partian){
-                let part = partian || 50;
-                
-                if(queryPromises.length){
-                    //if(tube == 1)console.log(util.inspect(queryPromises,{"colors":true}));
-                    Promise.all(queryPromises.splice(0,part)).then(function () {
-                        console.log("завершены промисы для трубы:",msg.tube);
 
-                        //start self recursively after success
-                        if(queryPromises.length){
-                            promiseSpliter();
-                        }else{
-                            console.log("all promises is completely");
-                            
-                            // завершена очередь для нашей трубы
-                            // чистим с задержкой коннектор и отправляем фринеру команду
-                            /*setTimeout(function () {
-                                connection.release();
-                                process.send({"freener":true,"lid":stack[stack.length-1].utc,"tube":tube});
-                                Global.busy = false;
-                            },1000);*/
-                        }
-                    },function (err) {
-                        console.log("Replication stack ERROR:",err);
-                        Global.busy = false;
-                    });
-                }
-            } 
+            Promise.all(queryPromises).then(function () {
+                console.log("завершены промисы для трубы:",msg.tube);
+                // завершена очередь для нашей трубы
+                // чистим с задержкой коннектор и отправляем фринеру команду
+                setTimeout(function () {
+                 connection.release();
+                 process.send({"freener":true,"lid":stack[stack.length-1].utc,"tube":tube});
+                 Global.busy = false;
+                 },1000);
+            },function (err) {
+                console.log("Replication stack ERROR:",err);
+                Global.busy = false;
+            });
+
         },function (err) {
             console.log("Replicator pool error:",err," on tube ",msg.tube);
         });
     }
     if(msg.umayexit){
+        console.log("umayexit recieved");
         setInterval(function () {
-            if(!Global.busy)process.exit(0);
-        },5000);
+            if(!Global.busy){
+                console.log("Terminating process:",process.pid);
+                process.exit(0);
+            }else {
+                console.log("ping process:",process.pid," is busy");
+            }
+        },30000);
     }
 });
 

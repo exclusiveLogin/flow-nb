@@ -405,7 +405,11 @@ io.on("connection",function(socket){
         //data.tube - пустая труба
         if(data.tube){
             //deferred query for worker kill self after complete data replication
-            Global.ReplicationWorkers[data.tube].send({"umayexit":true});
+            if(Global.ReplicationWorkers[data.tube]){
+                console.log("port send empty DB on tube",data.tube);
+                Global.ReplicationWorkers[data.tube].send({"umayexit":true});
+            }
+
         }
     });
 });
@@ -422,6 +426,7 @@ function inserterDB(tube,stack){
     if(!Global.ReplicationWorkers[tube]){
         //если нет workera то создаем и передаем туда стек репликации
         Global.ReplicationWorkers[tube] = fork("service_replicator.js");
+        Global.ReplicationWorkers[tube]["mytubeID"]=tube;
         Global.ReplicationWorkers[tube].on("message",function (msg) {
             //freener
             if(msg.freener && msg.lid && msg.tube){
@@ -430,8 +435,8 @@ function inserterDB(tube,stack){
 
         });
         //exit
-        Global.ReplicationWorkers[tube].on("exit",function (arg) {
-            console.log("service_repclicator exited this:",this," arg:",arg);
+        Global.ReplicationWorkers[tube].on("exit",function () {
+            console.log("service_repclicator exited this:",this);
             delete Global.ReplicationWorkers[Global.ReplicationWorkers.indexOf(this)];
         });
     }
