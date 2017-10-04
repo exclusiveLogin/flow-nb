@@ -85,7 +85,7 @@ process.on("message",function (msg) {
             }else {
                 console.log("ping process:",process.pid," is busy");
             }
-        },30000);
+        },5000);
     }
 });
 
