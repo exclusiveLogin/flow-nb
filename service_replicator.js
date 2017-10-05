@@ -10,7 +10,7 @@ console.log("replicator started id:",process.pid);
 //events form master process
 process.on("message",function (msg) {
     if(msg.stack_replica){//если команда на репликацию
-        console.log("получен стек для трубы:",msg.tube);
+        //console.log("получен стек для трубы:",msg.tube);
         let tube = msg.tube;
         let stack = msg.stack;
 

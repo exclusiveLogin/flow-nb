@@ -7,7 +7,7 @@ const mysql = require("mysql");
 var SQLconnection = false;
 var SQLconnectionRT = false;
 
-var pool;
+var pool, FEpool;
 function crPool(){
     if(pool)pool = null;
     pool = mysql.createPool({
@@ -19,13 +19,21 @@ function crPool(){
         database : 'flow_nb'
     });
 }
-var tmpPromiseRT = false;
-var tmpPromiseLocal = false;
-
+function crFEPool(){
+    if(FEpool)FEpool = null;
+    FEpool = mysql.createPool({
+        //waitForConnections:false,
+        connectionLimit : 20,
+        host     : 'localhost',
+        user     : 'root',
+        password : '123',
+        database : 'flow_nb'
+    });
+}
 
 //--------------main functions export--------------------
 module.exports = {
-    "getCON":function getCON(arj,rt,force) {
+    "getCON":function(arj,rt,force) {
         function getPromise(){
             var getConnectionDB = new Promise(function (resolve, reject) {
                 var lockLoop = false;
@@ -194,6 +202,61 @@ module.exports = {
             console.log("get Promise ARJ");
             return getPromise();
         }
+    },
+    "getFECON":function() {
+        function getPromise(){
+            var getConnectionDB = new Promise(function (resolve, reject) {
+                var lockLoop = false;
+                function resetPool(){
+                    if(!lockLoop){
+                        //если сюда попали значит уже не смогли получить от пула коннект
+                        //нечего делать ...сбрасываем пул и все остальное , пересобираем. на все одна попытка
+
+                        lockLoop = true;
+                        if(FEpool){
+                            FEpool.end(function(err){
+                                if(err){
+                                    console.log("ERROR:"+util.inspect(err,{colors:true}));
+                                }
+                                reconnectSQL();
+                            });
+                        }else{
+                            console.log("FEpool not established, create new FEpool");
+                            reconnectSQL();
+                        }
+                        function reconnectSQL() {
+                            crFEPool();
+                            regConSQLFrontEND();
+                        }
+                    }else {
+                        reject("Фатальная ошибка SQL FEpool");
+                    }
+                }
+                function regConSQLFrontEND(){
+                    if(FEpool){
+                        FEpool.getConnection(function(err, connection) {
+                            if(err){
+                                console.log("FEpool register error");
+                                resetPool();
+                            }else{
+                                console.log("Register SQL FECON success");
+                                resolve(connection);
+                            }
+                        });
+                    }else{
+                        console.log("FEpool not established");
+                        resetPool();
+                    }
+                }
+
+                if(!FEpool)crFEPool();//Первичная инициация FEpool
+
+                regConSQLFrontEND();
+            });
+            return getConnectionDB;
+        }
+        //нужно вернуть промис с connection для операций с БД FE
+        return getPromise();
     },
     "sqlCloseLocal":function sqlCloseLocal(){
         if(SQLconnection){

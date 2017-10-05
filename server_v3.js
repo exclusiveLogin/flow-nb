@@ -27,7 +27,7 @@ function plcWorkerCreator() {
             console.log("plc_collector msg:",msg.msg);
         }
         if(msg.plc_fe){
-            //FESender(msg.val,msg.dt,msg.pool);
+            FESender(msg.val,msg.dt,msg.pool);
             console.log("plc_FE val:"+util.inspect(msg.val,{"colors":true})+"dt:"+util.inspect(msg.dt,{"colors":true}));
         }
 
@@ -80,7 +80,6 @@ console.log("CPU number:",util.inspect(numOfFEWorkers,{"colors":true}));
 //-----------------SERVER TO PRICHAL----------------------
 Global.disconQ = false;
 
-//шлем нахер подключенного хомячка за то что слишком дохуя хочет от сервера
 function forceDisconCl(socket){
     if(!Global.disconQ){
         Global.disconQ = true;
@@ -194,13 +193,15 @@ function inserterDB(tube,stack){
 
 //RT to FE
 function FESender(data,nowdt,pool){
-    //nowdt = Number(nowdt);
-    socketServ.emit("all_ok",{
+    //в случае с микросервисной версией, подготавливаем и отправляем шине FE
+
+    let allOk = {
         "tube1":[nowdt[0],Number(data[0])],
         "tube2":[nowdt[1],Number(data[1])],
         "tube3":[nowdt[2],Number(data[2])],
         "tube4":[nowdt[3],Number(data[3])]
-    });
+    };
+
     var heap = process.memoryUsage();
     if(pool){
         heap.sqlcon = pool.allCon;
@@ -210,7 +211,8 @@ function FESender(data,nowdt,pool){
         heap.sqlfree = 0;
     }
 
-    socketServ.emit("heap",heap);
+    fe_worker.send({"all_ok":true,data:allOk});
+    fe_worker.send({"heap":true,data:heap});
 }
 
 
