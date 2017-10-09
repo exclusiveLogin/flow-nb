@@ -7,6 +7,8 @@ const util = require("util");
 
 console.log("replicator started id:",process.pid);
 
+db_adapter.checkPool("replicator check pool:");
+
 //events form master process
 process.on("message",function (msg) {
     if(msg.stack_replica){//если команда на репликацию

@@ -4,10 +4,10 @@ const util = require("util");
 const mysql = require("mysql");
 
 //this is connections
-var SQLconnection = false;
-var SQLconnectionRT = false;
+let SQLconnection = false;
+let SQLconnectionRT = false;
 
-var pool, FEpool;
+let pool, FEpool;
 function crPool(){
     if(pool)pool = null;
     pool = mysql.createPool({
@@ -30,6 +30,8 @@ function crFEPool(){
         database : 'flow_nb'
     });
 }
+let tmpPromiseRT = false;
+let tmpPromiseLocal = false;
 
 //--------------main functions export--------------------
 module.exports = {

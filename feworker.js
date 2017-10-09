@@ -2,11 +2,29 @@ console.log("fe_worker pid:",process.pid);
 let Global = {};
 Global.clients = [];
 Global.FEclients = [];
-var cluster = require('cluster'); // Only required if you want the worker id
-let sticky = require('sticky-session');
-let server = require("http").createServer();
-let io = require('socket.io');
-let socketServ = io.listen(server);
+
+const util = require("util");
+const db = require("./db_adapter");
+const cluster = require('cluster'); // Only required if you want the worker id
+const sticky = require('sticky-session');
+const server = require("http").createServer();
+const io = require('socket.io');
+const socketServ = io.listen(server);
+
+function DBQuery(connection,query) {
+    if(connection && query){
+        let pr = new Promise(function (resolve, reject) {
+            connection.query(query,function(err,data){
+                if(err){
+                    reject(err);
+                }else{
+                    resolve(data);
+                }
+            });
+        });
+        return pr;
+    }
+}
 
 if(!sticky.listen(server,3000)){
     //Master SECTION
@@ -17,31 +35,24 @@ if(!sticky.listen(server,3000)){
 
     socketServ.on("connection",function(socket){
         console.log("client Front End connected");
-        //console.log(util.inspect(socket,{colors:true}));
-        //console.log(util.inspect(socket.handshake.headers['x-forwarded-for'],{colors:true}));
-        //Global.FEclients.push(socket.conn.remoteAddress.substr(7));
         Global.FEclients.push(socket.handshake.headers['x-forwarded-for']);
         console.log(util.inspect(Global.FEclients,{colors:true}));
         socketServ.emit("clients", Global.FEclients);
         socket.on("arjLoad",function(data){
-            localP = false;
-            localNB = false;
-            trendP = [];
-            trendNB = [];
-            dumpflag = false;
+            let trendP = [];
+            let trendNB = [];
+            let dumpflag = false;
             console.log("ARJ LOAD started",data);
             if(data.min && data.max && data.tube){//проверка целостности
                 var tube = data.tube;
                 var interval = data.max - data.min;
                 var query_p = "SELECT * FROM `p_tube"+tube+"_h` ORDER BY `utc`";
                 var query_nb = "SELECT * FROM `tube"+tube+"_h` ORDER BY `utc`";
-                console.log("ARJ LOAD interval:",interval);
-                console.log("interval:"+interval);
-                if(interval>4*3600*24*1000){//если накопленные данные больше 12 часов но меньше 48
+                if(interval>4*3600*24*1000){//если накопленные данные больше 4 суток
                     query_p = "SELECT * FROM `p_tube"+tube+"_h` WHERE `utc` BETWEEN "+data.min+" AND "+data.max+" ORDER BY `utc`";
                     query_nb = "SELECT * FROM `tube"+tube+"_h` WHERE `utc` BETWEEN "+data.min+" AND "+data.max+" ORDER BY `utc`";
                     dumpflag = 0;
-                }else if(interval>3600*6*1000 && interval<4*3600*24*1000){
+                }else if(interval>3600*6*1000 && interval<4*3600*24*1000){//от суток до 4
                     query_p = "SELECT * FROM `p_tube"+tube+"_m` WHERE `utc` BETWEEN "+data.min+" AND "+data.max+" ORDER BY `utc`";
                     query_nb = "SELECT * FROM `tube"+tube+"_m` WHERE `utc` BETWEEN "+data.min+" AND "+data.max+" ORDER BY `utc`";
                     dumpflag = 1;
@@ -56,229 +67,150 @@ if(!sticky.listen(server,3000)){
                     dumpflag = 0;
                 }
                 //Поправить нахер этот бред
-                pool.getConnection(function(err,connection){
-                    if(!err){
-                        console.log("ArjLoad Pool Prichal OK");
-                        connection.query(query_p, function(err,data){
-                            if(err){
-                                socketServ.emit("mysql_error",{});
-                                console.log("ARJLOAD error SQL query P");
-                            }else{
-                                //console.log(util.inspect(data,{colors:true}));
-                                connection.release();
-                                localP = true;
-                                trendP = data;
-                                ret();
-                            }
+                db.getFECON()
+                    .then(function (connection) {
+                        let tmp_p = DBQuery(connection,query_p).then(function (data) {
+                            trendP = data;
                         });
-                    }else{
-                        socketServ.emit("mysql_error",{});
-                        console.log("error SQL pool");
-                        resetArjPool();
-                    }
-                });
-                pool.getConnection(function(err,connection){
-                    if(!err){
-                        console.log("ArjLoad Pool NB OK");
-                        connection.query(query_nb, function(err,data){
-                            if(err){
-                                socketServ.emit("mysql_error",{});
-                                console.log("ARJLOAD error SQL query NB");
-                            }else{
-                                //console.log(util.inspect(data,{colors:true}));
-                                connection.release();
-                                localNB = true;
-                                trendNB = data;
-                                ret();
-                            }
+
+                        let tmp_nb = DBQuery(connection,query_nb).then(function (data) {
+                            trendNB = data;
                         });
-                    }else{
+
+                        Promise.all([tmp_nb, tmp_p])
+                            .then(function () {
+                                connection.release();
+                                ret();
+                            })
+                            .catch(function () {
+                                connection.release();
+                                socketServ.emit("mysql_error",{});
+                            });
+                    })
+                    .catch(function (err) {
+                        console.log("error SQL pool err:",err);
                         socketServ.emit("mysql_error",{});
-                        console.log("error SQL pool");
-                        resetArjPool();
-                    }
-                });
+                    });
 
                 function ret(){
-                    if(localNB && localP){
-                        checkPoolArj("arj");
-                        if(data.trendall){
-                            var minP = trendP[0].utc;
-                            var minNB = trendNB[0].utc;
-                            var maxP = trendP[trendP.length-1].utc;
-                            var maxNB = trendNB[trendNB.length-1].utc;
-                            if(minP > minNB){
-                                data.min = minNB;
-                            }else {
-                                data.min = minP;
-                            }
-                            if(maxP > maxNB){
-                                data.max = maxP;
-                            }else {
-                                data.max = maxNB;
-                            }
-                            console.log("minmax  min:",data.min,"max:",data.max);
+                    console.log("check fe pool: ",util.inspect(db.checkPool("arj"),{"colors":true}));
+                    if(data.trendall){
+                        var minP = trendP[0].utc;
+                        var minNB = trendNB[0].utc;
+                        var maxP = trendP[trendP.length-1].utc;
+                        var maxNB = trendNB[trendNB.length-1].utc;
+                        if(minP > minNB){
+                            data.min = minNB;
+                        }else {
+                            data.min = minP;
                         }
-                        //socketServ.sockets.emit("arj_load_res",{trendP:trendP, trendNB:trendNB,min:data.min,max:data.max,dumpflag:dumpflag});
-                        socket.emit("arj_load_res",{trendP:trendP, trendNB:trendNB,min:data.min,max:data.max,dumpflag:dumpflag});
-                        localNB = false;
-                        localP = false;
-                        console.log("Arj send trendP:",trendP.length," series trendNB:",trendNB.length," series");
-                        trendP = null;
-                        trendNB = null;
-
+                        if(maxP > maxNB){
+                            data.max = maxP;
+                        }else {
+                            data.max = maxNB;
+                        }
+                        console.log("minmax  min:",data.min,"max:",data.max);
                     }
+                    socket.emit("arj_load_res",{trendP:trendP, trendNB:trendNB,min:data.min,max:data.max,dumpflag:dumpflag});
+                    console.log("Arj send trendP:",trendP.length," series trendNB:",trendNB.length," series");
                 }
             }
 
         });
         socket.on("min_max",function(data){
-            var RcvMin = null;
-            var RcvMax = null;
-            var RcvMin2 = null;
-            var RcvMax2 = null;
-            var localMin = false;
-            var localMax = false;
-            var localMin2 = false;
-            var localMax2 = false;
-            var result = {
+            let RcvMin,
+                RcvMax,
+                RcvMin2,
+                RcvMax2;
+
+            let result = {
                 min:null,
-                max:null
-            }
+                max:null,
+                tube:0
+            };
             console.log("min_max");
-            poolArj.getConnection(function(err,connection){
-                if(err){
-                    console.error("error create Arj con");
-                    console.log(err);
-                    resetArjPool();
-                }else{
-                    //--------------------------------1-----------------------------------------
-                    var query = "SELECT MIN(`utc`) AS `minimum` FROM `p_tube"+data.tube+"_dump`";
-                    connection.query(query,function(err,data,row){
-                        if(err){
-                            socketServ.sockets.emit("mysql_error",{});
-                            console.log("error SQL pool");
-                        }else{
-                            connection.release();
-                            console.log(util.inspect(data,{colors:true}));
-                            RcvMin = data[0].minimum;
-                            localMin = true;
-                            ret();
-                        }
-                    });
-                }
-            });
 
-            poolArj.getConnection(function(err,connection){
-                if(err){
-                    console.error("error create Arj con");
-                    console.log(err);
-                    resetArjPool();
-                }else{
-                    //-------------------------------2-----------------------------------------
-                    var query = "SELECT MAX(`utc`) AS `maximum` FROM `p_tube"+data.tube+"_dump`";
-                    connection.query(query,function(err,data,row){
-                        if(err){
-                            socketServ.sockets.emit("mysql_error",{});
-                            console.log("error SQL pool");
-                        }else{
-                            connection.release();
-                            console.log(util.inspect(data,{colors:true}));
-                            RcvMax = data[0].maximum;
-                            localMax = true;
-                            ret();
-                        }
-                    });
-                }
-            });
-
-            poolArj.getConnection(function(err,connection){
-                if(err){
-                    console.error("error create Arj con");
-                    console.log(err);
-                    resetArjPool();
-                }else{
-                    //--------------------------------3-----------------------------------------
-                    var query = "SELECT MIN(`utc`) AS `minimum` FROM `tube"+data.tube+"_dump`";
-                    connection.query(query,function(err,data,row){
-                        if(err){
-                            socketServ.sockets.emit("mysql_error",{});
-                            console.log("error SQL pool");
-                        }else{
-                            connection.release();
-                            console.log(util.inspect(data,{colors:true}));
-                            RcvMin2 = data[0].minimum;
-                            localMin2 = true;
-                            ret();
-                        }
-                    });
-                }
-            });
-
-            poolArj.getConnection(function(err,connection){
-                if(err){
-                    console.error("error create Arj con");
-                    console.log(err);
-                    resetArjPool();
-                }else{
-                    //--------------------------------4-----------------------------------------
-                    var query = "SELECT MAX(`utc`) AS `maximum` FROM `tube"+data.tube+"_dump`";
-                    connection.query(query,function(err,data,row){
-                        if(err){
-                            socketServ.sockets.emit("mysql_error",{});
-                            console.log("error SQL pool");
-                        }else{
-                            connection.release();
-                            console.log(util.inspect(data,{colors:true}));
-                            RcvMax2 = data[0].maximum;
-                            localMax2 = true;
-                            ret();
-                        }
-                    });
-                }
-            });
-
-            function ret(){
-                if(localMax && localMin && localMax2 && localMin2){
-                    //connection.release();
-                    //console.log("MinMax connection released");
-                    checkPoolArj();
-
-                    console.log("min:"+RcvMin+" max:"+RcvMax);
-                    console.log("min:"+RcvMin2+" max:"+RcvMax2);
-                    if(RcvMax >= RcvMax2){
-                        result.max = RcvMax;
-                    }else{
-                        result.max = RcvMax2;
+            //получаем коннект в базе FE ARJ труба 1
+            db.getFECON().then(function (connection) {
+                var query = "";
+                query = "SELECT MIN(`utc`) AS `minimum` FROM `p_tube"+data.tube+"_dump`";
+                let min1 = DBQuery(connection,query).then(function (data) {
+                    if(data){
+                        RcvMin = data[0].minimum;
                     }
-                    //обработка нуля min Interval
-                    if(RcvMin == null && RcvMin2 == null){
-                        socketServ.sockets.emit("min_null",{});
-                        console.log("min_max null SQL error");
-                    }else if(RcvMin == null){
-                        RcvMin = RcvMin2;
-                    }else{
-                        RcvMin2 = RcvMin;
-                    }
+                }).catch(function (err) {
+                    return err;
+                });
 
-                    if(RcvMin <= RcvMin2){
-                        result.min = RcvMin;
-                    }else{
-                        result.min = RcvMin2;
+                query = "SELECT MAX(`utc`) AS `maximum` FROM `p_tube"+data.tube+"_dump`";
+                let max1 = DBQuery(connection,query).then(function (data) {
+                    if(data){
+                        RcvMax = data[0].maximum;
                     }
-                    result.tube = data.tube;
-                    console.log(util.inspect(result,{colors:true}));
-                    //сюда пишем вывод значений для тренда
-                    //socketServ.sockets.emit("min_max_res",result);
-                    socket.emit("min_max_res",result);
-                    localMax = false;
-                    localMax2 = false;
-                    localMin = false;
-                    localMin2 = false;
+                }).catch(function (err) {
+                    return err;
+                });
+
+                query = "SELECT MIN(`utc`) AS `minimum` FROM `tube"+data.tube+"_dump`";
+                let min2 = DBQuery(connection,query).then(function (data) {
+                    if(data){
+                        RcvMin2 = data[0].minimum;
+                    }
+                }).catch(function (err) {
+                    return err;
+                });
+
+                query = "SELECT MAX(`utc`) AS `maximum` FROM `tube"+data.tube+"_dump`";
+                let max2 = DBQuery(connection,query).then(function (data) {
+                    if(data){
+                        RcvMax2 = data[0].maximum;
+                    }
+                }).catch(function (err) {
+                    return err;
+                });
+
+                Promise.all([min1,max1,min2,max2])
+                    .then(function () {
+                        //отчищаем коннектор
+                        connection.release();
+
+                        console.log("min1:"+RcvMin+" max1:"+RcvMax+" min2:"+RcvMin2+" max2:"+RcvMax2);
+
+                        if(RcvMax >= RcvMax2){
+                            result.max = RcvMax;
+                        }else{
+                            result.max = RcvMax2;
+                        }
+                        //обработка нуля min Interval
+                        if(RcvMin == null && RcvMin2 == null){
+                            socketServ.sockets.emit("min_null",{});
+                            console.log("min_max null SQL error");
+                        }else if(RcvMin == null){
+                            RcvMin = RcvMin2;
+                        }else{
+                            RcvMin2 = RcvMin;
+                        }
+
+                        if(RcvMin <= RcvMin2){
+                            result.min = RcvMin;
+                        }else{
+                            result.min = RcvMin2;
+                        }
+                        result.tube = data.tube;
+                        console.log(util.inspect(result,{colors:true}));
+
+                        //сюда пишем вывод значений для тренда
+                        socket.emit("min_max_res",result);
+                    })
+                    .catch(function (err) {
+                        console.log(err);
+                        connection.release();
+                })
+            }).catch(function (err) {
+                if(err){
+                    console.log(err);
                 }
-            }
-
-
+            });
         });
         socket.on("disconnect",function(){
             console.log("client Front End DISCONNECTED");
