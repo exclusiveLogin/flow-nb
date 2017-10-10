@@ -28,7 +28,7 @@ function plcWorkerCreator() {
         }
         if(msg.plc_fe){
             FESender(msg.val,msg.dt,msg.pool);
-            console.log("plc_FE val:"+util.inspect(msg.val,{"colors":true})+"dt:"+util.inspect(msg.dt,{"colors":true}));
+            //console.log("plc_FE val:"+util.inspect(msg.val,{"colors":true})+"dt:"+util.inspect(msg.dt,{"colors":true}));
         }
 
     });
@@ -120,18 +120,15 @@ io.on("connection",function(socket){
 
     socket.on('disconnect',function(){
         //---------------pool free------------
-        forceDisconCl(socket);
-        sqlCloseRemote();
-        checkPool("prichal disconnect RT");
+        //forceDisconCl(socket);
+        //sqlCloseRemote();
+        //checkPool("prichal disconnect RT");
         //------------------------------------
-        console.log("IO disconnected");
+        console.log("IO Prichal disconnected");
         var index = Global.clients.indexOf(socket);
-        //console.log("bfd:"+Global.clients);
         if(index!=-1){
             Global.clients.splice(index,1);
         }
-        //console.log("ad:"+Global.clients);
-
     });
     //запрос репликации
     socket.on("replica",function(cont){
@@ -184,7 +181,8 @@ function inserterDB(tube,stack){
         //exit
         Global.ReplicationWorkers[tube].on("exit",function () {
             console.log("service_repclicator exited this:",this);
-            delete Global.ReplicationWorkers[Global.ReplicationWorkers.indexOf(this)];
+            //delete Global.ReplicationWorkers[Global.ReplicationWorkers.indexOf(this)];
+            Global.ReplicationWorkers.splice(Global.ReplicationWorkers.indexOf(this),1);
             console.log("TEST:",Global.ReplicationWorkers);
         });
     }
@@ -213,6 +211,8 @@ function FESender(data,nowdt,pool){
 
     fe_worker.send({"all_ok":true,data:allOk});
     fe_worker.send({"heap":true,data:heap});
+
+    //console.log("all ok and heap sended to feworker");
 }
 
 

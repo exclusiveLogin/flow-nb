@@ -23,7 +23,7 @@ client.on('connect', function () {
     //запуск опроса PLC
     Global.schedullerTube = setInterval(function(){
         rcvTubes();
-    },1000);
+    },60);
 });
 
 client.on('error', function (err) {

@@ -29,9 +29,18 @@ function DBQuery(connection,query) {
 if(!sticky.listen(server,3000)){
     //Master SECTION
     console.log("sticky master запущен");
+    process.on("message",function (msg) {
+        //console.log(util.inspect(cluster.workers,{"colors":true}));
+        //console.log("sticky master msg:",msg);
+        if(msg.all_ok || msg.heap){
+            for(let worker in cluster.workers){
+                cluster.workers[worker].process.send(msg);
+            }
+        }
+    })
 }else{
     //Slave SECTION
-    console.log("sticky worker");
+    console.log("sticky worker id:",cluster.worker.id);
 
     socketServ.on("connection",function(socket){
         console.log("client Front End connected");
@@ -223,15 +232,17 @@ if(!sticky.listen(server,3000)){
         });
     });
 
-    //канал с CORE
-    process.on("message",function (msg) {
+
+    //канал с Master
+    cluster.worker.on("message",function (msg) {
+        //console.log("feworker massage from master fired msg:",util.inspect(msg,{"colors":true}));
         // IPC BUS
         if (msg.heap){
             socketServ.emit("heap",msg.data);
         }
         if (msg.all_ok){
             socketServ.emit("all_ok",msg.data);
+            //console.log("all ok sended to FE");
         }
     });
-
 }
