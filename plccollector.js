@@ -125,8 +125,9 @@ function rcvTubes(){
             //пишем в БД
             DBWriter(Global.buffer_valmin,Global.buffer_dtmin);
             DBWriter(Global.buffer_valmax,Global.buffer_dtmax);
-            //console.log(util.inspect("max tubes:"+Global.buffer_valmax,{colors:true}));
-            //console.log(util.inspect("min tubes:"+Global.buffer_valmin,{colors:true}));
+
+            //perfomance data
+            process.send({"heap":true, "data":process.memoryUsage()});
         }
 
     }).fail(function(e){

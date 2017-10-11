@@ -11,6 +11,7 @@ Global.clients = [];
 Global.FEclients = [];
 Global.ReplicationWorkers = []; //репликаторы
 Global.FEWorkers = []; // клиентские workers
+Global.plcworkerHeap = false;
 
 //RETRANSLATE ----------------------------
 const fork = require("child_process").fork;
@@ -28,7 +29,9 @@ function plcWorkerCreator() {
         }
         if(msg.plc_fe){
             FESender(msg.val,msg.dt,msg.pool);
-            //console.log("plc_FE val:"+util.inspect(msg.val,{"colors":true})+"dt:"+util.inspect(msg.dt,{"colors":true}));
+        }
+        if(msg.heap){
+            Global.plcworkerHeap = msg.data;
         }
 
     });
@@ -207,6 +210,10 @@ function FESender(data,nowdt,pool){
     }else{
         heap.sqlcon = 0;
         heap.sqlfree = 0;
+    }
+
+    if(Global.plcworkerHeap){
+        heap.plcheap = Global.plcworkerHeap;
     }
 
     fe_worker.send({"all_ok":true,data:allOk});

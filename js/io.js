@@ -49,6 +49,38 @@ $(document).ready(function(){
                     Global.TrendHeap.series[1].addPoint(data.heapTotal,true,true,false);
                 } 
             }
+            if(data.plcheap && data.plcheap.heapUsed && data.plcheap.heapTotal){
+                $("#plc_heap").text(data.plcheap.heapUsed);
+                $("#plc_heapT").text(data.plcheap.heapTotal);
+                //---------------------
+                if(Global.TrendHeap.series[2].xData.length<300){
+                    Global.TrendHeap.series[2].addPoint(data.plcheap.heapUsed,true,false,false);
+                }else{
+                    Global.TrendHeap.series[2].addPoint(data.plcheap.heapUsed,true,true,false);
+                }
+                //---------------------
+                if(Global.TrendHeap.series[3].xData.length<300){
+                    Global.TrendHeap.series[3].addPoint(data.plcheap.heapTotal,true,false,false);
+                }else{
+                    Global.TrendHeap.series[3].addPoint(data.plcheap.heapTotal,true,true,false);
+                }
+            }
+            if(data.feheap && (typeof data.feheap === "object")){
+                data.feheap.map(function (el,idx) {
+                    if(el && el.heapUsed && el.heapTotal){
+
+                        $("#fe_heap"+idx).text(el.heapUsed);
+                        $("#fe_heapT"+idx).text(el.heapTotal);
+                        //---------------------
+                        if(Global.TrendHeap.series[idx+3].xData.length<300){
+                            Global.TrendHeap.series[idx+3].addPoint(el.heapUsed,true,false,false);
+                        }else{
+                            Global.TrendHeap.series[idx+3].addPoint(el.heapUsed,true,true,false);
+                        }
+                    }
+                });
+
+            }
             if(data.sqlfree){
                 $("#server_sqlfree").text(data.sqlfree);
             }

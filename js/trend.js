@@ -197,7 +197,7 @@ $(document).ready(function(){
         credits:{enabled:false},
         chart: {
             //animation:false,
-            height:250,
+            height:150,
             renderTo:Global.trend1Container,            
         },
         title: {
@@ -251,7 +251,7 @@ $(document).ready(function(){
     var Trend_rt_setting2 = {
         credits:{enabled:false},
         chart: {
-            height:250,
+            height:150,
             renderTo:Global.trend2Container,            
         },
         title: {
@@ -294,7 +294,7 @@ $(document).ready(function(){
     var Trend_rt_setting3 = {
         credits:{enabled:false},
         chart: {
-            height:250,
+            height:150,
             renderTo:Global.trend3Container,            
         },
         title: {
@@ -337,7 +337,7 @@ $(document).ready(function(){
     var Trend_rt_setting4 = {
         credits:{enabled:false},
         chart: {
-            height:250,
+            height:150,
             renderTo:Global.trend4Container,            
         },
         title: {
@@ -380,14 +380,14 @@ $(document).ready(function(){
     var Trend_HeapSettings = {
         credits:{enabled:false},
         chart: {
-            height:250,
+            height:500,
             renderTo:Global.trendHeapContainer,            
         },
         title: {
             text: 'График производительности'
         },
         legend: {
-            enabled: false
+            //enabled: false
         },
         xAxis: {
             //type: 'datetime',
@@ -408,25 +408,76 @@ $(document).ready(function(){
                 },
             },
         },
-        series:[{
+        series:[{//0
             type: 'line',
-            name: 'Heap Used',
-            //data:[0,3,4,3,12,15,2],
+            name: 'CORE Heap Used',
             tooltip: {
                 valueDecimals: 0,
                 valueSuffix:' bytes'
             },
             color:"orange"
-        },
-               {
+        },{//1
             type: 'line',
-            name: 'Heap Total',
-            //data:[0,3,4,3,12,15,2],
+            name: 'CORE Heap Total',
             tooltip: {
                 valueDecimals: 0,
                 valueSuffix:' bytes'
             },
             color:"red"
+        },
+        {//2
+            type: 'line',
+            name: 'PLC Heap Used',
+            tooltip: {
+                valueDecimals: 0,
+                valueSuffix:' bytes'
+            },
+            color:"cyan"
+        },
+        {//3
+            type: 'line',
+            name: 'PLC Heap Total',
+            tooltip: {
+                valueDecimals: 0,
+                valueSuffix:' bytes'
+            },
+            color:"blue"
+        },
+        {//4
+            type: 'line',
+            name: 'FE 1 Heap Used',
+            tooltip: {
+                valueDecimals: 0,
+                valueSuffix:' bytes'
+            },
+            color:"#5f5"
+        },
+        {//5
+            type: 'line',
+            name: 'FE 2 Heap Used',
+            tooltip: {
+                valueDecimals: 0,
+                valueSuffix:' bytes'
+            },
+            color:"#5b5"
+        },
+        {//6
+            type: 'line',
+            name: 'FE 3 Heap Used',
+            tooltip: {
+                valueDecimals: 0,
+                valueSuffix:' bytes'
+            },
+            color:"#595"
+        },
+        {//7
+            type: 'line',
+            name: 'FE 4 Heap Used',
+            tooltip: {
+                valueDecimals: 0,
+                valueSuffix:' bytes'
+            },
+            color:"#575"
         }]
     };
     Global.Trend1 = new Highcharts.Chart(Trend_rt_setting1);

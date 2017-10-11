@@ -2,6 +2,7 @@ console.log("fe_worker pid:",process.pid);
 let Global = {};
 Global.clients = [];
 Global.FEclients = [];
+Global.feheap = [];
 
 const util = require("util");
 const db = require("./db_adapter");
@@ -29,7 +30,7 @@ function DBQuery(connection,query) {
 if(!sticky.listen(server,3000)){
     //Master SECTION
     console.log("sticky master запущен");
-    process.on("message",function (msg) {
+    process.on("message",function (msg) {//ретрансляция
         //console.log(util.inspect(cluster.workers,{"colors":true}));
         //console.log("sticky master msg:",msg);
         if(msg.all_ok || msg.heap){
@@ -37,7 +38,15 @@ if(!sticky.listen(server,3000)){
                 cluster.workers[worker].process.send(msg);
             }
         }
-    })
+    });
+    //канал с форками
+    cluster.on("message",function (worker,msg) {
+        if(msg.heapworker){
+            //console.log("hw:",msg,"worker:",worker.id);
+            Global.feheap[worker.id] = msg.data;
+            worker.process.send({"heap_refresh":true,"data":Global.feheap});
+        }
+    });
 }else{
     //Slave SECTION
     console.log("sticky worker id:",cluster.worker.id);
@@ -234,15 +243,24 @@ if(!sticky.listen(server,3000)){
 
 
     //канал с Master
-    cluster.worker.on("message",function (msg) {
-        //console.log("feworker massage from master fired msg:",util.inspect(msg,{"colors":true}));
+    cluster.worker.on("message",function (msg) {//ретрансляция на Front
         // IPC BUS
+        //обновляем feheap
+        if (msg.heap_refresh){
+            //console.log("refresh feheap in slave heap:");
+            Global.feheap = msg.data;
+        }
+
         if (msg.heap){
+            //отправляем отчет о памяти Мастер
+            cluster.worker.send({"heapworker":true,data:process.memoryUsage()});
+            msg.data.feheap = Global.feheap;
+            //console.log("feheap to FE...");
             socketServ.emit("heap",msg.data);
         }
         if (msg.all_ok){
             socketServ.emit("all_ok",msg.data);
-            //console.log("all ok sended to FE");
+            //console.log("allok to FE...");
         }
     });
 }
