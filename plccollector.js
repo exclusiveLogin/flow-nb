@@ -154,13 +154,11 @@ function DBWriter(data,nowdt){
     let tmpDate = new Date(nowdt[0]);
     let tmpSeconds = tmpDate.getSeconds();
     let tmpMinutes = tmpDate.getMinutes();
-    let tmpQ = "";
     if(data){
         data.map(function (element,elem) {//перебор 4 труб
             let tmpTube = elem+1;
-
             db_adapter.getCON().then(function (connection) {
-                tmpQ = 'INSERT IGNORE INTO `tube'+tmpTube+'_dump` (`value`,`utc`) VALUES('+data[elem]+','+nowdt[elem]+')';
+                let tmpQ = 'INSERT IGNORE INTO `tube'+tmpTube+'_dump` (`value`,`utc`) VALUES('+data[elem]+','+nowdt[elem]+')';
                 //console.log("min:",tmpMinutes," sec:",tmpSeconds);
                 connection.query(tmpQ,function(err){
                     if(err){
@@ -170,7 +168,7 @@ function DBWriter(data,nowdt){
                             console.log("SQL local con force replaced");
                         });
                     }
-                    //else console.log("data added in DB");
+                    //else console.log("Local data added in DB on tube:"+tmpTube);
                 });
 
                 if(tmpSeconds==0 && tmpMinutes == 0 && !Global.DBsecondLock){//Пишем в часовой (одну запись!!!!)
@@ -183,11 +181,12 @@ function DBWriter(data,nowdt){
                                 console.log("SQL local con force replaced");
                             });
                         }else {
-                            //console.log("Hourly data added in DB");
+                            //console.log("Local Hourly data added in DB on tube:"+tmpTube);
                         }
                     });
                 }
                 if(tmpSeconds==0 && !Global.DBsecondLock){//Пишем в минутный (одну запись!!!!)
+                    //console.log("//Пишем в минутный (одну запись!!!!)");
                     tmpQ = 'INSERT IGNORE INTO `tube'+tmpTube+'_m` (`value`,`utc`) VALUES('+data[elem]+','+nowdt[elem]+')';
                     //console.log("Data RT Minutly saved in DB successuful on tube PLANNED"+tmpTube);
                     connection.query(tmpQ,function(err){
@@ -198,9 +197,15 @@ function DBWriter(data,nowdt){
                                 console.log("SQL local con force replaced");
                             });
                         }else {
-                            //console.log("Minutely data added in DB");
+                            //console.log("Local Minutely data added in DB on tube"+tmpTube);
                         }
                     });
+                }
+                if(tmpSeconds == 0 && !Global.DBsecondLock && (elem==data.length-1)){//установка защиты на запись дублирующих секунд
+                    Global.DBsecondLock = true;
+                }
+                if(tmpSeconds!=0 && Global.DBsecondLock && (elem==data.length-1)){//снятие защиты на запись дублирующих секунд
+                    Global.DBsecondLock = false;
                 }
             },function () {//ошибка SQL
                 process.send({"mysql_error":true,"err":"fatal error SQL pool"});
@@ -210,13 +215,6 @@ function DBWriter(data,nowdt){
                 });
             });
         },this);
-
-        if(tmpSeconds == 0 && !Global.DBsecondLock){//установка защиты на запись дублирующих секунд
-            Global.DBsecondLock = true;
-        }
-        if(tmpSeconds!=0 && Global.DBsecondLock){//снятие защиты на запись дублирующих секунд
-            Global.DBsecondLock = false;
-        }
     }else{
         console.log("No data");
     }
@@ -224,15 +222,16 @@ function DBWriter(data,nowdt){
 
 //RT Prichal to DB
 function inserterRT(tubes,time){
+    //console.log("Tube RT:",util.inspect(tubes,{"colors":true}),"time:",util.inspect(time,{"colors":true}));
     var tmpDate = new Date(time[0]);
     var tmpSeconds = tmpDate.getSeconds();
     var tmpMinutes = tmpDate.getMinutes();
-    for(var elem in tubes){//перебор 4 труб
-        var tmpTube = Number(elem)+1;
+    for(let elem in tubes){//перебор 4 труб
+        let tmpTube = Number(elem)+1;
         //получаем коннект к БД и пишем туда данные с причала в режиме РТ
         db_adapter.getCON(false,true).then(
             function(connection){
-                tmpQ = 'INSERT IGNORE INTO `p_tube'+tmpTube+'_dump` (`value`,`utc`) VALUES('+tubes[elem]+','+time[elem]+')';
+                let tmpQ = 'INSERT IGNORE INTO `p_tube'+tmpTube+'_dump` (`value`,`utc`) VALUES('+tubes[elem]+','+time[elem]+')';
                 connection.query(tmpQ,function(err){
                     if(err){
                         process.send({"mysql_error":true,"err":"fatal error SQL pool"});
@@ -241,11 +240,9 @@ function inserterRT(tubes,time){
                             console.log("SQL RT connection force replaced");
                         });
                     }else{
-                        //console.log("Data RT saved in DB successuful");
+                        //console.log("Data RT saved in DB successuful on tube:"+tmpTube);
                     }
                 });
-
-
                 if(tmpSeconds==0 && tmpMinutes == 0 && !Global.RTsecondLock){//Пишем в часовой (одну запись!!!!)
                     tmpQ = 'INSERT IGNORE INTO `p_tube'+tmpTube+'_h` (`value`,`utc`) VALUES('+tubes[elem]+','+time[elem]+')';
                     connection.query(tmpQ,function(err){
@@ -256,7 +253,7 @@ function inserterRT(tubes,time){
                                 console.log("SQL RT connection force replaced");
                             });
                         }else{
-                            //console.log("Data RT Hourly saved in DB successuful");
+                            //console.log("Data RT Hourly saved in DB successuful on tube:"+tmpTube);
                         }
                     });
                 }
@@ -276,6 +273,13 @@ function inserterRT(tubes,time){
                         }
                     });
                 }
+
+                if(tmpSeconds == 0 && !Global.RTsecondLock && (elem==tubes.length-1)){//снятие защиты на запись дублирующих секунд
+                    Global.RTsecondLock = true;
+                }
+                if(tmpSeconds!=0 && Global.RTsecondLock && (elem==tubes.length-1)){//снятие защиты на запись дублирующих секунд
+                    Global.RTsecondLock = false;
+                }
             },
             function(error){
                 process.send({"mysql_error":true,"err":"fatal error SQL pool"});
@@ -286,12 +290,6 @@ function inserterRT(tubes,time){
             }
         );        
             
-    }
-    if(tmpSeconds == 0 && !Global.RTsecondLock){//снятие защиты на запись дублирующих секунд
-        Global.RTsecondLock = true;
-    }
-    if(tmpSeconds!=0 && Global.RTsecondLock){//снятие защиты на запись дублирующих секунд
-        Global.RTsecondLock = false;
     }
 }
 //W2F

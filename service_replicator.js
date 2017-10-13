@@ -40,6 +40,7 @@ process.on("message",function (msg) {
                             if(err){
                                 console.log(err);
                             }
+                            //console.log("Local Hourly data added in DB on tube"+tube);
                         });
                     }
                     if(stack[elem].sec == 0 && !Global.DBStacksecondLock){
@@ -48,6 +49,7 @@ process.on("message",function (msg) {
                             if(err){
                                 console.log(err);
                             }
+                            //console.log("STACK Minutely data added in DB on tube"+tube);
                         });
                     }
 
