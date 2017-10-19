@@ -28,11 +28,18 @@ function plcWorkerCreator() {
             console.log("plc_collector msg:",msg.msg);
         }
         if(msg.plc_fe){
-            FESender(msg.val,msg.dt,msg.pool);
+            FESender("all_ok",msg.val,msg.dt,msg.pool);
         }
         if(msg.heap){
             Global.plcworkerHeap = msg.data;
         }
+        if(msg.mb_error){
+            FESender("mb_error");
+        }
+        if(msg.mysql_error){
+            FESender("mysql_error");
+        }
+
 
     });
     plc_worker.on("disconnect",function () {
@@ -193,17 +200,25 @@ function inserterDB(tube,stack){
 }
 
 //RT to FE
-function FESender(data,nowdt,pool){
+function FESender(event,data,nowdt,pool){
     //в случае с микросервисной версией, подготавливаем и отправляем шине FE
+    if(event === "all_ok"){
+        let allOk = {
+            "tube1":[nowdt[0],Number(data[0])],
+            "tube2":[nowdt[1],Number(data[1])],
+            "tube3":[nowdt[2],Number(data[2])],
+            "tube4":[nowdt[3],Number(data[3])]
+        };
 
-    let allOk = {
-        "tube1":[nowdt[0],Number(data[0])],
-        "tube2":[nowdt[1],Number(data[1])],
-        "tube3":[nowdt[2],Number(data[2])],
-        "tube4":[nowdt[3],Number(data[3])]
-    };
+        fe_worker.send({"all_ok":true,data:allOk});
+    }
+    //проброс эверта в шину FE
+    if(event === "mb_error" || event === "mysql_error"){
+        fe_worker.send({[event]:true});
+    }
 
-    var heap = process.memoryUsage();
+    //heap send in every query
+    let heap = process.memoryUsage();
     if(pool){
         heap.sqlcon = pool.allCon;
         heap.sqlfree = pool.freeCon;
@@ -216,10 +231,7 @@ function FESender(data,nowdt,pool){
         heap.plcheap = Global.plcworkerHeap;
     }
 
-    fe_worker.send({"all_ok":true,data:allOk});
     fe_worker.send({"heap":true,data:heap});
-
-    //console.log("all ok and heap sended to feworker");
 }
 
 

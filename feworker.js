@@ -30,10 +30,8 @@ function DBQuery(connection,query) {
 if(!sticky.listen(server,3000)){
     //Master SECTION
     console.log("sticky master запущен");
-    process.on("message",function (msg) {//ретрансляция
-        //console.log(util.inspect(cluster.workers,{"colors":true}));
-        //console.log("sticky master msg:",msg);
-        if(msg.all_ok || msg.heap){
+    process.on("message",function (msg) {//ретрансляция в fork
+        if(msg){
             for(let worker in cluster.workers){
                 cluster.workers[worker].process.send(msg);
             }
@@ -247,20 +245,24 @@ if(!sticky.listen(server,3000)){
         // IPC BUS
         //обновляем feheap
         if (msg.heap_refresh){
-            //console.log("refresh feheap in slave heap:");
             Global.feheap = msg.data;
         }
 
-        if (msg.heap){
+        if (msg.heap && msg.data){
             //отправляем отчет о памяти Мастер
             cluster.worker.send({"heapworker":true,data:process.memoryUsage()});
             msg.data.feheap = Global.feheap;
             //console.log("feheap to FE...");
             socketServ.emit("heap",msg.data);
         }
-        if (msg.all_ok){
+        if (msg.all_ok && msg.data){
             socketServ.emit("all_ok",msg.data);
-            //console.log("allok to FE...");
+        }
+        if(msg.mysql_error){
+            socketServ.emit("mysql_error",msg.data);
+        }
+        if(msg.mb_error){
+            socketServ.emit("mb_error",msg.data);
         }
     });
 }
