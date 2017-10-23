@@ -292,7 +292,63 @@
                 </div>
                 <div id="arj_trend" class="col-md-8"></div>
             </div>
-            <div class="btn btn-warning btn-block disabled" id="btn_calc">Расчитать место протечки</div>
+            <div class="calcWrapper cont_panel">
+                <div class="btn btn-danger btn-block disabled" id="btn_calc_auto">Анализ выбранного интервала</div>
+                <div class="col-sm-12 text-center">
+                    <span>* Может занять длительное время</span>
+                </div>
+                <div class="wrapper row">
+                    <div class="col-sm-6 streamlog p">
+                        <div class="line"><span>Логирование вычислений первого потока включено</span></div>
+                    </div>
+                    <div class="col-sm-6 streamlog nb">
+                        <div class="line"><span>Логирование вычислений второго потока включено</span></div>
+                    </div>
+                    <div class="col-sm-6 streamcontainer p">
+                        <div class="row">
+                            <div class="col-sm-12 progressbar"></div>
+                            <div class="col-sm-12 text-center"><h4>Поток вычисления 1</h4></div>
+                            <div class="col-sm-6">
+                                <div class="line"><span>Текущий шаг:</span><span class="val calc_cur_step">0</span></div>
+                                <div class="line"><span>Текущее макс. значение:</span><span class="val calc_cur_maxval">0</span></div>
+                                <div class="line"><span>Текущий utc:</span><span class="val calc_cur_utc">0</span></div>
+                                <div class="line"><span>Обнаружено пиков:</span><span class="val calc_peaks">0</span></div>
+                                <div class="line"><span>Обнаружено ответных пиков:</span><span class="val calc_answer_peaks">0</span></div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="line"><span>Всего шагов:</span><span class="val calc_all_steps">0</span></div>
+                                <div class="line"><span>Осталось шагов:</span><span class="val calc_est_steps">0</span></div>
+                                <div class="line"><span>Текущий idx:</span><span class="val calc_idx">0</span></div>
+                                <div class="line"><span>Текущая Delta:</span><span class="val calc_cur_delta">0</span></div>
+                                <div class="line"><span>Tune:</span><span class="val calc_tune">standby</span></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 streamcontainer nb">
+                        <div class="row">
+                            <div class="col-sm-12 progressbar"></div>
+                            <div class="col-sm-12 text-center"><h4>Поток вычисления 2</h4></div>
+                            <div class="col-sm-6">
+                                <div class="line"><span>Текущий шаг:</span><span class="val calc_cur_step">0</span></div>
+                                <div class="line"><span>Текущее макс. значение:</span><span class="val calc_cur_maxval">0</span></div>
+                                <div class="line"><span>Текущий utc:</span><span class="val calc_cur_utc">0</span></div>
+                                <div class="line"><span>Обнаружено пиков:</span><span class="val calc_peaks">0</span></div>
+                                <div class="line"><span>Обнаружено ответных пиков:</span><span class="val calc_answer_peaks">0</span></div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="line"><span>Всего шагов:</span><span class="val calc_all_steps">0</span></div>
+                                <div class="line"><span>Осталось шагов:</span><span class="val calc_est_steps">0</span></div>
+                                <div class="line"><span>Текущий idx:</span><span class="val calc_idx">0</span></div>
+                                <div class="line"><span>Текущая Delta:</span><span class="val calc_cur_delta">0</span></div>
+                                <div class="line"><span>Tune:</span><span class="val calc_tune">standby</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="btn btn-warning btn-block disabled" id="btn_calc">Расчитать место протечки вручную</div>
+
         </div>
     </div>
     <div id="result" class="container-fluid transparent">

@@ -321,6 +321,17 @@ a:hover{
     transition: all 0.2s ease;
 }
 
+.calcWrapper .val{
+    font-weight: bold;
+    font-size: 140%;
+    color: white;
+    transition: all 0.2s ease;
+}
+.line{
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+
 /*-------------------------------trends---------------------------*/
 .rt-trend{
     background-color: #4c4c4c;
@@ -409,4 +420,17 @@ a:hover{
 }
 .status_node{
     display: inline-block;
+}
+.calcWrapper{
+    margin:10px 0;
+    color: #FFD100;
+}
+.streamlog{
+    border:1px solid grey;
+    height:150px;
+    overflow: auto;
+    padding: 15px 5px;
+}
+.streamcontainer{
+    border:1px solid grey;
 }
