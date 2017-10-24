@@ -133,6 +133,46 @@ if(!sticky.listen(server,3000)){
             }
 
         });
+        socket.on("flowcalc",function (data) {
+            console.log("flowcalc server fired data:",util.inspect(data,{"colors":true}));
+            let trendP = [];
+            let trendNB = [];
+            if(data.min && data.max && data.tube){//проверка целостности
+                var tube = data.tube;
+                let query_p = "SELECT * FROM `p_tube"+tube+"_dump` WHERE `utc` BETWEEN "+data.min+" AND "+data.max+" ORDER BY `utc`";
+                let query_nb = "SELECT * FROM `tube"+tube+"_dump` WHERE `utc` BETWEEN "+data.min+" AND "+data.max+" ORDER BY `utc`";
+
+                db.getFECON()
+                    .then(function (connection) {
+                        let tmp_p = DBQuery(connection,query_p).then(function (data) {
+                            trendP = data;
+                        });
+
+                        let tmp_nb = DBQuery(connection,query_nb).then(function (data) {
+                            trendNB = data;
+                        });
+
+                        Promise.all([tmp_nb, tmp_p])
+                            .then(function () {
+                                connection.release();
+                                ret();
+                            })
+                            .catch(function () {
+                                connection.release();
+                                socketServ.emit("mysql_error",{});
+                            });
+                    })
+                    .catch(function (err) {
+                        console.log("error SQL pool err:",err);
+                        socketServ.emit("mysql_error",{});
+                    });
+
+                function ret(){
+                    console.log("flowcalc_data sended");
+                    socket.emit("flowcalc_data",{trendP:trendP, trendNB:trendNB});
+                }
+            }
+        });
         socket.on("min_max",function(data){
             let RcvMin,
                 RcvMax,

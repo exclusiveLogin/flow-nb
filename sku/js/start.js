@@ -195,6 +195,8 @@ $(document).ready(function(){
             ampFilterNB:Number($('#int_ampfilter_nb').val()),
             ampFilterP:Number($('#int_ampfilter_p').val())
         };
+        //удаляем калькулятор если есть потому что настройки изменились
+        if(Global.FlowCalc)Global.FlowCalc = null;
         saveIntSettings();
         ls.saveSettings(Global.INTSettings);
     });
@@ -355,6 +357,16 @@ $(document).ready(function(){
             $(".res_msg").text("Не хватает данных для расчета");
         }
         
+    });
+    $("#btn_calc_auto").on("click",function () {
+        //проверка на отключение
+        if(!$(this).hasClass("disabled")){
+            //получаем интервал
+            let extremes = Global.MainTrend.get("timeline").getExtremes();
+            extremes.trigger = "flowcalc";
+            console.log("flowcalc EXTREMES:",extremes);
+            trendDetail(extremes);
+        }
     });
 });
 function userEnter(user) {

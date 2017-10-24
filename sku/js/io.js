@@ -422,13 +422,13 @@ $(document).ready(function(){
         Global.currentArjMinPoint = data.min;
 		Global.MainTrend.hideLoading();
     });
-    
+    Global.socketToNB.on("flowcalc_data",function (data) {
+        console.log("Data flowcalc received data:",data.trendP,data.trendNB);
+        FlowCalculatorCtrl(data.trendP,data.trendNB);
+    })
 });
 function trendDetail(e,refresh){
     if(Global.NB_Con && e.trigger){
-        /*if(e.trigger == "rangeSelectorButton" || e.trigger == "zoom"){
-            Global.socketToNB.emit("arjLoad",{min:e.min,max:e.max, tube:Global.currentTube});
-        }*/
         var data = {tube:Global.currentTube};
         if(e.min && e.max){
             if(e.trigger == "navigator" || e.trigger == "zoom"){
@@ -437,6 +437,12 @@ function trendDetail(e,refresh){
                 Global.zoomSteps.push(data);
                 if(Global.zoomSteps > 10)Global.zoomSteps.shift();
                 Global.socketToNB.emit("arjLoad",data);
+            }
+            if(e.trigger == "flowcalc"){
+                console.log("flowcalc fired");
+                data.min = e.min;
+                data.max = e.max;
+                Global.socketToNB.emit("flowcalc",data);
             }
         }
         if(e.rangeSelectorButton){
@@ -452,7 +458,7 @@ function trendDetail(e,refresh){
             }
         }
         if(e.trigger == "keydown"){
-            let tmpExtr = Global.MainTrend.get("timeline").getExtremes();//тут надо узнать ID
+            let tmpExtr = Global.MainTrend.get("timeline").getExtremes();
             var tmpInterval = tmpExtr.userMax - tmpExtr.userMin;
             var step = tmpInterval/2;
 
@@ -502,4 +508,22 @@ function press2perc(val){
     var cur = val/desc;
     //console.log(cur);
     return cur;
+}
+function FlowCalculatorCtrl(data_p, data_nb) {
+    if(FC){
+        if(!Global.FlowCalc){
+            Global.FlowCalc = new FC(data_p,data_nb,Global.ARJIp,Global.ARJI,".calcWrapper",cb);
+        }
+        let DangerPoints = Global.FlowCalc.calcFlow();
+        console.log("Danger points:",DangerPoints);
+        let flags = DangerPoints.map(function (elem,idx) {
+            return [Number(elem),0];
+        });
+        console.log("flags:",flags);
+        Global.MainTrend.series[2].setData(flags);
+        Global.MainTrend.hideLoading();
+    }
+    function cb() {
+        console.log("CB FlowCalc fired, Calc completed");
+    }
 }

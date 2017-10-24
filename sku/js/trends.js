@@ -420,6 +420,9 @@ $(document).ready(function(){
             renderTo:Global.mainTrendContainer,  
             zoomType:"x"
         },
+        boost: {
+            useGPUTranslations: true
+        },
         title: {
             //enabled:false,
             text: ''
@@ -475,19 +478,24 @@ $(document).ready(function(){
             events:{
                 afterSetExtremes:function(e){
                     trendDetail(e);
+                    let interval = e.max-e.min;
+                    if(interval < 24*3600*1000){
+                        //снимаем лок с кнопки калькуляции
+                        if($("#btn_intToggleArj").hasClass("active")){
+                            //при условии что включем DS в режиме архива
+                            $("#btn_calc_auto").removeClass("disabled");
+                        }
+                    }else {
+                        $("#btn_calc_auto").addClass("disabled");
+                    }
                     // console.log(e);
                 }
             }
         },
         yAxis: {
-            //min:0,
-            //max:16,
-            //maxRange:.2,
             title: {
                 text: 'Давление'
             },
-            //minPadding: 0.1,
-            //maxPadding: 0.2
             softMin:0.005,
             softMax:0.01
         },
@@ -501,8 +509,15 @@ $(document).ready(function(){
                     enabled:false
                 },
             },
+            scatter: {
+                marker: {
+                    symbol:"circle",
+                    radius: 10,
+                }
+            }
         },
         series:[{
+            id:'nbtrend',
             type: 'line',
             name: 'Нефтебаза',
             //data:[0,3,4,3,12,15,2],
@@ -511,24 +526,23 @@ $(document).ready(function(){
                 valueSuffix:' кг/см2'
             },
             color:"orange",
-            //line:{
-                point:{
-                    events:{
-                        select:function(point){
-                            console.log("Point NB selected");
-                            console.log(point);
-                            //------------------
-                            $(".pointNButc").text(point.target.x);
-                            $(".pointNBval").text(point.target.y+" кг/м2");
-                            Global.manPointNB = true;
-                            if(Global.manPointNB && Global.manPointP){
-                                $("#btn_calc").removeClass("disabled");
-                            }
+            point:{
+                events:{
+                    select:function(point){
+                        console.log("Point NB selected");
+                        console.log(point);
+                        //------------------
+                        $(".pointNButc").text(point.target.x);
+                        $(".pointNBval").text(point.target.y+" кг/м2");
+                        Global.manPointNB = true;
+                        if(Global.manPointNB && Global.manPointP){
+                            $("#btn_calc").removeClass("disabled");
                         }
                     }
                 }
-            //},
+            }
         },{
+            id:'ptrend',
             type: 'line',
             name: 'Причал',
             //data:[0,5,2,7,1,4,7],
@@ -537,23 +551,25 @@ $(document).ready(function(){
                 valueSuffix:' кг/см2'
             },
             color:"cyan",
-            //line:{
-                point:{
-                    events:{
-                        select:function(point){
-                            console.log("Point Prichal selected");
-                            console.log(point);
-                            //------------------
-                            $(".pointPutc").text(point.target.x);
-                            $(".pointPval").text(point.target.y+" кг/м2");
-                            Global.manPointP = true;
-                            if(Global.manPointNB && Global.manPointP){
-                                $("#btn_calc").removeClass("disabled");
-                            }
+            point:{
+                events:{
+                    select:function(point){
+                        console.log("Point Prichal selected");
+                        console.log(point);
+                        //------------------
+                        $(".pointPutc").text(point.target.x);
+                        $(".pointPval").text(point.target.y+" кг/м2");
+                        Global.manPointP = true;
+                        if(Global.manPointNB && Global.manPointP){
+                            $("#btn_calc").removeClass("disabled");
                         }
                     }
                 }
-            //},
+            }
+        },{
+            type: 'scatter',
+            color: 'rgba(223, 83, 83, .5)',
+            linkedTo:'nbtrend'
         }]
     };
     Global.Trend1 = new Highcharts.Chart(Trend_rt_setting1);
