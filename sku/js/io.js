@@ -425,6 +425,13 @@ $(document).ready(function(){
     Global.socketToNB.on("flowcalc_data",function (data) {
         console.log("Data flowcalc received data:",data.trendP,data.trendNB);
         FlowCalculatorCtrl(data.trendP,data.trendNB);
+        if(data.part){
+            setTimeout(function () {
+                console.log("flowcalc next part...");
+                Global.socketToNB.emit("flowcalc",{next:true});
+            },500);
+        }
+
     })
 });
 function trendDetail(e,refresh){
@@ -514,9 +521,14 @@ function FlowCalculatorCtrl(data_p, data_nb) {
         if(!Global.FlowCalc){
             Global.FlowCalc = new FC(data_p,data_nb,Global.ARJIp,Global.ARJI,".calcWrapper",cb);
         }
-        let DangerPoints = Global.FlowCalc.calcFlow();
+        let DangerPoints = [];
+        if(data_p && data_nb){
+            DangerPoints = Global.FlowCalc.calcFlow(data_p,data_nb);
+        }else {
+            DangerPoints = Global.FlowCalc.calcFlow();
+        }
         console.log("Danger points:",DangerPoints);
-        let flags = DangerPoints.map(function (elem,idx) {
+        let flags = DangerPoints.map(function (elem) {
             return [Number(elem),0];
         });
         console.log("flags:",flags);

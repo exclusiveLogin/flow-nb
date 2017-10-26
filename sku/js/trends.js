@@ -520,7 +520,6 @@ $(document).ready(function(){
             id:'nbtrend',
             type: 'line',
             name: 'Нефтебаза',
-            //data:[0,3,4,3,12,15,2],
             tooltip: {
                 valueDecimals: 2,
                 valueSuffix:' кг/см2'
@@ -545,7 +544,6 @@ $(document).ready(function(){
             id:'ptrend',
             type: 'line',
             name: 'Причал',
-            //data:[0,5,2,7,1,4,7],
             tooltip: {
                 valueDecimals: 2,
                 valueSuffix:' кг/см2'

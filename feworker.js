@@ -11,6 +11,7 @@ const sticky = require('sticky-session');
 const server = require("http").createServer();
 const io = require('socket.io');
 const socketServ = io.listen(server);
+const spawn = require("child_process").spawn;
 
 function DBQuery(connection,query) {
     if(connection && query){
@@ -44,12 +45,89 @@ if(!sticky.listen(server,3000)){
             Global.feheap[worker.id] = msg.data;
             worker.process.send({"heap_refresh":true,"data":Global.feheap});
         }
+        if(msg.pong){
+            //console.log("feworker pong:",worker.id);
+            if(Global["fetimer"+worker.id])clearTimeout(Global["fetimer"+worker.id]);
+            Global["fetimer"+worker.id]=setTimeout(function () {
+                console.log("worker:",worker.id," kill timer fired");
+                spawn("pm2 reload 0",{shell:true});
+            },60000);
+        }
+    });
+    cluster.on("disconnect",function (worker) {
+        console.log("worker:",worker.id," is disconnected");
     });
 }else{
     //Slave SECTION
     console.log("sticky worker id:",cluster.worker.id);
 
+    setInterval(function(){
+        process.send({"pong":true});
+    },5000);
     socketServ.on("connection",function(socket){
+        function* calcStepGenerator(data){
+            console.log("flowcalc generator started with data:",util.inspect(data,{"colors":true}));
+
+            if(data.min && data.max && data.tube){//проверка целостности
+                let interval = data.max - data.min;
+                let step = 10*60*1000;
+                let lastStep = data.min;
+                if(interval > step){
+                    console.log("gen interval:",interval," step:",step);
+                    for(let imin = data.min;imin<data.max;imin+=step){
+                        //грузим по 1 часу
+                        lastStep = imin;
+                        console.log("load query for min:",imin," max:",imin+step);
+                        yield {min:imin,max:imin+step,tube:data.tube};
+                    }
+                }else{
+                    console.log("gen done interval:",interval," step:",step);
+                }
+
+                return {min:lastStep,max:data.max,tube:data.tube};
+            }
+        }
+        let currentGen = false;
+        function getIntervalCalc(min,max,tube,part) {
+            let query_p = "SELECT * FROM `p_tube"+tube+"_dump` WHERE `utc` BETWEEN "+min+" AND "+max+" ORDER BY `utc`";
+            let query_nb = "SELECT * FROM `tube"+tube+"_dump` WHERE `utc` BETWEEN "+min+" AND "+max+" ORDER BY `utc`";
+
+            let trendP = [];
+            let trendNB = [];
+            //console.log("запрос из БД:",min," max:",max," partial:",part);
+            db.getFECON()
+                .then(function (connection) {
+                    let tmp_p = DBQuery(connection,query_p).then(function (data) {
+                        trendP = data;
+                        //console.log("запрос из БД P отработал");
+                    }).catch(function (err) {
+                        console.log("запрос из БД P НЕ отработал err:",err);
+                    });
+
+                    let tmp_nb = DBQuery(connection,query_nb).then(function (data) {
+                        trendNB = data;
+                        //console.log("запрос из БД NB отработал");
+                    }).catch(function (err) {
+                        console.log("запрос из БД NB НЕ отработал err:",err);
+                    });
+
+                    Promise.all([tmp_nb, tmp_p])
+                        .then(function () {
+                            connection.release();
+                            console.log("flowcalc_data min:",min," max:",max," partial:",part," sending to FE...");
+                            console.log("trendP:",trendP.length," trendNB:",trendNB.length);
+                            socket.emit("flowcalc_data",{trendP, trendNB, part});
+                        })
+                        .catch(function () {
+                            connection.release();
+                            socketServ.emit("mysql_error",{});
+                        });
+                })
+                .catch(function (err) {
+                    console.log("error SQL pool err:",err);
+                    socketServ.emit("mysql_error",{});
+                });
+        }
         console.log("client Front End connected");
         Global.FEclients.push(socket.handshake.headers['x-forwarded-for']);
         console.log(util.inspect(Global.FEclients,{colors:true}));
@@ -134,42 +212,27 @@ if(!sticky.listen(server,3000)){
 
         });
         socket.on("flowcalc",function (data) {
-            console.log("flowcalc server fired data:",util.inspect(data,{"colors":true}));
-            let trendP = [];
-            let trendNB = [];
-            if(data.min && data.max && data.tube){//проверка целостности
-                var tube = data.tube;
-                let query_p = "SELECT * FROM `p_tube"+tube+"_dump` WHERE `utc` BETWEEN "+data.min+" AND "+data.max+" ORDER BY `utc`";
-                let query_nb = "SELECT * FROM `tube"+tube+"_dump` WHERE `utc` BETWEEN "+data.min+" AND "+data.max+" ORDER BY `utc`";
+            //проверка целостности
+            if(!data.next || !currentGen){
+                console.log("нет next или генератора data:",data);
+                if(data.min && data.max && data.tube){
+                    //если нет флага next или генератора создаем ген и делаем первый проход
+                    currentGen = calcStepGenerator(data);
+                }
+            }
+            if(currentGen){
+                //ген создан
+                //делаем ход
+                let part = currentGen.next();
+                //console.log("part:",part);
 
-                db.getFECON()
-                    .then(function (connection) {
-                        let tmp_p = DBQuery(connection,query_p).then(function (data) {
-                            trendP = data;
-                        });
+                //get and send data
+                getIntervalCalc(part.value.min,part.value.max,part.value.tube,!part.done);
 
-                        let tmp_nb = DBQuery(connection,query_nb).then(function (data) {
-                            trendNB = data;
-                        });
-
-                        Promise.all([tmp_nb, tmp_p])
-                            .then(function () {
-                                connection.release();
-                                ret();
-                            })
-                            .catch(function () {
-                                connection.release();
-                                socketServ.emit("mysql_error",{});
-                            });
-                    })
-                    .catch(function (err) {
-                        console.log("error SQL pool err:",err);
-                        socketServ.emit("mysql_error",{});
-                    });
-
-                function ret(){
-                    console.log("flowcalc_data sended");
-                    socket.emit("flowcalc_data",{trendP:trendP, trendNB:trendNB});
+                //check done
+                if (part.done){
+                    console.log("done:true, clear GEN");
+                    currentGen = false;
                 }
             }
         });
