@@ -424,7 +424,6 @@ $(document).ready(function(){
     });
     Global.socketToNB.on("flowcalc_data",function (data) {
         let percent = data.percent || 0;
-        //console.log("Data flowcalc received data:",data.trendP,data.trendNB);
         Global.MainTrend.hideLoading();
         FlowCalculatorCtrl(data.trendP,data.trendNB);
         $(".calcWrpper .fc_allpts.val").text(Global.MainTrend.series[2].length);
@@ -442,7 +441,9 @@ $(document).ready(function(){
             },500);
         }else{
             $(".calcWrpper .fc_status.val").text("Завершено");
-
+            setTimeout(function () {
+                $(".calcWrpper .fc_status.val").text("standby");
+            },10000);
         }
     })
 });
