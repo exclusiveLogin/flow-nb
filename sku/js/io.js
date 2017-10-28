@@ -423,15 +423,27 @@ $(document).ready(function(){
 		Global.MainTrend.hideLoading();
     });
     Global.socketToNB.on("flowcalc_data",function (data) {
-        console.log("Data flowcalc received data:",data.trendP,data.trendNB);
+        let percent = data.percent || 0;
+        //console.log("Data flowcalc received data:",data.trendP,data.trendNB);
+        Global.MainTrend.hideLoading();
         FlowCalculatorCtrl(data.trendP,data.trendNB);
+        $(".calcWrpper .fc_allpts.val").text(Global.MainTrend.series[2].length);
+        $(".calcWrpper .fc_startstep.val").text(data.additionalData.min);
+        $(".calcWrpper .fc_endstep.val").text(data.additionalData.max);
+        $(".calcWrpper .fc_steppts.val").text(data.additionalData.allPts);
+        if(data.percent){
+            $(".calcWrapper #flowcalc_pb").css({width:data.percent+"%"}).attr("aria-valuenow",data.percent);
+        }
         if(data.part){
+            $(".calcWrpper .fc_status.val").text("Вычисление");
             setTimeout(function () {
                 console.log("flowcalc next part...");
                 Global.socketToNB.emit("flowcalc",{next:true});
             },500);
-        }
+        }else{
+            $(".calcWrpper .fc_status.val").text("Завершено");
 
+        }
     })
 });
 function trendDetail(e,refresh){
@@ -519,7 +531,7 @@ function press2perc(val){
 function FlowCalculatorCtrl(data_p, data_nb) {
     if(FC){
         if(!Global.FlowCalc){
-            Global.FlowCalc = new FC(data_p,data_nb,Global.ARJIp,Global.ARJI,".calcWrapper",cb);
+            Global.FlowCalc = new FC(data_p,data_nb, Global.ARJIp, Global.ARJI, cb);
         }
         let DangerPoints = [];
         if(data_p && data_nb){
@@ -531,9 +543,15 @@ function FlowCalculatorCtrl(data_p, data_nb) {
         let flags = DangerPoints.map(function (elem) {
             return [Number(elem),0];
         });
-        console.log("flags:",flags);
-        Global.MainTrend.series[2].setData(flags);
-        Global.MainTrend.hideLoading();
+        if (flags.length){
+            console.log("flags:",flags);
+            flags.forEach(function (el) {
+                Global.MainTrend.series[2].addPoint(el,false);
+            });
+            Global.MainTrend.redraw();
+            //Global.MainTrend.hideLoading();
+        }
+        $(".calcWrpper .fc_stepdp.val").text(flags.length);
     }
     function cb() {
         console.log("CB FlowCalc fired, Calc completed");

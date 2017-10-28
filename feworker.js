@@ -65,6 +65,7 @@ if(!sticky.listen(server,3000)){
         process.send({"pong":true});
     },5000);
     socketServ.on("connection",function(socket){
+        
         function* calcStepGenerator(data){
             console.log("flowcalc generator started with data:",util.inspect(data,{"colors":true}));
 
@@ -78,20 +79,26 @@ if(!sticky.listen(server,3000)){
                         //грузим по 1 часу
                         lastStep = imin;
                         console.log("load query for min:",imin," max:",imin+step);
-                        yield {min:imin,max:imin+step,tube:data.tube};
+                        let percent = (lastStep)/(data.max/100)
+                        yield {min:imin,max:imin+step,tube:data.tube,percent};
                     }
                 }else{
                     console.log("gen done interval:",interval," step:",step);
                 }
 
-                return {min:lastStep,max:data.max,tube:data.tube};
+                return {min:lastStep,max:data.max,tube:data.tube,percent:100};
             }
         }
+        
         let currentGen = false;
-        function getIntervalCalc(min,max,tube,part) {
+        
+        function getIntervalCalc(min, max, tube, part, percent) {
             let query_p = "SELECT * FROM `p_tube"+tube+"_dump` WHERE `utc` BETWEEN "+min+" AND "+max+" ORDER BY `utc`";
             let query_nb = "SELECT * FROM `tube"+tube+"_dump` WHERE `utc` BETWEEN "+min+" AND "+max+" ORDER BY `utc`";
-
+            let additionalData = {
+                min,
+                max
+            }
             let trendP = [];
             let trendNB = [];
             //console.log("запрос из БД:",min," max:",max," partial:",part);
@@ -113,10 +120,10 @@ if(!sticky.listen(server,3000)){
 
                     Promise.all([tmp_nb, tmp_p])
                         .then(function () {
+                            additionalData.allPts = trendP.length + trendNB.length;
                             connection.release();
-                            console.log("flowcalc_data min:",min," max:",max," partial:",part," sending to FE...");
-                            console.log("trendP:",trendP.length," trendNB:",trendNB.length);
-                            socket.emit("flowcalc_data",{trendP, trendNB, part});
+                            console.log("flowcalc_data min:",min," max:",max," partial:",part);
+                            socket.emit("flowcalc_data",{trendP, trendNB, part, percent, additionalData});
                         })
                         .catch(function () {
                             connection.release();
@@ -221,13 +228,12 @@ if(!sticky.listen(server,3000)){
                 }
             }
             if(currentGen){
-                //ген создан
                 //делаем ход
                 let part = currentGen.next();
                 //console.log("part:",part);
 
                 //get and send data
-                getIntervalCalc(part.value.min,part.value.max,part.value.tube,!part.done);
+                getIntervalCalc(part.value.min, part.value.max, part.value.tube, !part.done, part.percent);
 
                 //check done
                 if (part.done){

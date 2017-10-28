@@ -20,42 +20,6 @@ class FlowCalculator{
         }else {
             throw new Error("Нет Дельта-сигма интегратора для потока нефтебазы");
         }
-        if(view){
-            this.viewContainerId = view;
-            this.viewContainer = $(view);
-            this.btn = this.viewContainer.find("#btn_calc_auto");
-            this.console_p = this.viewContainer.find(".streamlog .p");
-            this.console_nb = this.viewContainer.find(".streamlog .nb");
-            this.container_p = this.viewContainer.find(".streamcontainer .p");
-            this.container_nb = this.viewContainer.find(".streamcontainer .nb");
-            this.viewData = {};
-            this.viewData.p = {};
-            this.viewData.nb = {};
-            this.viewData.p.calc_cur_step = this.container_p.find(".calc_cur_step");
-            this.viewData.p.calc_cur_maxval = this.container_p.find(".calc_cur_maxval");
-            this.viewData.p.calc_cur_utc = this.container_p.find(".calc_cur_utc");
-            this.viewData.p.calc_peaks = this.container_p.find(".calc_peaks");
-            this.viewData.p.calc_answer_peaks = this.container_p.find(".calc_answer_peaks");
-            this.viewData.p.calc_all_steps = this.container_p.find(".calc_all_steps");
-            this.viewData.p.calc_est_steps = this.container_p.find(".calc_est_steps");
-            this.viewData.p.calc_idx = this.container_p.find(".calc_idx");
-            this.viewData.p.calc_cur_delta = this.container_p.find(".calc_cur_delta");
-            this.viewData.p.calc_tune = this.container_p.find(".calc_tune");
-
-            this.viewData.nb.calc_cur_step = this.container_nb.find(".calc_cur_step");
-            this.viewData.nb.calc_cur_maxval = this.container_nb.find(".calc_cur_maxval");
-            this.viewData.nb.calc_cur_utc = this.container_nb.find(".calc_cur_utc");
-            this.viewData.nb.calc_peaks = this.container_nb.find(".calc_peaks");
-            this.viewData.nb.calc_answer_peaks = this.container_nb.find(".calc_answer_peaks");
-            this.viewData.nb.calc_all_steps = this.container_nb.find(".calc_all_steps");
-            this.viewData.nb.calc_est_steps = this.container_nb.find(".calc_est_steps");
-            this.viewData.nb.calc_idx = this.container_nb.find(".calc_idx");
-            this.viewData.nb.calc_cur_delta = this.container_nb.find(".calc_cur_delta");
-            this.viewData.nb.calc_tune = this.container_nb.find(".calc_tune");
-
-        }else {
-            throw new Error("Нет подключения для выходного контейнера");
-        }
         if(cb) {
             this.callbackFunc = cb;
         }
@@ -139,8 +103,6 @@ class FlowCalculator{
                 //отдаем для анализа
                 if(this.callbackFunc)this.callbackFunc();//если есть колбек, выполняем
                 let Calcresult = this.checkAnswerPoints(peaks_p_fine,peaks_nb_fine);
-                //console
-                //console.log("calc return:",Calcresult);
                 return Calcresult;
             }
         }
