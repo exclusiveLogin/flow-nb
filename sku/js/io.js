@@ -426,23 +426,26 @@ $(document).ready(function(){
         let percent = data.percent || 0;
         Global.MainTrend.hideLoading();
         FlowCalculatorCtrl(data.trendP,data.trendNB);
-        $(".calcWrpper .fc_allpts.val").text(Global.MainTrend.series[2].length);
-        $(".calcWrpper .fc_startstep.val").text(data.additionalData.min);
-        $(".calcWrpper .fc_endstep.val").text(data.additionalData.max);
-        $(".calcWrpper .fc_steppts.val").text(data.additionalData.allPts);
+        $(".calcWrapper .fc_allpts.val").text(Global.MainTrend.series[2].xData.length);
+        $(".calcWrapper .fc_startstep.val").text(data.additionalData.min);
+        $(".calcWrapper .fc_endstep.val").text(data.additionalData.max);
+        $(".calcWrapper .fc_steppts.val").text(data.additionalData.allPts);
         if(data.percent){
             $(".calcWrapper #flowcalc_pb").css({width:data.percent+"%"}).attr("aria-valuenow",data.percent);
         }
         if(data.part){
-            $(".calcWrpper .fc_status.val").text("Вычисление");
+            $(".calcWrapper .fc_status.val").text("Вычисление");
             setTimeout(function () {
                 console.log("flowcalc next part...");
                 Global.socketToNB.emit("flowcalc",{next:true});
             },500);
         }else{
-            $(".calcWrpper .fc_status.val").text("Завершено");
+            console.log("flowcalc completed");
+            $(".calcWrapper .fc_status.val").text("Завершено");
+            $("#btn_calc_auto").removeClass("disabled");
             setTimeout(function () {
-                $(".calcWrpper .fc_status.val").text("standby");
+                $(".calcWrapper .fc_status.val").text("standby");
+                $(".calcWrapper #flowcalc_pb").css({width:"0"}).attr("aria-valuenow",0);
             },10000);
         }
     })
@@ -534,15 +537,23 @@ function FlowCalculatorCtrl(data_p, data_nb) {
         if(!Global.FlowCalc){
             Global.FlowCalc = new FC(data_p,data_nb, Global.ARJIp, Global.ARJI, cb);
         }
+        let _Calculator = new Calculator();
         let DangerPoints = [];
         if(data_p && data_nb){
             DangerPoints = Global.FlowCalc.calcFlow(data_p,data_nb);
         }else {
             DangerPoints = Global.FlowCalc.calcFlow();
         }
-        console.log("Danger points:",DangerPoints);
+        //console.log("Danger points:",DangerPoints);
         let flags = DangerPoints.map(function (elem) {
-            return [Number(elem),0];
+            let flood = false;
+            let rel = 0;
+            if(elem[1].nbpts && elem[1].ppts){
+                _Calculator.setPoints(elem[1].nbpts,elem[1].ppts);
+                flood = _Calculator.calc();
+                rel = flood.rel;
+            }
+            return {x:Number(elem[0].utc), y:rel, dataPts:elem[1], flood};
         });
         if (flags.length){
             console.log("flags:",flags);
@@ -550,9 +561,8 @@ function FlowCalculatorCtrl(data_p, data_nb) {
                 Global.MainTrend.series[2].addPoint(el,false);
             });
             Global.MainTrend.redraw();
-            //Global.MainTrend.hideLoading();
         }
-        $(".calcWrpper .fc_stepdp.val").text(flags.length);
+        $(".calcWrapper .fc_stepdp.val").text(flags.length);
     }
     function cb() {
         console.log("CB FlowCalc fired, Calc completed");

@@ -67,4 +67,4 @@ Calculator = function(speed,distance){
             }
         }
     };
-}
+};

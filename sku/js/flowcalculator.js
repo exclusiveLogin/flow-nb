@@ -53,56 +53,35 @@ class FlowCalculator{
             }
 
             if(this.data_p && this.data_nb){
+                let peaks_splised_p = [];
+                let peaks_splised_nb = [];
                 //stream 1
-                let peaks_p = this.data_p.map(function (elem,idx) {
+                this.data_p.map(function (elem,idx) {
                     let current_val=this.integrator_p.Integrity(elem.value);
                     if(idx > this.integrator_p.Buffer.length-1){
                         //фильтруем первые мат ошибки
                         if(this.checkMaxP(current_val)){
                             //если максимальное то берем предыдушее значение и возвращаем в массив пиков
-                            return this.data_p[idx-1];
+                            peaks_splised_p.push(this.data_p[idx-1]);
                         }
                     }
                 },this);
 
                 //stream 2
-                let peaks_nb = this.data_nb.map(function (elem,idx) {
+                this.data_nb.map(function (elem,idx) {
                     let current_val=this.integrator_nb.Integrity(elem.value);
                     if(idx > this.integrator_nb.Buffer.length-1){
                         //фильтруем первые мат ошибки
                         if(this.checkMaxNB(current_val)){
                             //если максимальное то берем предыдушее значение и возвращаем в массив пиков
-                            return this.data_nb[idx-1];
+                            peaks_splised_nb.push(this.data_nb[idx-1]);
                         }
                     }
                 },this);
 
-                let peaks_splised_p = [];
-                let peaks_splised_nb = [];
-                for(let check in peaks_p){
-                    if (peaks_p[check] != undefined){
-                        peaks_splised_p.push(peaks_p[check]);
-                    }
-                }
-                for(let check in peaks_nb){
-                    if (peaks_nb[check] != undefined){
-                        peaks_splised_nb.push(peaks_nb[check]);
-                    }
-                }
-
-                //готовим массивы
-                let peaks_p_fine = [];
-                let peaks_nb_fine = [];
-                for(let peak in peaks_splised_p){
-                    peaks_p_fine[peaks_splised_p[peak].utc] = peaks_splised_p[peak].value;
-                }
-                for(let peak in peaks_splised_nb){
-                    peaks_nb_fine[peaks_splised_nb[peak].utc] = peaks_splised_nb[peak].value;
-                }
-
                 //отдаем для анализа
+                let Calcresult = this.checkAnswerPoints(peaks_splised_p,peaks_splised_nb);
                 if(this.callbackFunc)this.callbackFunc();//если есть колбек, выполняем
-                let Calcresult = this.checkAnswerPoints(peaks_p_fine,peaks_nb_fine);
                 return Calcresult;
             }
         }
@@ -154,15 +133,20 @@ class FlowCalculator{
 
             for (let id in stream1){
                 for(let idx in stream2){
-                    if((idx-id > 0) && (idx-id < 2000)){
-                        result.push(id);
+                    if((stream2[idx].utc - stream1[id].utc > 0) && (stream2[idx].utc - stream1[id].utc < 2000)){
+                        //проверка на полярность величины
+                        if((stream1[id].value > 0 && stream2[idx].value > 0)||(stream1[id].value < 0 && stream2[idx].value < 0)){
+                            result.push([stream1[id],{nbpts:stream1[id].utc,ppts:stream2[idx].utc}]);
+                        }
                     }
                 }
             }
             for (let id in stream2){
                 for(let idx in stream1){
-                    if((idx-id > 0) && (idx-id < 2000)){
-                        result.push(id);
+                    if((stream1[idx].utc - stream2[id].utc > 0) && (stream1[idx].utc - stream2[id].utc < 2000)){
+                        if((stream2[id].value > 0 && stream1[idx].value > 0)||(stream2[id].value < 0 && stream1[idx].value < 0)){
+                            result.push([stream2[id],{nbpts:stream1[idx].utc,ppts:stream2[id].utc}]);
+                        }
                     }
                 }
             }

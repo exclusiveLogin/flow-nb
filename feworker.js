@@ -72,33 +72,41 @@ if(!sticky.listen(server,3000)){
             if(data.min && data.max && data.tube){//проверка целостности
                 let interval = data.max - data.min;
                 let step = 10*60*1000;
-                let lastStep = data.min;
+                let lastStep = 0;
+                let completeStep = data.min
                 if(interval > step){
                     console.log("gen interval:",interval," step:",step);
                     for(let imin = data.min;imin<data.max;imin+=step){
                         //грузим по 1 часу
-                        lastStep = imin;
-                        console.log("load query for min:",imin," max:",imin+step);
-                        let percent = (lastStep)/(data.max/100)
+                        lastStep += step;
+                        completeStep = imin;
+                        //console.log("load query for min:",imin," max:",imin+step);
+
+                        //console.log("---------------");
+                        //console.log("lastStep:",lastStep," max:",data.max);
+                        //console.log("---------------");
+                        let percent = (lastStep)/(interval/100);
+                        //console.log("percent:",percent);
                         yield {min:imin,max:imin+step,tube:data.tube,percent};
                     }
                 }else{
                     console.log("gen done interval:",interval," step:",step);
                 }
 
-                return {min:lastStep,max:data.max,tube:data.tube,percent:100};
+                return {min:completeStep,max:data.max,tube:data.tube,percent:100};
             }
         }
         
         let currentGen = false;
         
         function getIntervalCalc(min, max, tube, part, percent) {
+            //console.log("GIC:"+percent);
             let query_p = "SELECT * FROM `p_tube"+tube+"_dump` WHERE `utc` BETWEEN "+min+" AND "+max+" ORDER BY `utc`";
             let query_nb = "SELECT * FROM `tube"+tube+"_dump` WHERE `utc` BETWEEN "+min+" AND "+max+" ORDER BY `utc`";
             let additionalData = {
                 min,
                 max
-            }
+            };
             let trendP = [];
             let trendNB = [];
             //console.log("запрос из БД:",min," max:",max," partial:",part);
@@ -122,7 +130,7 @@ if(!sticky.listen(server,3000)){
                         .then(function () {
                             additionalData.allPts = trendP.length + trendNB.length;
                             connection.release();
-                            console.log("flowcalc_data min:",min," max:",max," partial:",part);
+                            console.log("flowcalc_data partial:",part," percent:",percent," allPTS:",additionalData.allPts);
                             socket.emit("flowcalc_data",{trendP, trendNB, part, percent, additionalData});
                         })
                         .catch(function () {
@@ -167,7 +175,6 @@ if(!sticky.listen(server,3000)){
                     query_nb = "SELECT * FROM `tube"+tube+"_h` ORDER BY `utc`";
                     dumpflag = 0;
                 }
-                //Поправить нахер этот бред
                 db.getFECON()
                     .then(function (connection) {
                         let tmp_p = DBQuery(connection,query_p).then(function (data) {
@@ -230,10 +237,11 @@ if(!sticky.listen(server,3000)){
             if(currentGen){
                 //делаем ход
                 let part = currentGen.next();
-                //console.log("part:",part);
+                //console.log("part:",part," percent:",part.percent);
 
                 //get and send data
-                getIntervalCalc(part.value.min, part.value.max, part.value.tube, !part.done, part.percent);
+                //console.log("done:"+part.done);
+                getIntervalCalc(part.value.min, part.value.max, part.value.tube, !part.done, part.value.percent);
 
                 //check done
                 if (part.done){

@@ -433,6 +433,7 @@ $(document).ready(function(){
         },
         navigator:{
             //adaptToUpdatedData:false,
+            enabled:false,
             height:10
         },
         rangeSelector:{
@@ -479,7 +480,7 @@ $(document).ready(function(){
                 afterSetExtremes:function(e){
                     trendDetail(e);
                     let interval = e.max-e.min;
-                    if(interval < 24*3600*1000){
+                    if(interval < 365*24*3600*1000){
                         //снимаем лок с кнопки калькуляции
                         if($("#btn_intToggleArj").hasClass("active")){
                             //при условии что включем DS в режиме архива
@@ -565,9 +566,23 @@ $(document).ready(function(){
                 }
             }
         },{
+            point:{
+                events:{
+                    click:function (e) {
+                        e.stopPropagation();
+                        console.log("point:",this);
+                        calcPoint(this.flood);
+                    }
+                }
+            },
             type: 'scatter',
             color: 'rgba(223, 83, 83, .5)',
-            linkedTo:'nbtrend'
+            states:{
+                select:{
+                    enabled:false
+                }
+            }
+            //linkedTo:'nbtrend'
         }]
     };
     Global.Trend1 = new Highcharts.Chart(Trend_rt_setting1);

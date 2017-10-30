@@ -366,6 +366,8 @@ $(document).ready(function(){
             extremes.trigger = "flowcalc";
             console.log("flowcalc EXTREMES:",extremes);
             trendDetail(extremes);
+            $(this).addClass("disabled");
+            Global.MainTrend.series[2].setData([]);
         }
     });
 });
@@ -392,3 +394,14 @@ function showSysMsg(msg,state) {
     }
     
 }
+function calcPoint(point){
+    resultToggle(1);
+    if(point.error){
+        $(".res_msg").text(point.errTxt);
+    }else{
+        $(".res_msg").text("Рачет произведен успешно");
+        $(".res_nb_val").text(point.fromNB);
+        $(".res_pr_val").text(point.fromP);
+        $(".res_center_val").text(point.rel);
+    }
+};

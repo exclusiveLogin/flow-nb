@@ -434,3 +434,7 @@ a:hover{
 .streamcontainer{
     border:1px solid grey;
 }
+.calcWrapper .progress{
+    height: 8px;
+    background-color: #3e3e3e;
+}
