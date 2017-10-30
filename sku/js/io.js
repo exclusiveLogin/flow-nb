@@ -549,7 +549,7 @@ function FlowCalculatorCtrl(data_p, data_nb) {
             let flood = false;
             let rel = 0;
             if(elem[1].nbpts && elem[1].ppts){
-                _Calculator.setPoints(elem[1].nbpts,elem[1].ppts);
+                _Calculator.setPoints(elem[1].nbpts.utc,elem[1].ppts.utc);
                 flood = _Calculator.calc();
                 rel = flood.rel;
             }
@@ -559,6 +559,10 @@ function FlowCalculatorCtrl(data_p, data_nb) {
             console.log("flags:",flags);
             flags.forEach(function (el) {
                 Global.MainTrend.series[2].addPoint(el,false);
+                if(el.dataPts.nbpts && el.dataPts.ppts){
+                    Global.MainTrend.get("floodnb").addPoint([Number(el.dataPts.nbpts.utc), Number(el.dataPts.nbpts.value)],false);
+                    Global.MainTrend.get("floodp").addPoint([Number(el.dataPts.ppts.utc), Number(el.dataPts.ppts.value)],false);
+                }
             });
             Global.MainTrend.redraw();
         }

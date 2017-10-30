@@ -368,6 +368,8 @@ $(document).ready(function(){
             trendDetail(extremes);
             $(this).addClass("disabled");
             Global.MainTrend.series[2].setData([]);
+            $(".fc_startinv.val").text(extremes.min);
+            $(".fc_endinv.val").text(extremes.max);
         }
     });
 });

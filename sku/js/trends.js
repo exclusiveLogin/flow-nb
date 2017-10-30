@@ -566,6 +566,7 @@ $(document).ready(function(){
                 }
             }
         },{
+            id:'flood',
             point:{
                 events:{
                     click:function (e) {
@@ -577,12 +578,18 @@ $(document).ready(function(){
             },
             type: 'scatter',
             color: 'rgba(223, 83, 83, .5)',
-            states:{
-                select:{
-                    enabled:false
-                }
-            }
-            //linkedTo:'nbtrend'
+            name:'Протечки'
+        },{
+            id:'floodp',
+            type: 'scatter',
+            color: 'cyan',
+            linkedTo:'ptrend',
+            
+        },{
+            id:'floodnb',
+            type: 'scatter',
+            color: 'orange',
+            linkedTo:'nbtrend'
         }]
     };
     Global.Trend1 = new Highcharts.Chart(Trend_rt_setting1);

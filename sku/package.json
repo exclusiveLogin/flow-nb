@@ -5,7 +5,7 @@
   "dependencies": {
     "babel-core": "^6.23.1",
     "babel-loader": "^6.3.2",
-    "babel-preset-es2015": "^6.22.0",
+    "babel-preset-env": "*",
     "bootstrap": "^3.3.7",
     "bundle-loader": "^0.5.4",
     "css-loader": "",

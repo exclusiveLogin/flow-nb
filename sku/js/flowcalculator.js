@@ -136,7 +136,7 @@ class FlowCalculator{
                     if((stream2[idx].utc - stream1[id].utc > 0) && (stream2[idx].utc - stream1[id].utc < 2000)){
                         //проверка на полярность величины
                         if((stream1[id].value > 0 && stream2[idx].value > 0)||(stream1[id].value < 0 && stream2[idx].value < 0)){
-                            result.push([stream1[id],{nbpts:stream1[id].utc,ppts:stream2[idx].utc}]);
+                            result.push([stream1[id],{nbpts:stream1[id],ppts:stream2[idx]}]);
                         }
                     }
                 }
@@ -145,7 +145,7 @@ class FlowCalculator{
                 for(let idx in stream1){
                     if((stream1[idx].utc - stream2[id].utc > 0) && (stream1[idx].utc - stream2[id].utc < 2000)){
                         if((stream2[id].value > 0 && stream1[idx].value > 0)||(stream2[id].value < 0 && stream1[idx].value < 0)){
-                            result.push([stream2[id],{nbpts:stream1[idx].utc,ppts:stream2[id].utc}]);
+                            result.push([stream2[id],{nbpts:stream1[idx],ppts:stream2[id]}]);
                         }
                     }
                 }
