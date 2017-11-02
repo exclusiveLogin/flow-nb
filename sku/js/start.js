@@ -348,7 +348,7 @@ $(document).ready(function(){
             if(resultCalc.error){
                 $(".res_msg").text(resultCalc.errTxt);
             }else{
-                $(".res_msg").text("Рачет произведен успешно");
+                $(".res_msg").text("Раcчет произведен успешно");
                 $(".res_nb_val").text(resultCalc.fromNB);
                 $(".res_pr_val").text(resultCalc.fromP);
                 $(".res_center_val").text(resultCalc.rel);
@@ -375,6 +375,12 @@ $(document).ready(function(){
             Global.MainTrend.get("testp").setData([]);
             $(".fc_startinv.val").text(extremes.min);
             $(".fc_endinv.val").text(extremes.max);
+            if(Global.FloodMarkers.length){
+                Global.FloodMarkers.forEach(function (el) {
+                    el.setMap(null);
+                })
+            }
+
         }
     });
     $("#btn_calc_auto_reset").on("click",function () {

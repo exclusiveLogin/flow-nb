@@ -7,3 +7,4 @@ require("../style/dark.css");
 window.Highcharts = require("highcharts/highstock");
 window.GML = require('google-maps');
 GML.KEY = "AIzaSyCGc1IlCuJd173d1Q1685Eya-Cs7NJ5HOU";
+GML.LIBRARIES = ['geometry'];

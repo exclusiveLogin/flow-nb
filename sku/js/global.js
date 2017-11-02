@@ -19,6 +19,7 @@ Global = {
     currentArjIntervalDump:false,
     currentArjMinPoint:null,
     currentArjMaxPoint:null,
-    zoomSteps:[]
+    zoomSteps:[],
+    FloodMarkers:[],
 };
 

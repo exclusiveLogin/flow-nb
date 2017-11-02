@@ -586,6 +586,7 @@ function FlowCalculatorCtrl(data_p, data_nb, callback) {
             flags.forEach(function (el) {
                 if(!el.flood.error){
                     Global.MainTrend.series[2].addPoint(el,false);
+                    Global.FloodMarkers.push(Global.CalcMapMarker(Number(el.flood.fromNB)));
                     if(el.dataPts.nbpts && el.dataPts.ppts){
                         Global.MainTrend.get("floodnb").addPoint([Number(el.dataPts.nbpts.utc), Number(el.dataPts.nbpts.value)],false);
                         Global.MainTrend.get("floodp").addPoint([Number(el.dataPts.ppts.utc), Number(el.dataPts.ppts.value)],false);
