@@ -503,7 +503,12 @@ $(document).ready(function(){
         plotOptions: {
             series: {
                 threshold:40,
-                allowPointSelect:true
+                allowPointSelect:true,
+                states:{
+                    hover:{
+                        enabled:false
+                    },
+                }
             },
             line:{
                 marker:{
@@ -513,7 +518,7 @@ $(document).ready(function(){
             scatter: {
                 marker: {
                     symbol:"circle",
-                    radius: 10,
+                    radius: 5,
                 }
             }
         },
@@ -567,6 +572,9 @@ $(document).ready(function(){
             }
         },{
             id:'flood',
+            marker:{
+                radius:15
+            },
             point:{
                 events:{
                     click:function (e) {
@@ -583,13 +591,30 @@ $(document).ready(function(){
             id:'floodp',
             type: 'scatter',
             color: 'cyan',
-            linkedTo:'ptrend',
-            
+            name:'Маркеры P',
         },{
             id:'floodnb',
             type: 'scatter',
             color: 'orange',
-            linkedTo:'nbtrend'
+            name:'Маркеры NB',
+        },{
+            visible:false,
+            id:'testp',
+            type: 'line',
+            name: 'Калькуляция P',
+            tooltip: {
+                valueDecimals: 1
+            },
+            color:"green"
+        },{
+            visible:false,
+            id:'testnb',
+            type: 'line',
+            name: 'Калькуляция NB',
+            tooltip: {
+                valueDecimals: 1
+            },
+            color:"red"
         }]
     };
     Global.Trend1 = new Highcharts.Chart(Trend_rt_setting1);

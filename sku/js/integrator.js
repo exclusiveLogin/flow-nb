@@ -53,12 +53,12 @@ function Integrator(){
             this.Buffer.shift();
             this.Buffer.push(val);
             if(this.integrityOnly){
-                var Interg = this.DFilter();
+                ret = this.DFilter();
             }else{
-                var Interg = this.Filter();
+                ret = this.Filter();
             }
         }
-        return Interg;
+        return ret;
     };
     
     this.Filter = function(){

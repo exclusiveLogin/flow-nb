@@ -1,5 +1,7 @@
 class FlowCalculator{
-    constructor(data_p,data_nb,integrator_p,integrator_nb,view,cb){
+    constructor(data_p,data_nb,integrator_p,integrator_nb,cb){
+        this.integrator_p = {};
+        this.integrator_nb = {};
         if(data_p){
             this.data_p = data_p;
         }else {
@@ -11,12 +13,12 @@ class FlowCalculator{
             throw new Error("Нет входных данных Нефтебазы");
         }
         if(integrator_p){
-            this.integrator_p = integrator_p;
+            Object.assign(this.integrator_p, integrator_p);
         }else {
             throw new Error("Нет Дельта-сигма интегратора для потока причала");
         }
         if(integrator_nb){
-            this.integrator_nb = integrator_nb;
+            Object.assign(this.integrator_nb, integrator_nb);
         }else {
             throw new Error("Нет Дельта-сигма интегратора для потока нефтебазы");
         }
@@ -62,9 +64,11 @@ class FlowCalculator{
                         //фильтруем первые мат ошибки
                         if(this.checkMaxP(current_val)){
                             //если максимальное то берем предыдушее значение и возвращаем в массив пиков
+                            if(this.prevValP)this.data_p[idx-1].value = this.prevValP;
                             peaks_splised_p.push(this.data_p[idx-1]);
                         }
                     }
+                    this.prevValP = current_val;
                 },this);
 
                 //stream 2
@@ -74,9 +78,11 @@ class FlowCalculator{
                         //фильтруем первые мат ошибки
                         if(this.checkMaxNB(current_val)){
                             //если максимальное то берем предыдушее значение и возвращаем в массив пиков
+                            if(this.prevValNB)this.data_nb[idx-1].value = this.prevValNB;
                             peaks_splised_nb.push(this.data_nb[idx-1]);
                         }
                     }
+                    this.prevValNB = current_val;
                 },this);
 
                 //отдаем для анализа
@@ -90,40 +96,38 @@ class FlowCalculator{
 
     checkMaxP(nextval){
         //проверка вверх и вниз
+        let tmpAbs = Math.abs(nextval);
         if(this.prevMaxP){
-            let tmpAbs = Math.abs(nextval);
             //если новый пик и локер установлен то сбрасывает до следующего заднего фронта
-            if((tmpAbs > this.prevMaxP) && (this.downlockP))this.downlockP = false;
-            if((tmpAbs < this.prevMaxP) && (!this.downlockP)){
-                //проверяем абс значения максимума
-                //любое падение воспринимается как достижение максимума
-                this.prevMaxP = tmpAbs;
-                this.downlockP = true;
-                return true;
+            if(tmpAbs > this.prevMaxP)this.downlockP = false;
+            if(tmpAbs <= this.prevMaxP){
+                if(!this.downlockP){
+                    //проверяем абс значения максимума
+                    //любое падение воспринимается как достижение максимума
+                    this.downlockP = true;
+                    return true;
+                }
             }
-        }else {
-            //write init max
-            this.prevMaxP = Math.abs(nextval);
         }
+        this.prevMaxP = tmpAbs;
         return false;
     }
     checkMaxNB(nextval){
         //проверка вверх и вниз
-        if(this.prevMaxNB){
-            let tmpAbs = Math.abs(nextval);
+        let tmpAbs = Math.abs(nextval);
+        if(this.prevMaxNB) {
             //если новый пик и локер установлен то сбрасывает до следующего заднего фронта
-            if((tmpAbs > this.prevMaxNB) && (this.downlockNB))this.downlockNB = false;
-            if((tmpAbs < this.prevMaxNB) && (!this.downlockNB)){
-                //проверяем абс значения максимума
-                //любое падение воспринимается как достижение максимума
-                this.prevMaxNB = tmpAbs;
-                this.downlockNB = true;
-                return true;
+            if (tmpAbs > this.prevMaxNB) this.downlockNB = false;
+            if (tmpAbs <= this.prevMaxNB) {
+                if (!this.downlockNB) {
+                    //проверяем абс значения максимума
+                    //любое падение воспринимается как достижение максимума
+                    this.downlockNB = true;
+                    return true;
+                }
             }
-        }else {
-            //write init max
-            this.prevMaxNB = Math.abs(nextval);
         }
+        this.prevMaxNB = tmpAbs;
         return false;
     }
 
@@ -133,19 +137,29 @@ class FlowCalculator{
 
             for (let id in stream1){
                 for(let idx in stream2){
-                    if((stream2[idx].utc - stream1[id].utc > 0) && (stream2[idx].utc - stream1[id].utc < 2000)){
+                    if((stream2[idx].utc - stream1[id].utc > 0) && (stream2[idx].utc - stream1[id].utc < 1700)){
                         //проверка на полярность величины
-                        if((stream1[id].value > 0 && stream2[idx].value > 0)||(stream1[id].value < 0 && stream2[idx].value < 0)){
-                            result.push([stream1[id],{nbpts:stream1[id],ppts:stream2[idx]}]);
+                        if(stream1[id].value > 0 && stream2[idx].value > 0){
+                            result.push([stream1[id],{ppts:stream1[id],nbpts:stream2[idx]}]);
+                            break;
+                        }
+                        if(stream1[id].value < 0 && stream2[idx].value < 0){
+                            result.push([stream1[id],{ppts:stream1[id],nbpts:stream2[idx]}]);
+                            break;
                         }
                     }
                 }
             }
             for (let id in stream2){
                 for(let idx in stream1){
-                    if((stream1[idx].utc - stream2[id].utc > 0) && (stream1[idx].utc - stream2[id].utc < 2000)){
-                        if((stream2[id].value > 0 && stream1[idx].value > 0)||(stream2[id].value < 0 && stream1[idx].value < 0)){
-                            result.push([stream2[id],{nbpts:stream1[idx],ppts:stream2[id]}]);
+                    if((stream1[idx].utc - stream2[id].utc > 0) && (stream1[idx].utc - stream2[id].utc < 1700)){
+                        if(stream2[id].value > 0 && stream1[idx].value > 0){
+                            result.push([stream2[id],{ppts:stream1[idx],nbpts:stream2[id]}]);
+                            break;
+                        }
+                        if(stream2[id].value < 0 && stream1[idx].value < 0){
+                            result.push([stream2[id],{ppts:stream1[idx],nbpts:stream2[id]}]);
+                            break;
                         }
                     }
                 }

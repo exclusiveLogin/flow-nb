@@ -6,24 +6,10 @@
 
     <meta name="theme-color" content="#444">
 
-
     <title>СКУ - Система Контроля Утечек</title>
-    <!-- Latest compiled and minified CSS -->
-    <!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">-->
-
-    <!-- Optional theme -->
-    <!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">-->
-
 
     <link rel="icon" sizes="192x192" href="public/images/rn_logo.png">
-    <!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css">-->
-    <!--<link rel="stylesheet" href="style/dark.css">-->
-    <!--<link rel="stylesheet" href="style/lightbox.css">-->
-    <!--<link rel="stylesheet" href="fancybox/jquery.fancybox.css">-->
     <link rel="stylesheet" href="jquery-ui-1.11.4/jquery-ui.css">
-
-
-    <!--<script src="js/jquery-1.11.3.js"></script>-->
 
     <!--Bundle modules-->
     <script src="public/vendor.js"></script>
@@ -39,23 +25,7 @@
     <script src="js/socket.io.js"></script>
     <script src="js/io.js?v=beta?v=1"></script>
     <script src="js/integrator.js?v=1"></script>
-
-    <!--<script src="js/lightbox.js"></script>-->
-    <!--<script src="js/detect.js"></script>-->
-
-    <!--Google Maps-->
-    <!--<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCGc1IlCuJd173d1Q1685Eya-Cs7NJ5HOU"></script>-->
     <script src="js/maps.js?v=beta"></script>
-
-    <!--<script src="fancybox/jquery.fancybox.pack.js"></script>-->
-    <!--<script src="fancybox/jquery.fancybox.js"></script>-->
-
-    <!--<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>-->
-    <!--<script src="https://code.highcharts.com/stock/highstock.js"></script>-->
-    <!--<script src="https://code.highcharts.com/highcharts-more.js"></script>-->
-
-
-
 
 </head>
 <body>
@@ -298,6 +268,9 @@
                         <div class="progress">
                             <div id="flowcalc_pb" class="progress-bar progress-bar-success progress-bar-striped" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width:0%"></div>
                         </div>
+                    </div>
+                    <div class="col-sm-12">
+                        <div class="btn btn-default btn-block disabled" id="btn_calc_auto_reset">Отменить расчет</div>
                     </div>
                 </div>
 

@@ -56,6 +56,7 @@ if(!sticky.listen(server,3000)){
     });
     cluster.on("disconnect",function (worker) {
         console.log("worker:",worker.id," is disconnected");
+        if(Global["fetimer"+worker.id])clearTimeout(Global["fetimer"+worker.id]);
     });
 }else{
     //Slave SECTION
@@ -71,7 +72,7 @@ if(!sticky.listen(server,3000)){
 
             if(data.min && data.max && data.tube){//проверка целостности
                 let interval = data.max - data.min;
-                let step = 10*60*1000;
+                let step = 3600*1000;
                 let lastStep = 0;
                 let completeStep = data.min
                 if(interval > step){

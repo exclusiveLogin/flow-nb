@@ -425,7 +425,6 @@ $(document).ready(function(){
     Global.socketToNB.on("flowcalc_data",function (data) {
         let percent = data.percent || 0;
         Global.MainTrend.hideLoading();
-        FlowCalculatorCtrl(data.trendP,data.trendNB);
         $(".calcWrapper .fc_allpts.val").text(Global.MainTrend.series[2].xData.length);
         $(".calcWrapper .fc_startstep.val").text(data.additionalData.min);
         $(".calcWrapper .fc_endstep.val").text(data.additionalData.max);
@@ -435,17 +434,29 @@ $(document).ready(function(){
         }
         if(data.part){
             $(".calcWrapper .fc_status.val").text("Вычисление");
-            setTimeout(function () {
-                console.log("flowcalc next part...");
-                Global.socketToNB.emit("flowcalc",{next:true});
-            },500);
+
+            let cb = function () {
+                Global.flowcalcTimerNext = setTimeout(function () {
+                    Global.socketToNB.emit("flowcalc",{next:true});
+                },100);
+            };
+
+            FlowCalculatorCtrl(data.trendP,data.trendNB,cb);
         }else{
             console.log("flowcalc completed");
             $(".calcWrapper .fc_status.val").text("Завершено");
             $("#btn_calc_auto").removeClass("disabled");
+            $("#btn_calc_auto_reset").addClass("disabled");
+            FlowCalculatorCtrl(data.trendP,data.trendNB);
             setTimeout(function () {
                 $(".calcWrapper .fc_status.val").text("standby");
                 $(".calcWrapper #flowcalc_pb").css({width:"0"}).attr("aria-valuenow",0);
+                $(".calcWrapper .fc_allpts.val").text(Global.MainTrend.series[2].xData.length);
+                $(".calcWrapper .fc_startstep.val").text("-");
+                $(".calcWrapper .fc_endstep.val").text("-");
+                $(".calcWrapper .fc_steppts.val").text("-");
+                $(".fc_startinv.val").text("-");
+                $(".fc_endinv.val").text("-");
             },10000);
         }
     })
@@ -532,43 +543,63 @@ function press2perc(val){
     //console.log(cur);
     return cur;
 }
-function FlowCalculatorCtrl(data_p, data_nb) {
+function FlowCalculatorCtrl(data_p, data_nb, callback) {
     if(FC){
         if(!Global.FlowCalc){
             Global.FlowCalc = new FC(data_p,data_nb, Global.ARJIp, Global.ARJI, cb);
         }
+        /*if(!Global.FlowTest){
+            Global.FlowTest = new FT(data_p,data_nb, Global.ARJIp, Global.ARJI, cb);
+        }*/
         let _Calculator = new Calculator();
         let DangerPoints = [];
+        //let TestDangerPoint = [];
+
+        /*TestDangerPoint = Global.FlowTest.calcFlow(data_p,data_nb);
+        TestDangerPoint[0].forEach(function (el) {
+            Global.MainTrend.get("testnb").addPoint(el,false);
+        });
+        TestDangerPoint[1].forEach(function (el) {
+            Global.MainTrend.get("testp").addPoint(el,false);
+        });
+        Global.MainTrend.redraw();*/
+
         if(data_p && data_nb){
             DangerPoints = Global.FlowCalc.calcFlow(data_p,data_nb);
         }else {
             DangerPoints = Global.FlowCalc.calcFlow();
         }
-        //console.log("Danger points:",DangerPoints);
+
         let flags = DangerPoints.map(function (elem) {
-            let flood = false;
+            let flood = {};
             let rel = 0;
             if(elem[1].nbpts && elem[1].ppts){
                 _Calculator.setPoints(elem[1].nbpts.utc,elem[1].ppts.utc);
                 flood = _Calculator.calc();
                 rel = flood.rel;
             }
-            return {x:Number(elem[0].utc), y:rel, dataPts:elem[1], flood};
+            return {x:Number(elem[0].utc), y:rel, dataPts:elem[1], flood:Object.assign({},flood)};
         });
+
         if (flags.length){
-            console.log("flags:",flags);
+            console.log("flags:",flags," length:",flags.length);
             flags.forEach(function (el) {
-                Global.MainTrend.series[2].addPoint(el,false);
-                if(el.dataPts.nbpts && el.dataPts.ppts){
-                    Global.MainTrend.get("floodnb").addPoint([Number(el.dataPts.nbpts.utc), Number(el.dataPts.nbpts.value)],false);
-                    Global.MainTrend.get("floodp").addPoint([Number(el.dataPts.ppts.utc), Number(el.dataPts.ppts.value)],false);
+                if(!el.flood.error){
+                    Global.MainTrend.series[2].addPoint(el,false);
+                    if(el.dataPts.nbpts && el.dataPts.ppts){
+                        Global.MainTrend.get("floodnb").addPoint([Number(el.dataPts.nbpts.utc), Number(el.dataPts.nbpts.value)],false);
+                        Global.MainTrend.get("floodp").addPoint([Number(el.dataPts.ppts.utc), Number(el.dataPts.ppts.value)],false);
+                    }
                 }
             });
             Global.MainTrend.redraw();
         }
         $(".calcWrapper .fc_stepdp.val").text(flags.length);
+        if(callback && typeof (callback) == "function"){
+            callback();
+        }
     }
     function cb() {
-        console.log("CB FlowCalc fired, Calc completed");
+        //console.log("CB FlowCalc fired, Calc completed");
     }
 }

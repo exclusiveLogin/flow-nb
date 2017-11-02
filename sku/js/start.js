@@ -367,9 +367,20 @@ $(document).ready(function(){
             console.log("flowcalc EXTREMES:",extremes);
             trendDetail(extremes);
             $(this).addClass("disabled");
+            $("#btn_calc_auto_reset").removeClass("disabled");
             Global.MainTrend.series[2].setData([]);
+            Global.MainTrend.get("floodnb").setData([]);
+            Global.MainTrend.get("floodp").setData([]);
+            Global.MainTrend.get("testnb").setData([]);
+            Global.MainTrend.get("testp").setData([]);
             $(".fc_startinv.val").text(extremes.min);
             $(".fc_endinv.val").text(extremes.max);
+        }
+    });
+    $("#btn_calc_auto_reset").on("click",function () {
+        if(!$(this).hasClass("disabled")){
+            if(Global.flowcalcTimerNext)clearTimeout(Global.flowcalcTimerNext);
+            $(this).addClass("disabled");
         }
     });
 });
