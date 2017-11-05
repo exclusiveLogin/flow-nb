@@ -60,6 +60,8 @@ $(document).ready(function(){
 
     refreshLog();
     
+    Global.FloodLog = new FL(".calcWrapper .calcLog");
+    
     //JQUI - init
     <!--*****PreBuffer*****-->
     $('#int_pre_slider').slider({
@@ -325,6 +327,10 @@ $(document).ready(function(){
         var num = $(this).data("num");
         //console.log("btn_tube num = "+num);
         if(num){
+            //stop calc and remove floods
+            stopCalc();
+            clearFloods();
+            
             Global.currentTube = num;
             minMax(num);
             trendToggle(true,num);
@@ -361,35 +367,45 @@ $(document).ready(function(){
     $("#btn_calc_auto").on("click",function () {
         //проверка на отключение
         if(!$(this).hasClass("disabled")){
+            //clear first
+            clearFloods();
             //получаем интервал
             let extremes = Global.MainTrend.get("timeline").getExtremes();
             extremes.trigger = "flowcalc";
-            console.log("flowcalc EXTREMES:",extremes);
+            //console.log("flowcalc EXTREMES:",extremes);
             trendDetail(extremes);
             $(this).addClass("disabled");
             $("#btn_calc_auto_reset").removeClass("disabled");
-            Global.MainTrend.series[2].setData([]);
-            Global.MainTrend.get("floodnb").setData([]);
-            Global.MainTrend.get("floodp").setData([]);
-            Global.MainTrend.get("testnb").setData([]);
-            Global.MainTrend.get("testp").setData([]);
             $(".fc_startinv.val").text(extremes.min);
             $(".fc_endinv.val").text(extremes.max);
-            if(Global.FloodMarkers.length){
-                Global.FloodMarkers.forEach(function (el) {
-                    el.setMap(null);
-                })
-            }
-
         }
     });
     $("#btn_calc_auto_reset").on("click",function () {
         if(!$(this).hasClass("disabled")){
-            if(Global.flowcalcTimerNext)clearTimeout(Global.flowcalcTimerNext);
-            $(this).addClass("disabled");
+            stopCalc();
         }
     });
 });
+function clearFloods(){
+    Global.MainTrend.series[2].setData([]);
+    Global.MainTrend.get("floodnb").setData([]);
+    Global.MainTrend.get("floodp").setData([]);
+    Global.MainTrend.get("testnb").setData([]);
+    Global.MainTrend.get("testp").setData([]);
+    if(Global.FloodMarkers.length){
+        Global.FloodMarkers.forEach(function (el) {
+            el.setMap(null);
+            el = null;
+        });
+        Global.FloodMarkers = [];
+    }
+    //clear FloodLog;
+    Global.FloodLog.clearLog();
+}
+function stopCalc(){
+    $("#btn_calc_auto_reset").addClass("disabled");
+    if(Global.flowcalcTimerNext)clearTimeout(Global.flowcalcTimerNext);
+}
 function userEnter(user) {
     Global.authkey=true;
     Global.loggedAs = user;

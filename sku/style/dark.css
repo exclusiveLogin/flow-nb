@@ -438,3 +438,12 @@ a:hover{
     height: 8px;
     background-color: #3e3e3e;
 }
+.calcWrapper .calcLog{
+    border: 1px inset grey;
+    border-radius: 5px;
+    background-color: #444;
+    /*display: none;*/
+}
+.calcWrapper .calcLog tr:nth-child(even){
+    background-color: #333;
+}

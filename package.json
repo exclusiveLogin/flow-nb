@@ -10,10 +10,26 @@
     "socket.io": "^1.4.8",
     "socket.io-client": "",
     "socketio-sticky-session": "^0.4.2",
-    "sticky-session": "^1.1.2"
+    "sticky-session": "^1.1.2",
+    "babel-core": "^6.23.1",
+    "babel-loader": "^6.3.2",
+    "babel-preset-env": "*",
+    "bootstrap": "^3.3.7",
+    "bundle-loader": "^0.5.4",
+    "css-loader": "",
+    "expose-loader": "",
+    "file-loader": "",
+    "font-awesome": "^4.7.0",
+    "google-maps": "^3.2.1",
+    "highcharts": "^5.0.7",
+    "jquery2": "",
+    "style-loader": "",
+    "uglify-loader": "^1.4.0",
+    "webpack": "^2.2.1"
   },
   "scripts": {
-    "start": "node server_v2.js"
+    "preinstall":"npm i webpack -g && npm i pm2 -g",
+    "start": "pm2 server_v3.js"
   },
   "main": "server.js",
   "author": "",
