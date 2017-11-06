@@ -1,7 +1,7 @@
 {
   "name": "flow-nb",
   "description": "this is node Nbase",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "dependencies": {
     "jsmodbus": "^1.0.6",
     "mysql": "",
@@ -28,7 +28,7 @@
     "webpack": "^2.2.1"
   },
   "scripts": {
-    "preinstall":"npm i webpack -g && npm i pm2 -g",
+    "preinstall": "npm i webpack -g && npm i pm2 -g",
     "start": "pm2 server_v3.js"
   },
   "main": "server.js",
