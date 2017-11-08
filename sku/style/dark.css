@@ -437,6 +437,7 @@ a:hover{
 .calcWrapper .progress{
     height: 8px;
     background-color: #3e3e3e;
+    display: none;
 }
 .calcWrapper .calcLog{
     border: 1px inset grey;
@@ -446,4 +447,10 @@ a:hover{
 }
 .calcWrapper .calcLog tr:nth-child(even){
     background-color: #333;
+}
+.calcWrapper .calcLog .fombtn, .calcWrapper .calcLog .fombtn_show{
+    cursor: pointer;
+}
+.calcWrapper .calcLog .fombtn_show.fa-eye-slash{
+    color: grey;
 }

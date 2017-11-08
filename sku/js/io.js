@@ -430,7 +430,6 @@ $(document).ready(function(){
                 Global.MainTrend.hideLoading();
             });
             Global.socketToNB.on("flowcalc_data",function (data) {
-                let percent = data.percent || 0;
                 Global.MainTrend.hideLoading();
                 $(".calcWrapper .fc_allpts.val").text(Global.MainTrend.series[2].xData.length);
                 $(".calcWrapper .fc_startstep.val").text(data.additionalData.min);
@@ -440,6 +439,7 @@ $(document).ready(function(){
                     $(".calcWrapper #flowcalc_pb").css({width:data.percent+"%"}).attr("aria-valuenow",data.percent);
                 }
                 if(data.part){
+                    $(".calcWrapper .progress").show();
                     $(".calcWrapper .fc_status.val").text("Вычисление");
 
                     let cb = function () {
@@ -447,17 +447,18 @@ $(document).ready(function(){
                             Global.socketToNB.emit("flowcalc",{next:true});
                         },100);
                     };
-
-                    FlowCalculatorCtrl(data.trendP,data.trendNB,cb);
+                    if(Global.flowcalcRunning)FlowCalculatorCtrl(data.trendP,data.trendNB,cb);
                 }else{
                     console.log("flowcalc completed");
+                    Global.flowcalcRunning = false;
                     $(".calcWrapper .fc_status.val").text("Завершено");
                     $("#btn_calc_auto").removeClass("disabled");
                     $("#btn_calc_auto_reset").addClass("disabled");
                     FlowCalculatorCtrl(data.trendP,data.trendNB);
                     setTimeout(function () {
                         $(".calcWrapper .fc_status.val").text("standby");
-                        $(".calcWrapper #flowcalc_pb").css({width:"0"}).attr("aria-valuenow",0);
+                        $("#flowcalc_pb").css({width:"0"}).attr("aria-valuenow",0);
+                        $(".calcWrapper .progress").hide(1000);
                         $(".calcWrapper .fc_allpts.val").text(Global.MainTrend.series[2].xData.length);
                         $(".calcWrapper .fc_startstep.val").text("-");
                         $(".calcWrapper .fc_endstep.val").text("-");
@@ -597,20 +598,20 @@ function FlowCalculatorCtrl(data_p, data_nb, callback) {
             console.log("flags:",flags," length:",flags.length);
             flags.forEach(function (el) {
                 if(!el.flood.error){
+                    let uid = getRandomInt(0, 10000);
                     Global.MainTrend.series[2].addPoint(el,false);
-                    Global.FloodMarkers.push(Global.CalcMapMarker(Number(el.flood.fromNB)));
+                    Global.FloodMarkers.push(Global.CalcMapMarker(Number(el.flood.fromNB),uid));
                     if(el.dataPts.nbpts && el.dataPts.ppts){
                         //write to log
-                        let uid = getRandomInt(0, 10000);
                         let forLog = {
-                                id:uid,
-                                time:new Date(el.dataPts.nbpts.utc).toString,
+                                uid:uid,
+                                time:new Date(el.dataPts.nbpts.utc).toString(),
                                 timeOffset:Math.abs(el.dataPts.ppts.utc - el.dataPts.nbpts.utc),
                                 offset:el.flood.rel,
                                 fromNB:el.flood.fromNB,
                                 fromP:el.flood.fromP
                         };
-                        Global.write2Log(forLog);
+                        Global.FloodLog.write2log(forLog);
                         
                         Global.MainTrend.get("floodnb").addPoint([Number(el.dataPts.nbpts.utc), Number(el.dataPts.nbpts.value)],false);
                         Global.MainTrend.get("floodp").addPoint([Number(el.dataPts.ppts.utc), Number(el.dataPts.ppts.value)],false);

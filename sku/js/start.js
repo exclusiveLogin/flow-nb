@@ -325,7 +325,6 @@ $(document).ready(function(){
     });
     $('.btn-arj-tube').on('click',function(){
         var num = $(this).data("num");
-        //console.log("btn_tube num = "+num);
         if(num){
             //stop calc and remove floods
             stopCalc();
@@ -378,6 +377,7 @@ $(document).ready(function(){
             $("#btn_calc_auto_reset").removeClass("disabled");
             $(".fc_startinv.val").text(extremes.min);
             $(".fc_endinv.val").text(extremes.max);
+            Global.flowcalcRunning = true;
         }
     });
     $("#btn_calc_auto_reset").on("click",function () {
@@ -385,6 +385,36 @@ $(document).ready(function(){
             stopCalc();
         }
     });
+    $(document).on("click",".calcWrapper .fombtn", function () {
+        let uid = $(this).data("uid");
+        Global.FloodMarkers.forEach(function (marker) {
+            if(marker.id == uid){
+                marker.setAnimation(google.maps.Animation.BOUNCE);
+                setTimeout(function(){
+                    marker.setAnimation(null);
+                },5000);
+            }
+        });
+    });
+    $(document).on("click",".calcWrapper .fombtn_show", function () {
+        let uid = $(this).data("uid");
+        let element = $(this);
+        Global.FloodMarkers.forEach(function (marker) {
+            if(marker.id == uid){
+                if(element.hasClass("fa-eye")){
+                    element.removeClass("fa-eye").addClass("fa-eye-slash");//change style
+                    marker.setMap(null);
+                    console.log("marker: ",marker.id," hide");
+                }else {
+                    element.removeClass("fa-eye-slash").addClass("fa-eye");//change style
+                    marker.setAnimation(google.maps.Animation.DROP);
+                    marker.setMap(Global.map);
+                    console.log("marker: ",marker.id," show");
+                }
+
+            }
+        });
+    })
 });
 function clearFloods(){
     Global.MainTrend.series[2].setData([]);
@@ -404,7 +434,7 @@ function clearFloods(){
 }
 function stopCalc(){
     $("#btn_calc_auto_reset").addClass("disabled");
-    if(Global.flowcalcTimerNext)clearTimeout(Global.flowcalcTimerNext);
+    Global.flowcalcRunning = false;
 }
 function userEnter(user) {
     Global.authkey=true;

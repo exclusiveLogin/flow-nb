@@ -35,6 +35,10 @@ $(function () {
             {lat: 53.177225, lng: 48.561979},
             {lat: 53.174862, lng: 48.563583},
             {lat: 53.174344, lng: 48.563915},
+
+            {lat: 53.171692, lng: 48.565750},
+            {lat: 53.171209, lng: 48.565664},
+
             {lat: 53.167138, lng: 48.563519},
             {lat: 53.166025, lng: 48.562784},
             {lat: 53.166572, lng: 48.560838}
@@ -72,9 +76,9 @@ $(function () {
 
         PathTubeAdditional.splice(PathTubeAdditional.length-1,1);
         Global.PathTubeAdditional = PathTubeAdditional;
-        console.log("Path: ",PathTubeAdditional);
+        //console.log("Path: ",PathTubeAdditional);
 
-        Global.CalcMapMarker = function(distance){
+        Global.CalcMapMarker = function(distance,uid){
             let targetPt = false;
             for(let path in Global.PathTubeAdditional){
                 //сравниваем дистанцию
@@ -86,12 +90,13 @@ $(function () {
             //заполняем последним сегментом если не нашли
             if(!targetPt)targetPt=Global.PathTubeAdditional[Global.PathTubeAdditional.length-1];
 
-            console.log("TP: ",targetPt);
+            //console.log("TP: ",targetPt);
             //создаем маркер
             let PointFlood = google.maps.geometry.spherical.computeOffset(targetPt.startPt,distance-targetPt.fromDist,targetPt.heading);
-            console.log("PF: ",PointFlood);
+            //console.log("PF: ",PointFlood);
 
             let marker = new google.maps.Marker({
+                id:uid,
                 map:Global.map,
                 position:PointFlood,
                 title:"Протечка",
@@ -105,7 +110,7 @@ $(function () {
                     strokeWeight: .5
                 }
             });
-            console.log("Marker: ",marker);
+            //console.log("Marker: ",marker);
 
             return marker;
         };

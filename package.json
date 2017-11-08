@@ -28,8 +28,7 @@
     "webpack": "^2.2.1"
   },
   "scripts": {
-    "preinstall": "npm i webpack -g && npm i pm2 -g",
-    "start": "pm2 server_v3.js"
+    "start": "pm2 reload server_v3.js"
   },
   "main": "server.js",
   "author": "",

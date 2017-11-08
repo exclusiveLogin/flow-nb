@@ -26,6 +26,10 @@ class FloodLog{
                                             <td>${data.fromNB}</td>
                                             <td>${data.fromP}</td>
                                             <td>${data.offset}</td>
+                                            <td>
+                                                <i class="fa fa-map-marker fombtn" aria-hidden="true" data-uid="${data.uid}"></i>
+                                                <i class="fa fa-eye fombtn_show" aria-hidden="true" data-uid="${data.uid}"></i>
+                                            </td>
                                         </tr>`);
     }
     clearLog(){
