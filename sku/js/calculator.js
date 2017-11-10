@@ -7,7 +7,7 @@ Calculator = function(speed,distance){
             fromP:null
         };
     
-    this.waveSpeed = speed | 1200;
+    this.waveSpeed = speed | 1490;
     this.distance = distance | 1743;
     this.center = Number(Number(this.distance/2).toFixed(1));
     this.pointNB = null;

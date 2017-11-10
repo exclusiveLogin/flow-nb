@@ -435,6 +435,16 @@ function clearFloods(){
 function stopCalc(){
     $("#btn_calc_auto_reset").addClass("disabled");
     Global.flowcalcRunning = false;
+    $(".calcWrapper .fc_status.val").text("standby");
+    $("#flowcalc_pb").css({width:"0"}).attr("aria-valuenow",0);
+    $(".calcWrapper .progress, #btn_calc_auto_reset").hide(1000);
+    $(".calcWrapper .fc_allpts.val").text(Global.MainTrend.series[2].xData.length);
+    $(".calcWrapper .fc_startstep.val").text("-");
+    $(".calcWrapper .fc_endstep.val").text("-");
+    $(".calcWrapper .fc_steppts.val").text("-");
+    $(".fc_startinv.val").text("-");
+    $(".fc_endinv.val").text("-");
+    Global.MainTrend.xAxis[0].removePlotLine('plotLineProgress');
 }
 function userEnter(user) {
     Global.authkey=true;

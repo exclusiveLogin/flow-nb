@@ -443,7 +443,8 @@ a:hover{
     border: 1px inset grey;
     border-radius: 5px;
     background-color: #444;
-    /*display: none;*/
+    max-height: 200px;
+    overflow-y: scroll;
 }
 .calcWrapper .calcLog tr:nth-child(even){
     background-color: #333;

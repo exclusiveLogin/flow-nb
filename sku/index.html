@@ -264,18 +264,20 @@
             </div>
             <div class="calcWrapper cont_panel">
                 <div class="row">
-                    <div class="calcLog col-sm-12">
-                        <table width="100%" style="text-align: center;">
-                            <tr style="border-bottom: 1px solid;">
-                                <td>ID</td>
-                                <td>Время протечки</td>
-                                <td>Задержка импульса</td>
-                                <td>От Нефтебазы</td>
-                                <td>От причала</td>
-                                <td>Смещение от центра</td>
-                                <td>На карте</td>
-                            </tr>
-                        </table>
+                    <div class="col-sm-12">
+                        <div class="calcLog">
+                            <table width="100%" style="text-align: center;">
+                                <tr style="border-bottom: 1px solid;">
+                                    <td>ID</td>
+                                    <td>Время протечки</td>
+                                    <td>Задержка импульса</td>
+                                    <td>От Нефтебазы</td>
+                                    <td>От причала</td>
+                                    <td>Смещение от центра</td>
+                                    <td>На карте</td>
+                                </tr>
+                            </table>
+                        </div>
                     </div>
                 </div>
                 
@@ -301,12 +303,18 @@
                     <div class="col-sm-3"><span>Конец интервала:</span><span class="fc_endinv val">-</span></div>
                 </div>
 
-                <div class="btn btn-danger btn-block disabled" id="btn_calc_auto">Анализ выбранного интервала</div>
-                <div class="col-sm-12 text-center">
-                    <span>* Может занять длительное время</span>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="btn btn-danger btn-block disabled" id="btn_calc_auto">Анализ выбранного интервала</div>
+                        <div class="col-sm-12 text-center">
+                            <span>* Может занять длительное время</span>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="btn btn-warning btn-block disabled" id="btn_calc">Расчитать место протечки вручную</div>
+                    </div>
                 </div>
             </div>
-            <div class="btn btn-warning btn-block disabled" id="btn_calc">Расчитать место протечки вручную</div>
 
         </div>
     </div>

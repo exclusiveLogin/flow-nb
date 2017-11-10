@@ -439,7 +439,7 @@ $(document).ready(function(){
                     $(".calcWrapper #flowcalc_pb").css({width:data.percent+"%"}).attr("aria-valuenow",data.percent);
                 }
                 if(data.part){
-                    $(".calcWrapper .progress").show();
+                    $(".calcWrapper .progress, #btn_calc_auto_reset").show();
                     $(".calcWrapper .fc_status.val").text("Вычисление");
 
                     let cb = function () {
@@ -447,6 +447,10 @@ $(document).ready(function(){
                             Global.socketToNB.emit("flowcalc",{next:true});
                         },100);
                     };
+                    if(Global.MainTrend.series[2].xData.length > 1000){
+                        stopCalc();
+                        showSysMsg("Неправильные настройки Delta Sigma  слишком много вхождений");
+                    }
                     if(Global.flowcalcRunning)FlowCalculatorCtrl(data.trendP,data.trendNB,cb);
                 }else{
                     console.log("flowcalc completed");
@@ -456,15 +460,7 @@ $(document).ready(function(){
                     $("#btn_calc_auto_reset").addClass("disabled");
                     FlowCalculatorCtrl(data.trendP,data.trendNB);
                     setTimeout(function () {
-                        $(".calcWrapper .fc_status.val").text("standby");
-                        $("#flowcalc_pb").css({width:"0"}).attr("aria-valuenow",0);
-                        $(".calcWrapper .progress").hide(1000);
-                        $(".calcWrapper .fc_allpts.val").text(Global.MainTrend.series[2].xData.length);
-                        $(".calcWrapper .fc_startstep.val").text("-");
-                        $(".calcWrapper .fc_endstep.val").text("-");
-                        $(".calcWrapper .fc_steppts.val").text("-");
-                        $(".fc_startinv.val").text("-");
-                        $(".fc_endinv.val").text("-");
+                        stopCalc();
                     },10000);
                 }
             });
@@ -578,7 +574,16 @@ function FlowCalculatorCtrl(data_p, data_nb, callback) {
         Global.MainTrend.redraw();*/
 
         if(data_p && data_nb){
+            Global.MainTrend.xAxis[0].removePlotLine('plotLineProgress');
             DangerPoints = Global.FlowCalc.calcFlow(data_p,data_nb);
+            if(data_p[0]) {
+                Global.MainTrend.xAxis[0].addPlotLine({
+                    id:'plotLineProgress',
+                    color:'red',
+                    width:2,
+                    value:data_p[0].utc
+                });
+            }
         }else {
             DangerPoints = Global.FlowCalc.calcFlow();
         }
